@@ -32,7 +32,7 @@ class BaseAPI(object):
         elif os.getenv('FCM_API_KEY', None):
             self._FCM_API_KEY = os.getenv('FCM_API_KEY', None)
         else:
-            raise AuthenticationError("Please provide the api_key in the google-services.json file that can be downloaded in ")
+            raise AuthenticationError("Please provide the api_key in the google-services.json file")
 
 
     def request_headers(self):

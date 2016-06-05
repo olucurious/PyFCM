@@ -34,7 +34,6 @@ Example
 
 Send notifications using the ``FCMNotification`` class:
 
-
 .. code-block:: python
     # Send to single device.
     from pyfcm import FCMNotification
