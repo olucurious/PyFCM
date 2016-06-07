@@ -29,6 +29,9 @@ Install using pip:
 
     pip install pyfcm
 
+    OR
+    
+    pip install git+git://github.com/olucurious/PyFCM.git
 
 PyFCM supports Android and iOS.
 
