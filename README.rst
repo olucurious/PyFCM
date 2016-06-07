@@ -46,13 +46,13 @@ Send notifications using the ``FCMNotification`` class:
 
     registration_id = "<device registration_id>"
     message_title = "Uber update"
-    message_body = "Hi john, your Uber driver is around"
+    message_body = "Hi john, your customized news for today is ready"
     result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body)
 
     # Send to multiple devices by passing a list of ids.
     registration_ids = ["<device registration_id 1>", "<device registration_id 2>", ...]
     message_title = "Uber update"
-    message_body = "Have you checked for cool Uber drivers around lately?"
+    message_body = "Hope you're having fun this weekend, don't forget to check today's news"
     result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_title=message_title, message_body=message_body)
 
     print result
@@ -63,6 +63,22 @@ Send a low priority message.
 
     # The default is low_priority == False
     result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_body=message, low_priority=True)
+
+Sending a message to a topic.
+
+.. code-block:: python
+
+    # Send a message to devices subscribed to a topic.
+    result = push_service.notify_topic_subscribers(topic_name="news", message_body=message)
+
+    # Conditional topic messaging
+    topic_condition = "'TopicA' in topics && ('TopicB' in topics || 'TopicC' in topics)"
+    result = push_service.notify_topic_subscribers(topic_name="news", message_body=message, condition=topic_condition)
+    # FCM first evaluates any conditions in parentheses, and then evaluates the expression from left to right. In the above expression, a user subscribed to any single topic does not receive the message. Likewise, a user who does not subscribe to TopicA does not receive the message. These combinations do receive it:
+    # TopicA and TopicB
+    # TopicA and TopicC
+    # Conditions for topics support two operators per expression, and parentheses are supported.
+    # For more information, check: https://firebase.google.com/docs/cloud-messaging/topic-messaging
 
 Other argument options
 
