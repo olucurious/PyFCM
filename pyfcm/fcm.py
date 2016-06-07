@@ -181,5 +181,8 @@ class FCMNotification(BaseAPI):
         payload = self.parse_payload(topic_name=topic_name,
                                      message_body=message_body,
                                      message_title=message_title,
-                                     message_icon=message_icon,  extra_data=extra_data)
+                                     message_icon=message_icon, collapse_key=collapse_key,
+                                     delay_while_idle=delay_while_idle, time_to_live=time_to_live,
+                                     restricted_package_name=restricted_package_name, low_priority=low_priority,
+                                     dry_run=dry_run, extra_data=extra_data)
         return self.send_request([payload])
