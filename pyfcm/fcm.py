@@ -49,7 +49,7 @@ class FCMNotification(BaseAPI):
             InvalidDataError: Invalid data provided
             InternalPackageError: Mostly from changes in the response of FCM, contact the project owner to resolve the issue
         """
-        payload = self.parse_payload(registration_ids=registration_id,
+        payload = self.parse_payload(registration_ids=[registration_id],
                                      message_body=message_body,
                                      message_title=message_title,
                                      message_icon=message_icon, collapse_key=collapse_key,
