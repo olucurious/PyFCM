@@ -93,16 +93,17 @@ class BaseAPI(object):
         :rtype: json
         """
         fcm_payload = dict()
-        if isinstance(registration_ids, list):
-            fcm_payload['registration_ids'] = registration_ids
+        if registration_ids:
+            if len(registration_ids) > 1:
+                fcm_payload['registration_ids'] = registration_ids
+            else:
+                fcm_payload['to'] = registration_ids[0]
         if condition:
             fcm_payload['condition'] = condition
         else:
             # In the `to` reference at: https://firebase.google.com/docs/cloud-messaging/http-server-ref#send-downstream
             # We have `Do not set this field (to) when sending to multiple topics`
             # Which is why it's in the `else` block since `condition` is used when multiple topics are being targeted
-            if isinstance(registration_ids, str):
-                fcm_payload['to'] = registration_ids
             if topic_name:
                 fcm_payload['to'] = '/topics/%s' % (topic_name)
         if low_priority:
