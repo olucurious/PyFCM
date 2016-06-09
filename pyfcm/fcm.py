@@ -49,6 +49,7 @@ class FCMNotification(BaseAPI):
             InvalidDataError: Invalid data provided
             InternalPackageError: Mostly from changes in the response of FCM, contact the project owner to resolve the issue
         """
+        # [registration_id] cos we're sending to a single device
         payload = self.parse_payload(registration_ids=[registration_id],
                                      message_body=message_body,
                                      message_title=message_title,
