@@ -30,7 +30,7 @@ Install using pip:
     pip install pyfcm
 
     OR
-    
+
     pip install git+git://github.com/olucurious/PyFCM.git
 
 PyFCM supports Android and iOS.
@@ -76,7 +76,7 @@ Sending a message to a topic.
 
     # Conditional topic messaging
     topic_condition = "'TopicA' in topics && ('TopicB' in topics || 'TopicC' in topics)"
-    result = push_service.notify_topic_subscribers(topic_name="news", message_body=message, condition=topic_condition)
+    result = push_service.notify_topic_subscribers(message_body=message, condition=topic_condition)
     # FCM first evaluates any conditions in parentheses, and then evaluates the expression from left to right. In the above expression, a user subscribed to any single topic does not receive the message. Likewise, a user who does not subscribe to TopicA does not receive the message. These combinations do receive it:
     # TopicA and TopicB
     # TopicA and TopicC
