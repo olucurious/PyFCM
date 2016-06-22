@@ -1,4 +1,4 @@
-from baseapi import BaseAPI
+from .baseapi import BaseAPI
 
 
 class FCMNotification(BaseAPI):
