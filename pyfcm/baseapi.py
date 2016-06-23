@@ -65,6 +65,10 @@ class BaseAPI(object):
                 'results': results}
 
     def registration_id_chunks(self, registration_ids):
+        try:
+            xrange
+        except NameError:
+            xrange = range
         """Yield successive 1000-sized (max fcm recipients per request) chunks from registration_ids."""
         for i in xrange(0, len(registration_ids), self.FCM_MAX_RECIPIENTS):
             yield registration_ids[i:i + self.FCM_MAX_RECIPIENTS]
