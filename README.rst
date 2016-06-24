@@ -62,6 +62,40 @@ Send notifications using the ``FCMNotification`` class:
 
     print result
 
+Send a data message.
+
+.. code-block:: python
+
+    # With FCM, you can send two types of messages to clients:
+    # 1. Notification messages, sometimes thought of as "display messages."
+    # 2. Data messages, which are handled by the client app.
+
+    # Client app is responsible for processing data messages. Data messages have only custom key-value pairs. (Python dict)
+    # Data messages let developers send up to 4KB of custom key-value pairs.
+
+    # Sending a notification with data message payload
+    data_message = {
+        "Nick" : "Mario",
+        "body" : "great match!",
+        "Room" : "PortugalVSDenmark"
+    }
+    # To multiple devices
+    result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_body=message_body, data_message=data_message)
+    # To a single device
+    result = push_service.notify_single_device(registration_id=registration_id, message_body=message_body, data_message=data_message)
+
+    # Sending a data message only payload, do NOT include message_body
+
+    # To multiple devices
+    result = push_service.notify_multiple_devices(registration_ids=registration_ids, data_message=data_message)
+    # To a single device
+    result = push_service.notify_single_device(registration_id=registration_id, data_message=data_message)
+
+    # Use notification messages when you want FCM to handle displaying a notification on your app's behalf.
+    # Use data messages when you just want to process the messages only in your app.
+    # PyFCM can send a message including both notification and data payloads.
+    # In such cases, FCM handles displaying the notification payload, and the client app handles the data payload.
+
 Send a low priority message.
 
 .. code-block:: python
@@ -79,7 +113,9 @@ Sending a message to a topic.
     # Conditional topic messaging
     topic_condition = "'TopicA' in topics && ('TopicB' in topics || 'TopicC' in topics)"
     result = push_service.notify_topic_subscribers(message_body=message, condition=topic_condition)
-    # FCM first evaluates any conditions in parentheses, and then evaluates the expression from left to right. In the above expression, a user subscribed to any single topic does not receive the message. Likewise, a user who does not subscribe to TopicA does not receive the message. These combinations do receive it:
+    # FCM first evaluates any conditions in parentheses, and then evaluates the expression from left to right.
+    # In the above expression, a user subscribed to any single topic does not receive the message. Likewise,
+    # a user who does not subscribe to TopicA does not receive the message. These combinations do receive it:
     # TopicA and TopicB
     # TopicA and TopicC
     # Conditions for topics support two operators per expression, and parentheses are supported.
@@ -117,10 +153,13 @@ Access response data.
     print result['failure'] #Number of messages that could not be processed.
     print result['canonical_ids'] #Number of results that contain a canonical registration token.
     print result['results'] #Array of objects representing the status of the messages processed.
-    #The result objects are listed in the same order as the request (i.e., for each registration ID in the request, its result is listed in the same index in the response).
-    #message_id: String specifying a unique ID for each successfully processed message.
-    #registration_id: Optional string specifying the canonical registration token for the client app that the message was processed and sent to. Sender should use this value as the registration token for future requests. Otherwise, the messages might be rejected.
-    #error: String specifying the error that occurred when processing the message for the recipient
+
+    # The result objects are listed in the same order as the request (i.e., for each registration ID in the request,
+    # its result is listed in the same index in the response).
+    # message_id: String specifying a unique ID for each successfully processed message.
+    # registration_id: Optional string specifying the canonical registration token for the client app that the message
+    # was processed and sent to. Sender should use this value as the registration token for future requests. Otherwise, the messages might be rejected.
+    # error: String specifying the error that occurred when processing the message for the recipient
     
     
 License
@@ -133,10 +172,14 @@ The MIT License (MIT). Please see LICENSE.rst for more information.
 
     Copyright (c) 2015 Emmanuel Adegbite
 
-    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
+    files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+    modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+    is furnished to do so, subject to the following conditions:
 
     The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 

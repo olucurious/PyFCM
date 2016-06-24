@@ -32,3 +32,24 @@ v0.0.4 (09-06-2016)
 - Fixed "registration_id of notify_single_device does not work with a str input"
 
 .. _Emmanuel Olucurious: https://github.com/olucurious
+
+v0.0.5 (22-06-2016)
+-------------------
+
+- Fixed python 3 import issue
+
+.. _MrLucasCardoso: https://github.com/MrLucasCardoso
+
+v0.0.6 (23-06-2016)
+-------------------
+
+- Fixed xrange issue in python3
+
+.. _Emmanuel Olucurious: https://github.com/olucurious
+
+v0.0.7 (24-06-2016)
+-------------------
+
+- Added support for sending data only messages
+
+.. _Emmanuel Olucurious: https://github.com/olucurious
