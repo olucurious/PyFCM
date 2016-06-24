@@ -14,7 +14,8 @@ class FCMNotification(BaseAPI):
                              restricted_package_name=None,
                              low_priority=False,
                              dry_run=False,
-                             extra_data=None):
+                             extra_data=None,
+                             type_data=False):
         """
         Send push notification to a single device
 
@@ -56,7 +57,7 @@ class FCMNotification(BaseAPI):
                                      message_icon=message_icon, collapse_key=collapse_key,
                                      delay_while_idle=delay_while_idle, time_to_live=time_to_live,
                                      restricted_package_name=restricted_package_name, low_priority=low_priority,
-                                     dry_run=dry_run, extra_data=extra_data)
+                                     dry_run=dry_run, extra_data=extra_data, type_data=type_data)
         return self.send_request([payload])
 
     def notify_multiple_devices(self,
@@ -71,7 +72,8 @@ class FCMNotification(BaseAPI):
                                 restricted_package_name=None,
                                 low_priority=False,
                                 dry_run=False,
-                                extra_data=None):
+                                extra_data=None,
+                                type_data=False):
         """
         Sends push notification to multiple devices,
         can send to over 1000 devices
@@ -119,7 +121,7 @@ class FCMNotification(BaseAPI):
                                                    delay_while_idle=delay_while_idle, time_to_live=time_to_live,
                                                    restricted_package_name=restricted_package_name,
                                                    low_priority=low_priority,
-                                                   dry_run=dry_run, extra_data=extra_data))
+                                                   dry_run=dry_run, extra_data=extra_data, type_data=type_data))
             return self.send_request(payloads)
         else:
             payload = self.parse_payload(registration_ids=registration_ids,
@@ -128,7 +130,7 @@ class FCMNotification(BaseAPI):
                                          message_icon=message_icon, collapse_key=collapse_key,
                                          delay_while_idle=delay_while_idle, time_to_live=time_to_live,
                                          restricted_package_name=restricted_package_name, low_priority=low_priority,
-                                         dry_run=dry_run, extra_data=extra_data)
+                                         dry_run=dry_run, extra_data=extra_data, type_data=type_data)
             return self.send_request([payload])
 
     def notify_topic_subscribers(self,
@@ -143,7 +145,8 @@ class FCMNotification(BaseAPI):
                                  restricted_package_name=None,
                                  low_priority=False,
                                  dry_run=False,
-                                 extra_data=None):
+                                 extra_data=None,
+                                 type_data=False):
         """
         Sends push notification to multiple devices subscribe to a topic
 
@@ -185,5 +188,5 @@ class FCMNotification(BaseAPI):
                                      message_icon=message_icon, collapse_key=collapse_key,
                                      delay_while_idle=delay_while_idle, time_to_live=time_to_live,
                                      restricted_package_name=restricted_package_name, low_priority=low_priority,
-                                     dry_run=dry_run, extra_data=extra_data)
+                                     dry_run=dry_run, extra_data=extra_data, type_data=type_data)
         return self.send_request([payload])

@@ -91,7 +91,8 @@ class BaseAPI(object):
                       restricted_package_name=None,
                       low_priority=False,
                       dry_run=False,
-                      extra_data=None):
+                      extra_data=None,
+                      type_data=False):
         """
 
         :rtype: json
@@ -127,14 +128,15 @@ class BaseAPI(object):
             fcm_payload['dry_run'] = dry_run
         if extra_data and isinstance(extra_data, dict):
             fcm_payload['data'] = extra_data
-        if not message_body:
-            raise InvalidDataError("Message body cannot be empty")
-        else:
-            fcm_payload['notification'] = {
-                'body': message_body,
-                'title': message_title,
-                'icon': message_icon
-            }
+        if not type_data:
+            if not message_body:
+                raise InvalidDataError("Message body cannot be empty")
+            else:
+                fcm_payload['notification'] = {
+                    'body': message_body,
+                    'title': message_title,
+                    'icon': message_icon
+                }
         logging.info(fcm_payload)
         return self.json_dumps(fcm_payload)
 
