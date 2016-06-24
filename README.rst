@@ -85,7 +85,6 @@ Send a data message.
     result = push_service.notify_single_device(registration_id=registration_id, message_body=message_body, data_message=data_message)
 
     # Sending a data message only payload, do NOT include message_body
-
     # To multiple devices
     result = push_service.notify_multiple_devices(registration_ids=registration_ids, data_message=data_message)
     # To a single device
