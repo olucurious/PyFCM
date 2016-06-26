@@ -13,7 +13,7 @@ Overview
 2. Improve/fix the code.
 3. Add your changes to CHANGES.rst
 4. Add your name to AUTHORS.rst
-3. Push to your fork and submit a pull request to the ``develop`` branch.
+5. Push to your fork and submit a pull request to the ``develop`` branch.
 
 
 Guidelines
