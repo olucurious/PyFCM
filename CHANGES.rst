@@ -53,3 +53,7 @@ v0.0.7 (24-06-2016)
 - Added support for sending data only messages
 
 .. _Emmanuel Olucurious: https://github.com/olucurious
+
+v0.0.8 (26-06-2016)
+- Checking content-length in response, otherwise it will crash, when calling response.json()
+.. _Rishabh : https://gihub.com/elpoisterio
