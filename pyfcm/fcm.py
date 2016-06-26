@@ -14,14 +14,15 @@ class FCMNotification(BaseAPI):
                              restricted_package_name=None,
                              low_priority=False,
                              dry_run=False,
-                             extra_data=None,
-                             type_data=False):
+                             data_message=None):
+
         """
         Send push notification to a single device
 
         Args:
             registration_id (str): FCM device registration IDs.
             message_body (str): Message string to display in the notification tray
+            data_message (dict): Data message payload to send alone or with the notification message
 
         Keyword Args:
             collapse_key (str, optional): Identifier for a group of messages
@@ -57,7 +58,8 @@ class FCMNotification(BaseAPI):
                                      message_icon=message_icon, collapse_key=collapse_key,
                                      delay_while_idle=delay_while_idle, time_to_live=time_to_live,
                                      restricted_package_name=restricted_package_name, low_priority=low_priority,
-                                     dry_run=dry_run, extra_data=extra_data, type_data=type_data)
+                                     dry_run=dry_run, data_message=data_message)
+
         return self.send_request([payload])
 
     def notify_multiple_devices(self,
@@ -72,8 +74,8 @@ class FCMNotification(BaseAPI):
                                 restricted_package_name=None,
                                 low_priority=False,
                                 dry_run=False,
-                                extra_data=None,
-                                type_data=False):
+                                data_message=None):
+
         """
         Sends push notification to multiple devices,
         can send to over 1000 devices
@@ -81,6 +83,7 @@ class FCMNotification(BaseAPI):
         Args:
             registration_ids (list): FCM device registration IDs.
             message_body (str): Message string to display in the notification tray
+            data_message (dict): Data message payload to send alone or with the notification message
 
         Keyword Args:
             collapse_key (str, optional): Identifier for a group of messages
@@ -121,7 +124,7 @@ class FCMNotification(BaseAPI):
                                                    delay_while_idle=delay_while_idle, time_to_live=time_to_live,
                                                    restricted_package_name=restricted_package_name,
                                                    low_priority=low_priority,
-                                                   dry_run=dry_run, extra_data=extra_data, type_data=type_data))
+                                                   dry_run=dry_run, data_message=data_message))
             return self.send_request(payloads)
         else:
             payload = self.parse_payload(registration_ids=registration_ids,
@@ -130,7 +133,7 @@ class FCMNotification(BaseAPI):
                                          message_icon=message_icon, collapse_key=collapse_key,
                                          delay_while_idle=delay_while_idle, time_to_live=time_to_live,
                                          restricted_package_name=restricted_package_name, low_priority=low_priority,
-                                         dry_run=dry_run, extra_data=extra_data, type_data=type_data)
+                                         dry_run=dry_run, data_message=data_message)
             return self.send_request([payload])
 
     def notify_topic_subscribers(self,
@@ -145,8 +148,8 @@ class FCMNotification(BaseAPI):
                                  restricted_package_name=None,
                                  low_priority=False,
                                  dry_run=False,
-                                 extra_data=None,
-                                 type_data=False):
+                                 data_message=None):
+
         """
         Sends push notification to multiple devices subscribe to a topic
 
@@ -154,6 +157,7 @@ class FCMNotification(BaseAPI):
             topic_name (topic_name): Name of the topic to deliver messages to
             A topic name is a string that can be formed with any character in [a-zA-Z0-9-_.~%]
             message_body (str): Message string to display in the notification tray
+            data_message (dict): Data message payload to send alone or with the notification message
 
         Keyword Args:
             collapse_key (str, optional): Identifier for a group of messages
@@ -188,5 +192,5 @@ class FCMNotification(BaseAPI):
                                      message_icon=message_icon, collapse_key=collapse_key,
                                      delay_while_idle=delay_while_idle, time_to_live=time_to_live,
                                      restricted_package_name=restricted_package_name, low_priority=low_priority,
-                                     dry_run=dry_run, extra_data=extra_data, type_data=type_data)
+                                     dry_run=dry_run, data_message=data_message)
         return self.send_request([payload])

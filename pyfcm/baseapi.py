@@ -91,8 +91,8 @@ class BaseAPI(object):
                       restricted_package_name=None,
                       low_priority=False,
                       dry_run=False,
-                      extra_data=None,
-                      type_data=False):
+                      data_message=None):
+
         """
 
         :rtype: json
@@ -126,18 +126,19 @@ class BaseAPI(object):
             fcm_payload['restricted_package_name'] = restricted_package_name
         if dry_run:
             fcm_payload['dry_run'] = dry_run
-        if extra_data and isinstance(extra_data, dict):
-            fcm_payload['data'] = extra_data
-        if not type_data:
-            if not message_body:
-                raise InvalidDataError("Message body cannot be empty")
-            else:
-                fcm_payload['notification'] = {
-                    'body': message_body,
-                    'title': message_title,
-                    'icon': message_icon
-                }
-        logging.info(fcm_payload)
+
+        if data_message and isinstance(data_message, dict):
+            fcm_payload['data'] = data_message
+        if message_body:
+            fcm_payload['notification'] = {
+                'body': message_body,
+                'title': message_title,
+                'icon': message_icon
+            }
+        else:
+            # This is needed for iOS when we are sending only custom data messages
+            fcm_payload['content_available'] = True
+
         return self.json_dumps(fcm_payload)
 
     def send_request(self, payloads=None):
