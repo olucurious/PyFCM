@@ -2,6 +2,7 @@
 PyFCM
 *****
 
+|version| |license|
 
 Python client for FCM - Firebase Cloud Messaging (Android & iOS)
 
@@ -35,8 +36,8 @@ Install using pip:
 
 PyFCM supports Android and iOS.
 
-Example
--------
+Examples
+--------
 
 Send notifications using the ``FCMNotification`` class:
 
@@ -183,5 +184,12 @@ The MIT License (MIT). Please see LICENSE.rst for more information.
     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
     LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
     IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+.. |version| image:: http://img.shields.io/pypi/v/pyfcm.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/pyfcm/
+
+.. |license| image:: http://img.shields.io/pypi/l/pyfcm.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/pyfcm/
 
 
