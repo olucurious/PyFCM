@@ -48,7 +48,7 @@ class BaseAPI(object):
 
         Returns a python dict of multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)
         """
-        if 'content-length' in response and int (response['content-length']) <= 0:
+        if 'content-length' in response and int(response['content-length']) <= 0:
             return {}
         parsed_response = response.json()
 
