@@ -5,6 +5,7 @@ import json
 from .errors import *
 import logging
 
+
 class BaseAPI(object):
     """
     Base class for the pyfcm API wrapper for FCM
@@ -47,6 +48,8 @@ class BaseAPI(object):
 
         Returns a python dict of multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)
         """
+        if 'content-length' in response and int(response['content-length']) <= 0:
+            return {}
         parsed_response = response.json()
 
         multicast_id = parsed_response.get('multicast_id', None)
@@ -54,7 +57,7 @@ class BaseAPI(object):
         failure = parsed_response.get('failure', 0)
         canonical_ids = parsed_response.get('canonical_ids', 0)
         results = parsed_response.get('results', [])
-        message_id = parsed_response.get('message_id', None) #for topic messages
+        message_id = parsed_response.get('message_id', None)  # for topic messages
         if message_id:
             success = 1
 
@@ -92,6 +95,7 @@ class BaseAPI(object):
                       low_priority=False,
                       dry_run=False,
                       data_message=None):
+
         """
 
         :rtype: json
@@ -125,6 +129,7 @@ class BaseAPI(object):
             fcm_payload['restricted_package_name'] = restricted_package_name
         if dry_run:
             fcm_payload['dry_run'] = dry_run
+
         if data_message and isinstance(data_message, dict):
             fcm_payload['data'] = data_message
         if message_body:
@@ -136,6 +141,7 @@ class BaseAPI(object):
         else:
             # This is needed for iOS when we are sending only custom data messages
             fcm_payload['content_available'] = True
+
         return self.json_dumps(fcm_payload)
 
     def send_request(self, payloads=None):

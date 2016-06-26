@@ -15,6 +15,7 @@ class FCMNotification(BaseAPI):
                              low_priority=False,
                              dry_run=False,
                              data_message=None):
+
         """
         Send push notification to a single device
 
@@ -58,6 +59,7 @@ class FCMNotification(BaseAPI):
                                      delay_while_idle=delay_while_idle, time_to_live=time_to_live,
                                      restricted_package_name=restricted_package_name, low_priority=low_priority,
                                      dry_run=dry_run, data_message=data_message)
+
         return self.send_request([payload])
 
     def notify_multiple_devices(self,
@@ -73,6 +75,7 @@ class FCMNotification(BaseAPI):
                                 low_priority=False,
                                 dry_run=False,
                                 data_message=None):
+
         """
         Sends push notification to multiple devices,
         can send to over 1000 devices
@@ -146,6 +149,7 @@ class FCMNotification(BaseAPI):
                                  low_priority=False,
                                  dry_run=False,
                                  data_message=None):
+
         """
         Sends push notification to multiple devices subscribe to a topic
 
