@@ -57,6 +57,6 @@ v0.0.7 (24-06-2016)
 v0.0.8 (26-06-2016)
 -------------------
 
-- Checking content-length in response, otherwise it will crash, when calling response.json()
+- Checking content-length in response.headers, otherwise it will crash, when calling response.json()
 
 .. _Rishabh : https://gihub.com/elpoisterio
