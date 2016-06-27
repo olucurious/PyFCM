@@ -2,8 +2,6 @@
 PyFCM
 *****
 
-|version| |license|
-
 Python client for FCM - Firebase Cloud Messaging (Android & iOS)
 
 Firebase Cloud Messaging (FCM) is the new version of GCM. It inherits the reliable and scalable GCM infrastructure, plus new features. GCM users are strongly recommended to upgrade to FCM.
