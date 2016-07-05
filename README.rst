@@ -30,7 +30,7 @@ Install using pip:
 
     OR
 
-    pip install git+git://github.com/olucurious/PyFCM.git
+    pip install git+https://github.com/olucurious/PyFCM.git
 
 PyFCM supports Android and iOS.
 
