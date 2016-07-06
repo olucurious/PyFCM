@@ -7,6 +7,7 @@ class FCMNotification(BaseAPI):
                              message_body=None,
                              message_title=None,
                              message_icon=None,
+                             sound=None,
                              condition=None,
                              collapse_key=None,
                              delay_while_idle=False,
@@ -23,6 +24,7 @@ class FCMNotification(BaseAPI):
             registration_id (str): FCM device registration IDs.
             message_body (str): Message string to display in the notification tray
             data_message (dict): Data message payload to send alone or with the notification message
+            sound (str): The sound file name to play. Specify "Default" for device default sound.
 
         Keyword Args:
             collapse_key (str, optional): Identifier for a group of messages
@@ -55,9 +57,13 @@ class FCMNotification(BaseAPI):
         payload = self.parse_payload(registration_ids=[registration_id],
                                      message_body=message_body,
                                      message_title=message_title,
-                                     message_icon=message_icon, collapse_key=collapse_key,
-                                     delay_while_idle=delay_while_idle, time_to_live=time_to_live,
-                                     restricted_package_name=restricted_package_name, low_priority=low_priority,
+                                     message_icon=message_icon, 
+                                     sound=sound,
+                                     collapse_key=collapse_key,
+                                     delay_while_idle=delay_while_idle, 
+                                     time_to_live=time_to_live,
+                                     restricted_package_name=restricted_package_name, 
+                                     low_priority=low_priority,
                                      dry_run=dry_run, data_message=data_message)
 
         return self.send_request([payload])
@@ -67,6 +73,7 @@ class FCMNotification(BaseAPI):
                                 message_body=None,
                                 message_title=None,
                                 message_icon=None,
+                                sound=None,
                                 condition=None,
                                 collapse_key=None,
                                 delay_while_idle=False,
@@ -84,6 +91,7 @@ class FCMNotification(BaseAPI):
             registration_ids (list): FCM device registration IDs.
             message_body (str): Message string to display in the notification tray
             data_message (dict): Data message payload to send alone or with the notification message
+            sound (str): The sound file name to play. Specify "Default" for device default sound.
 
         Keyword Args:
             collapse_key (str, optional): Identifier for a group of messages
@@ -120,8 +128,11 @@ class FCMNotification(BaseAPI):
                 payloads.append(self.parse_payload(registration_ids=registration_ids,
                                                    message_body=message_body,
                                                    message_title=message_title,
-                                                   message_icon=message_icon, collapse_key=collapse_key,
-                                                   delay_while_idle=delay_while_idle, time_to_live=time_to_live,
+                                                   sound=sound,
+                                                   message_icon=message_icon, 
+                                                   collapse_key=collapse_key,
+                                                   delay_while_idle=delay_while_idle, 
+                                                   time_to_live=time_to_live,
                                                    restricted_package_name=restricted_package_name,
                                                    low_priority=low_priority,
                                                    dry_run=dry_run, data_message=data_message))
@@ -130,9 +141,13 @@ class FCMNotification(BaseAPI):
             payload = self.parse_payload(registration_ids=registration_ids,
                                          message_body=message_body,
                                          message_title=message_title,
-                                         message_icon=message_icon, collapse_key=collapse_key,
-                                         delay_while_idle=delay_while_idle, time_to_live=time_to_live,
-                                         restricted_package_name=restricted_package_name, low_priority=low_priority,
+                                         message_icon=message_icon, 
+                                         sound=sound,
+                                         collapse_key=collapse_key,
+                                         delay_while_idle=delay_while_idle, 
+                                         time_to_live=time_to_live,
+                                         restricted_package_name=restricted_package_name, 
+                                         low_priority=low_priority,
                                          dry_run=dry_run, data_message=data_message)
             return self.send_request([payload])
 
@@ -141,6 +156,7 @@ class FCMNotification(BaseAPI):
                                  message_body=None,
                                  message_title=None,
                                  message_icon=None,
+                                 sound=None,
                                  condition=None,
                                  collapse_key=None,
                                  delay_while_idle=False,
@@ -158,6 +174,7 @@ class FCMNotification(BaseAPI):
             A topic name is a string that can be formed with any character in [a-zA-Z0-9-_.~%]
             message_body (str): Message string to display in the notification tray
             data_message (dict): Data message payload to send alone or with the notification message
+            sound (str): The sound file name to play. Specify "Default" for device default sound.
 
         Keyword Args:
             collapse_key (str, optional): Identifier for a group of messages
@@ -189,8 +206,12 @@ class FCMNotification(BaseAPI):
         payload = self.parse_payload(topic_name=topic_name,
                                      message_body=message_body,
                                      message_title=message_title,
-                                     message_icon=message_icon, collapse_key=collapse_key,
-                                     delay_while_idle=delay_while_idle, time_to_live=time_to_live,
-                                     restricted_package_name=restricted_package_name, low_priority=low_priority,
+                                     message_icon=message_icon,
+                                     sound=sound, 
+                                     collapse_key=collapse_key,
+                                     delay_while_idle=delay_while_idle, 
+                                     time_to_live=time_to_live,
+                                     restricted_package_name=restricted_package_name, 
+                                     low_priority=low_priority,
                                      dry_run=dry_run, data_message=data_message)
         return self.send_request([payload])
