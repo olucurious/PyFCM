@@ -142,9 +142,8 @@ class BaseAPI(object):
 
             # only add the 'sound' key if sound is not None
             # otherwise a default sound will play -- even with empty string args.
-            if sound is not None {
+            if sound is not None:
                 fcm_payload['notification']['sound'] = sound
-            }
 
         else:
             # This is needed for iOS when we are sending only custom data messages
