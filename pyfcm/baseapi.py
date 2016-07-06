@@ -87,6 +87,7 @@ class BaseAPI(object):
                       message_body=None,
                       message_title=None,
                       message_icon=None,
+                      sound=None,
                       condition=None,
                       collapse_key=None,
                       delay_while_idle=False,
@@ -138,6 +139,12 @@ class BaseAPI(object):
                 'title': message_title,
                 'icon': message_icon
             }
+
+            # only add the 'sound' key if sound is not None
+            # otherwise a default sound will play -- even with empty string args.
+            if sound is not None:
+                fcm_payload['notification']['sound'] = sound
+
         else:
             # This is needed for iOS when we are sending only custom data messages
             fcm_payload['content_available'] = True
