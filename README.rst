@@ -1,6 +1,7 @@
 *****
 PyFCM
 *****
+|version| |license| 
 
 Python client for FCM - Firebase Cloud Messaging (Android & iOS)
 
