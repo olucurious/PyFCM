@@ -46,6 +46,14 @@ Send notifications using the ``FCMNotification`` class:
 
     push_service = FCMNotification(api_key="<api-key>")
 
+    # OR initialize with proxies
+
+    proxy_dict = {
+              "http"  : "http://127.0.0.1",
+              "https" : "http://127.0.0.1",
+            }
+    push_service = FCMNotification(api_key="<api-key>", proxy_dict=proxy_dict)
+
     # Your api-key can be gotten from:  https://console.firebase.google.com/project/<project-name>/settings/cloudmessaging
 
     registration_id = "<device registration_id>"
@@ -169,7 +177,7 @@ The MIT License (MIT). Please see LICENSE.rst for more information.
 
 ::
 
-    Copyright (c) 2015 Emmanuel Adegbite
+    Copyright (c) 2016 Emmanuel Adegbite
 
     Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
     files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,

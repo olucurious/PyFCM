@@ -27,13 +27,21 @@ class BaseAPI(object):
     #: wake a sleeping device and open a network connection to your server.
     FCM_HIGH_PRIORITY = 'high'
 
-    def __init__(self, api_key=None):
+    def __init__(self, api_key=None, proxy_dict=None):
+        """
+
+        :type proxy_dict: dict, api_key: string
+        """
         if api_key:
             self._FCM_API_KEY = api_key
         elif os.getenv('FCM_API_KEY', None):
             self._FCM_API_KEY = os.getenv('FCM_API_KEY', None)
         else:
             raise AuthenticationError("Please provide the api_key in the google-services.json file")
+        self.FCM_REQ_PROXIES = None
+        if proxy_dict and isinstance(proxy_dict, dict):
+            if (('http' in proxy_dict) or ('https' in proxy_dict)):
+                self.FCM_REQ_PROXIES = proxy_dict
 
     def request_headers(self):
         return {
@@ -95,7 +103,15 @@ class BaseAPI(object):
                       restricted_package_name=None,
                       low_priority=False,
                       dry_run=False,
-                      data_message=None):
+                      data_message=None,
+                      click_action=None,
+                      badge=None,
+                      color=None,
+                      tag=None,
+                      body_loc_key=None,
+                      body_loc_args=None,
+                      title_loc_key=None,
+                      title_loc_args=None):
 
         """
 
@@ -139,10 +155,25 @@ class BaseAPI(object):
                 'title': message_title,
                 'icon': message_icon
             }
-
+            if click_action:
+                fcm_payload['notification']['click_action'] = click_action
+            if badge:
+                fcm_payload['notification']['badge'] = badge
+            if color:
+                fcm_payload['notification']['color'] = color
+            if tag:
+                fcm_payload['notification']['tag'] = tag
+            if body_loc_key:
+                fcm_payload['notification']['body_loc_key'] = body_loc_key
+            if body_loc_args:
+                fcm_payload['notification']['body_loc_args'] = body_loc_args
+            if title_loc_key:
+                fcm_payload['notification']['title_loc_key'] = title_loc_key
+            if title_loc_args:
+                fcm_payload['notification']['title_loc_args'] = title_loc_args
             # only add the 'sound' key if sound is not None
             # otherwise a default sound will play -- even with empty string args.
-            if sound is not None:
+            if sound:
                 fcm_payload['notification']['sound'] = sound
 
         else:
@@ -154,8 +185,9 @@ class BaseAPI(object):
     def send_request(self, payloads=None):
 
         for payload in payloads:
-            response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload, verify=True)
-
+            response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload)
+            if self.FCM_REQ_PROXIES:
+                response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload, proxies=self.FCM_REQ_PROXIES)
             if response.status_code == 200:
                 return self.parse_response(response)
             elif response.status_code == 401:
