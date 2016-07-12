@@ -15,7 +15,15 @@ class FCMNotification(BaseAPI):
                              restricted_package_name=None,
                              low_priority=False,
                              dry_run=False,
-                             data_message=None):
+                             data_message=None,
+                             click_action=None,
+                             badge=None,
+                             color=None,
+                             tag=None,
+                             body_loc_key=None,
+                             body_loc_args=None,
+                             title_loc_key=None,
+                             title_loc_args=None):
 
         """
         Send push notification to a single device
@@ -57,14 +65,21 @@ class FCMNotification(BaseAPI):
         payload = self.parse_payload(registration_ids=[registration_id],
                                      message_body=message_body,
                                      message_title=message_title,
-                                     message_icon=message_icon, 
+                                     message_icon=message_icon,
                                      sound=sound,
                                      collapse_key=collapse_key,
-                                     delay_while_idle=delay_while_idle, 
+                                     delay_while_idle=delay_while_idle,
                                      time_to_live=time_to_live,
-                                     restricted_package_name=restricted_package_name, 
+                                     restricted_package_name=restricted_package_name,
                                      low_priority=low_priority,
-                                     dry_run=dry_run, data_message=data_message)
+                                     dry_run=dry_run, data_message=data_message, click_action=click_action,
+                                     badge=badge,
+                                     color=color,
+                                     tag=tag,
+                                     body_loc_key=body_loc_key,
+                                     body_loc_args=body_loc_args,
+                                     title_loc_key=title_loc_key,
+                                     title_loc_args=title_loc_args)
 
         return self.send_request([payload])
 
@@ -81,7 +96,15 @@ class FCMNotification(BaseAPI):
                                 restricted_package_name=None,
                                 low_priority=False,
                                 dry_run=False,
-                                data_message=None):
+                                data_message=None,
+                                click_action=None,
+                                badge=None,
+                                color=None,
+                                tag=None,
+                                body_loc_key=None,
+                                body_loc_args=None,
+                                title_loc_key=None,
+                                title_loc_args=None):
 
         """
         Sends push notification to multiple devices,
@@ -129,26 +152,41 @@ class FCMNotification(BaseAPI):
                                                    message_body=message_body,
                                                    message_title=message_title,
                                                    sound=sound,
-                                                   message_icon=message_icon, 
+                                                   message_icon=message_icon,
                                                    collapse_key=collapse_key,
-                                                   delay_while_idle=delay_while_idle, 
+                                                   delay_while_idle=delay_while_idle,
                                                    time_to_live=time_to_live,
                                                    restricted_package_name=restricted_package_name,
                                                    low_priority=low_priority,
-                                                   dry_run=dry_run, data_message=data_message))
+                                                   dry_run=dry_run, data_message=data_message,
+                                                   click_action=click_action,
+                                                   badge=badge,
+                                                   color=color,
+                                                   tag=tag,
+                                                   body_loc_key=body_loc_key,
+                                                   body_loc_args=body_loc_args,
+                                                   title_loc_key=title_loc_key,
+                                                   title_loc_args=title_loc_args))
             return self.send_request(payloads)
         else:
             payload = self.parse_payload(registration_ids=registration_ids,
                                          message_body=message_body,
                                          message_title=message_title,
-                                         message_icon=message_icon, 
+                                         message_icon=message_icon,
                                          sound=sound,
                                          collapse_key=collapse_key,
-                                         delay_while_idle=delay_while_idle, 
+                                         delay_while_idle=delay_while_idle,
                                          time_to_live=time_to_live,
-                                         restricted_package_name=restricted_package_name, 
+                                         restricted_package_name=restricted_package_name,
                                          low_priority=low_priority,
-                                         dry_run=dry_run, data_message=data_message)
+                                         dry_run=dry_run, data_message=data_message, click_action=click_action,
+                                         badge=badge,
+                                         color=color,
+                                         tag=tag,
+                                         body_loc_key=body_loc_key,
+                                         body_loc_args=body_loc_args,
+                                         title_loc_key=title_loc_key,
+                                         title_loc_args=title_loc_args)
             return self.send_request([payload])
 
     def notify_topic_subscribers(self,
@@ -164,7 +202,15 @@ class FCMNotification(BaseAPI):
                                  restricted_package_name=None,
                                  low_priority=False,
                                  dry_run=False,
-                                 data_message=None):
+                                 data_message=None,
+                                 click_action=None,
+                                 badge=None,
+                                 color=None,
+                                 tag=None,
+                                 body_loc_key=None,
+                                 body_loc_args=None,
+                                 title_loc_key=None,
+                                 title_loc_args=None):
 
         """
         Sends push notification to multiple devices subscribe to a topic
@@ -207,11 +253,18 @@ class FCMNotification(BaseAPI):
                                      message_body=message_body,
                                      message_title=message_title,
                                      message_icon=message_icon,
-                                     sound=sound, 
+                                     sound=sound,
                                      collapse_key=collapse_key,
-                                     delay_while_idle=delay_while_idle, 
+                                     delay_while_idle=delay_while_idle,
                                      time_to_live=time_to_live,
-                                     restricted_package_name=restricted_package_name, 
+                                     restricted_package_name=restricted_package_name,
                                      low_priority=low_priority,
-                                     dry_run=dry_run, data_message=data_message)
+                                     dry_run=dry_run, data_message=data_message, click_action=click_action,
+                                     badge=badge,
+                                     color=color,
+                                     tag=tag,
+                                     body_loc_key=body_loc_key,
+                                     body_loc_args=body_loc_args,
+                                     title_loc_key=title_loc_key,
+                                     title_loc_args=title_loc_args)
         return self.send_request([payload])

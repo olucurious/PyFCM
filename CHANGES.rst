@@ -60,3 +60,12 @@ v0.0.8 (26-06-2016)
 - Checking content-length in response.headers, otherwise it will crash, when calling response.json()
 
 .. _Rishabh : https://gihub.com/elpoisterio
+
+v1.0.0 (12-07-2016)
+-------------------
+
+- Added proxy support, more fcm arguments and bump version to 1.0.0
+
+.. _Emmanuel Olucurious: https://github.com/olucurious
+
+
