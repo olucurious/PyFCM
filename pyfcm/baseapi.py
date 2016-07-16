@@ -111,7 +111,8 @@ class BaseAPI(object):
                       body_loc_key=None,
                       body_loc_args=None,
                       title_loc_key=None,
-                      title_loc_args=None):
+                      title_loc_args=None,
+                      **extra_kwargs):
 
         """
 
@@ -179,6 +180,9 @@ class BaseAPI(object):
         else:
             # This is needed for iOS when we are sending only custom data messages
             fcm_payload['content_available'] = True
+
+        if extra_kwargs:
+            fcm_payload.update(extra_kwargs)
 
         return self.json_dumps(fcm_payload)
 

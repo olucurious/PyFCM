@@ -68,4 +68,8 @@ v1.0.0 (12-07-2016)
 
 .. _Emmanuel Olucurious: https://github.com/olucurious
 
+v1.0.0 (16-07-2016)
+-------------------
+- Added extra_kwargs for dinamic vars in notify_single_device/notify_multiple_devices functions
 
+.. _Sergey Afonin: https://github.com/safonin
