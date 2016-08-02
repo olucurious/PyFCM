@@ -35,6 +35,13 @@ Install using pip:
 
 PyFCM supports Android and iOS.
 
+Features
+--------
+
+- All FCM functionality covered
+- Tornado support
+
+
 Examples
 --------
 
