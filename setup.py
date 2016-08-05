@@ -16,10 +16,11 @@ from setuptools import setup
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
 tests_require = ["mock", "unittest2"]
 
 meta = {}
-exec(read('pyfcm/__meta__.py'), meta)
+exec (read('pyfcm/__meta__.py'), meta)
 
 if sys.argv[-1] == 'publish':
     os.system("git tag -a %s -m 'v%s'" % (meta['__version__'], meta['__version__']))
@@ -38,8 +39,8 @@ setup(
     long_description=read('README.rst'),
     packages=['pyfcm'],
     install_requires=meta['__install_requires__'],
-    tests_require = tests_require,
-    test_suite = "tests.get_tests",
+    tests_require=tests_require,
+    test_suite="tests.get_tests",
     keywords='firebase fcm apns ios gcm android push notifications',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
