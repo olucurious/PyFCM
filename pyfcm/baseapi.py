@@ -197,6 +197,6 @@ class BaseAPI(object):
             elif response.status_code == 401:
                 raise AuthenticationError("There was an error authenticating the sender account")
             elif response.status_code == 400:
-                raise InternalPackageError("Please create a new github issue describing what you're doing")
+                raise InternalPackageError(response.text)
             else:
                 raise FCMServerError("FCM server is temporarily unavailable")
