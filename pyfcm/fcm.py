@@ -217,6 +217,7 @@ class FCMNotification(BaseAPI):
 
         Args:
             topic_name (topic_name): Name of the topic to deliver messages to
+            condition (condition): Topic condition to deliver messages to
             A topic name is a string that can be formed with any character in [a-zA-Z0-9-_.~%]
             message_body (str): Message string to display in the notification tray
             data_message (dict): Data message payload to send alone or with the notification message
@@ -250,6 +251,7 @@ class FCMNotification(BaseAPI):
             InternalPackageError: JSON parsing error, mostly from changes in the response of FCM, create a new github issue to resolve it.
         """
         payload = self.parse_payload(topic_name=topic_name,
+                                     condition=condition,
                                      message_body=message_body,
                                      message_title=message_title,
                                      message_icon=message_icon,
