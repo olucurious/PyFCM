@@ -9,7 +9,7 @@ from ..fcm import FCMNotification
 
 class TornadoBaseAPI(BaseAPI):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(TornadoBaseAPI, self).__init__(*args, **kwargs)
         self.http_client = AsyncHTTPClient()
 
     @gen.coroutine
@@ -25,7 +25,8 @@ class TornadoBaseAPI(BaseAPI):
             response = yield self.http_client.fetch(request)
 
             if response.code == 200:
-                return self.parse_response(response)
+                yield self.parse_response(response)
+                return
             elif response.code == 401:
                 raise AuthenticationError('There was an error authenticating the sender account')
             elif response.code == 400:
@@ -100,8 +101,8 @@ class TornadoFCMNotification(FCMNotification, TornadoBaseAPI):
                                      title_loc_key=title_loc_key,
                                      title_loc_args=title_loc_args)
 
-        response = yield self.send_request([payload])
-        return response
+        yield self.send_request([payload])
+        return
 
     @gen.coroutine
     def notify_multiple_devices(self,
@@ -151,7 +152,8 @@ class TornadoFCMNotification(FCMNotification, TornadoBaseAPI):
                                                    body_loc_args=body_loc_args,
                                                    title_loc_key=title_loc_key,
                                                    title_loc_args=title_loc_args))
-            return self.send_request(payloads)
+            yield self.send_request(payloads)
+            return
         else:
             payload = self.parse_payload(registration_ids=registration_ids,
                                          message_body=message_body,
@@ -171,8 +173,8 @@ class TornadoFCMNotification(FCMNotification, TornadoBaseAPI):
                                          body_loc_args=body_loc_args,
                                          title_loc_key=title_loc_key,
                                          title_loc_args=title_loc_args)
-            response = yield self.send_request([payload])
-            return response
+            yield self.send_request([payload])
+            return
 
     @gen.coroutine
     def notify_topic_subscribers(self,
@@ -215,5 +217,5 @@ class TornadoFCMNotification(FCMNotification, TornadoBaseAPI):
                                      body_loc_args=body_loc_args,
                                      title_loc_key=title_loc_key,
                                      title_loc_args=title_loc_args)
-        response = yield self.send_request([payload])
-        return response
+        yield self.send_request([payload])
+        return
