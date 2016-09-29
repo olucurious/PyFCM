@@ -39,9 +39,8 @@ class BaseAPI(object):
         else:
             raise AuthenticationError("Please provide the api_key in the google-services.json file")
         self.FCM_REQ_PROXIES = None
-        if proxy_dict and isinstance(proxy_dict, dict):
-            if (('http' in proxy_dict) or ('https' in proxy_dict)):
-                self.FCM_REQ_PROXIES = proxy_dict
+        if proxy_dict and isinstance(proxy_dict, dict) and (('http' in proxy_dict) or ('https' in proxy_dict)):
+            self.FCM_REQ_PROXIES = proxy_dict
 
     def request_headers(self):
         return {
@@ -143,6 +142,8 @@ class BaseAPI(object):
             fcm_payload['collapse_key'] = collapse_key
         if time_to_live and isinstance(time_to_live, int):
             fcm_payload['time_to_live'] = time_to_live
+        else:
+            raise InvalidDataError("Provided time_to_live is not an integer")
         if restricted_package_name:
             fcm_payload['restricted_package_name'] = restricted_package_name
         if dry_run:
@@ -150,6 +151,8 @@ class BaseAPI(object):
 
         if data_message and isinstance(data_message, dict):
             fcm_payload['data'] = data_message
+        else:
+            raise InvalidDataError("Provided data_message is in the wrong format")
         if message_body:
             fcm_payload['notification'] = {
                 'body': message_body,
