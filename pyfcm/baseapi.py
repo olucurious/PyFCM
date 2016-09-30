@@ -140,19 +140,21 @@ class BaseAPI(object):
             fcm_payload['delay_while_idle'] = delay_while_idle
         if collapse_key:
             fcm_payload['collapse_key'] = collapse_key
-        if time_to_live and isinstance(time_to_live, int):
-            fcm_payload['time_to_live'] = time_to_live
-        else:
-            raise InvalidDataError("Provided time_to_live is not an integer")
+        if time_to_live:
+            if isinstance(time_to_live, int):
+                fcm_payload['time_to_live'] = time_to_live
+            else:
+                raise InvalidDataError("Provided time_to_live is not an integer")
         if restricted_package_name:
             fcm_payload['restricted_package_name'] = restricted_package_name
         if dry_run:
             fcm_payload['dry_run'] = dry_run
 
-        if data_message and isinstance(data_message, dict):
-            fcm_payload['data'] = data_message
-        else:
-            raise InvalidDataError("Provided data_message is in the wrong format")
+        if data_message:
+            if isinstance(data_message, dict):
+                fcm_payload['data'] = data_message
+            else:
+                raise InvalidDataError("Provided data_message is in the wrong format")
         if message_body:
             fcm_payload['notification'] = {
                 'body': message_body,
