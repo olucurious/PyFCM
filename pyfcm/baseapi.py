@@ -65,8 +65,6 @@ class BaseAPI(object):
         canonical_ids = parsed_response.get('canonical_ids', 0)
         results = parsed_response.get('results', [])
         message_id = parsed_response.get('message_id', None)  # for topic messages
-        if message_id:
-            success = 1
 
         return {'multicast_id': multicast_id,
                 'success': success,
