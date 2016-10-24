@@ -171,10 +171,12 @@ class BaseAPI(object):
         for payload in payloads:
             response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload)
             if self.FCM_REQ_PROXIES:
-                response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload, proxies=self.FCM_REQ_PROXIES)
+                response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload,
+                                         proxies=self.FCM_REQ_PROXIES)
             self.send_request_responses.append(response)
 
     def parse_responses(self):
+        response_list = list()
         for response in self.send_request_responses:
             if response.status_code == 200:
                 """
@@ -195,14 +197,15 @@ class BaseAPI(object):
                 message_id = parsed_response.get('message_id', None)  # for topic messages
                 if message_id:
                     success = 1
-                return {'multicast_id': multicast_id,
-                        'success': success,
-                        'failure': failure,
-                        'canonical_ids': canonical_ids,
-                        'results': results}
+                response_list.append({'multicast_id': multicast_id,
+                                      'success': success,
+                                      'failure': failure,
+                                      'canonical_ids': canonical_ids,
+                                      'results': results})
             elif response.status_code == 401:
                 raise AuthenticationError("There was an error authenticating the sender account")
             elif response.status_code == 400:
                 raise InternalPackageError(response.text)
             else:
                 raise FCMServerError("FCM server is temporarily unavailable")
+        return response_list
