@@ -41,13 +41,36 @@ class BaseAPI(object):
         self.FCM_REQ_PROXIES = None
         if proxy_dict and isinstance(proxy_dict, dict) and (('http' in proxy_dict) or ('https' in proxy_dict)):
             self.FCM_REQ_PROXIES = proxy_dict
-        self.send_request_responses = list()
 
     def request_headers(self):
         return {
             "Content-Type": self.CONTENT_TYPE,
             "Authorization": "key=" + self._FCM_API_KEY,
         }
+
+    def parse_response(self, response):
+        """
+        Parses the json response sent back by the
+        server and tries to get out the important return variables
+
+        Returns a python dict of multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)
+        """
+        if 'content-length' in response.headers and int(response.headers['content-length']) <= 0:
+            return {}
+        parsed_response = response.json()
+
+        multicast_id = parsed_response.get('multicast_id', None)
+        success = parsed_response.get('success', 0)
+        failure = parsed_response.get('failure', 0)
+        canonical_ids = parsed_response.get('canonical_ids', 0)
+        results = parsed_response.get('results', [])
+        message_id = parsed_response.get('message_id', None)  # for topic messages
+
+        return {'multicast_id': multicast_id,
+                'success': success,
+                'failure': failure,
+                'canonical_ids': canonical_ids,
+                'results': results}
 
     def registration_id_chunks(self, registration_ids):
         try:
@@ -172,34 +195,8 @@ class BaseAPI(object):
             response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload)
             if self.FCM_REQ_PROXIES:
                 response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload, proxies=self.FCM_REQ_PROXIES)
-            return response
-
-    def parse_responses(self):
-        for response in self.send_request_responses:
             if response.status_code == 200:
-                """
-                Parses the json response sent back by the
-                server and tries to get out the important return variables
-
-                Returns a python dict of multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)
-                """
-                if 'content-length' in response.headers and int(response.headers['content-length']) <= 0:
-                    return {}
-                parsed_response = response.json()
-
-                multicast_id = parsed_response.get('multicast_id', None)
-                success = parsed_response.get('success', 0)
-                failure = parsed_response.get('failure', 0)
-                canonical_ids = parsed_response.get('canonical_ids', 0)
-                results = parsed_response.get('results', [])
-                message_id = parsed_response.get('message_id', None)  # for topic messages
-                if message_id:
-                    success = 1
-                return {'multicast_id': multicast_id,
-                        'success': success,
-                        'failure': failure,
-                        'canonical_ids': canonical_ids,
-                        'results': results}
+                return self.parse_response(response)
             elif response.status_code == 401:
                 raise AuthenticationError("There was an error authenticating the sender account")
             elif response.status_code == 400:
