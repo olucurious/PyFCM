@@ -81,7 +81,7 @@ class FCMNotification(BaseAPI):
                                      title_loc_key=title_loc_key,
                                      title_loc_args=title_loc_args)
 
-        self.send_request_responses.append(self.send_request([payload]))
+        self.send_request([payload])
         self.parse_responses()
 
     def notify_multiple_devices(self,
@@ -168,7 +168,7 @@ class FCMNotification(BaseAPI):
                                                    body_loc_args=body_loc_args,
                                                    title_loc_key=title_loc_key,
                                                    title_loc_args=title_loc_args))
-            self.send_request_responses.append(self.send_request(payloads))
+            self.send_request(payloads)
             return self.parse_responses()
         else:
             payload = self.parse_payload(registration_ids=registration_ids,
@@ -189,7 +189,7 @@ class FCMNotification(BaseAPI):
                                          body_loc_args=body_loc_args,
                                          title_loc_key=title_loc_key,
                                          title_loc_args=title_loc_args)
-            self.send_request_responses.append(self.send_request([payload]))
+            self.send_request([payload])
             return self.parse_responses()
 
     def notify_topic_subscribers(self,
@@ -272,5 +272,5 @@ class FCMNotification(BaseAPI):
                                      body_loc_args=body_loc_args,
                                      title_loc_key=title_loc_key,
                                      title_loc_args=title_loc_args)
-        self.send_request_responses.append(self.send_request([payload]))
+        self.send_request([payload])
         return self.parse_responses()
