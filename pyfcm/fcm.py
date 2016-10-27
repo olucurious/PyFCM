@@ -30,9 +30,10 @@ class FCMNotification(BaseAPI):
 
         Args:
             registration_id (str): FCM device registration IDs.
-            message_body (str): Message string to display in the notification tray
-            data_message (dict): Data message payload to send alone or with the notification message
+            message_body (str): Message string to display in the notification tray.
+            data_message (dict): Data message payload to send alone or with the notification message.
             sound (str): The sound file name to play. Specify "Default" for device default sound.
+            condition (condition): Topic condition to deliver messages to.
 
         Keyword Args:
             collapse_key (str, optional): Identifier for a group of messages
@@ -57,9 +58,9 @@ class FCMNotification(BaseAPI):
 
         Raises:
             AuthenticationError: If :attr:`api_key` is not set or provided or there is an error authenticating the sender.
-            FCMServerError: Internal server error or timeout error on Firebase cloud messaging server
-            InvalidDataError: Invalid data provided
-            InternalPackageError: Mostly from changes in the response of FCM, contact the project owner to resolve the issue
+            FCMServerError: Internal server error or timeout error on Firebase cloud messaging server.
+            InvalidDataError: Invalid data provided.
+            InternalPackageError: Mostly from changes in the response of FCM, contact the project owner to resolve the issue.
         """
         # [registration_id] cos we're sending to a single device
         payload = self.parse_payload(registration_ids=[registration_id],
@@ -67,6 +68,7 @@ class FCMNotification(BaseAPI):
                                      message_title=message_title,
                                      message_icon=message_icon,
                                      sound=sound,
+                                     condition=condition,
                                      collapse_key=collapse_key,
                                      delay_while_idle=delay_while_idle,
                                      time_to_live=time_to_live,
@@ -113,9 +115,10 @@ class FCMNotification(BaseAPI):
 
         Args:
             registration_ids (list): FCM device registration IDs.
-            message_body (str): Message string to display in the notification tray
-            data_message (dict): Data message payload to send alone or with the notification message
+            message_body (str): Message string to display in the notification tray.
+            data_message (dict): Data message payload to send alone or with the notification message.
             sound (str): The sound file name to play. Specify "Default" for device default sound.
+            condition (condition): Topic condition to deliver messages to.
 
         Keyword Args:
             collapse_key (str, optional): Identifier for a group of messages
@@ -140,8 +143,8 @@ class FCMNotification(BaseAPI):
 
         Raises:
             AuthenticationError: If :attr:`api_key` is not set or provided or there is an error authenticating the sender.
-            FCMServerError: Internal server error or timeout error on Firebase cloud messaging server
-            InvalidDataError: Invalid data provided
+            FCMServerError: Internal server error or timeout error on Firebase cloud messaging server.
+            InvalidDataError: Invalid data provided.
             InternalPackageError: JSON parsing error, mostly from changes in the response of FCM, create a new github issue to resolve it.
         """
         if len(registration_ids) > self.FCM_MAX_RECIPIENTS:
@@ -153,6 +156,7 @@ class FCMNotification(BaseAPI):
                                                    message_body=message_body,
                                                    message_title=message_title,
                                                    sound=sound,
+                                                   condition=condition,
                                                    message_icon=message_icon,
                                                    collapse_key=collapse_key,
                                                    delay_while_idle=delay_while_idle,
@@ -176,6 +180,7 @@ class FCMNotification(BaseAPI):
                                          message_title=message_title,
                                          message_icon=message_icon,
                                          sound=sound,
+                                         condition=condition,
                                          collapse_key=collapse_key,
                                          delay_while_idle=delay_while_idle,
                                          time_to_live=time_to_live,
@@ -219,11 +224,11 @@ class FCMNotification(BaseAPI):
         Sends push notification to multiple devices subscribe to a topic
 
         Args:
-            topic_name (topic_name): Name of the topic to deliver messages to
-            condition (condition): Topic condition to deliver messages to
+            topic_name (topic_name): Name of the topic to deliver messages to.
+            condition (condition): Topic condition to deliver messages to.
             A topic name is a string that can be formed with any character in [a-zA-Z0-9-_.~%]
-            message_body (str): Message string to display in the notification tray
-            data_message (dict): Data message payload to send alone or with the notification message
+            message_body (str): Message string to display in the notification tray.
+            data_message (dict): Data message payload to send alone or with the notification message.
             sound (str): The sound file name to play. Specify "Default" for device default sound.
 
         Keyword Args:
@@ -249,8 +254,8 @@ class FCMNotification(BaseAPI):
 
         Raises:
             AuthenticationError: If :attr:`api_key` is not set or provided or there is an error authenticating the sender.
-            FCMServerError: Internal server error or timeout error on Firebase cloud messaging server
-            InvalidDataError: Invalid data provided
+            FCMServerError: Internal server error or timeout error on Firebase cloud messaging server.
+            InvalidDataError: Invalid data provided.
             InternalPackageError: JSON parsing error, mostly from changes in the response of FCM, create a new github issue to resolve it.
         """
         payload = self.parse_payload(topic_name=topic_name,
