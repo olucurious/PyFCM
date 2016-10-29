@@ -2,6 +2,7 @@
 PyFCM
 
 """
+import traceback
 
 from .__meta__ import (
     __title__,
@@ -13,8 +14,3 @@ from .__meta__ import (
     __license__
 )
 from .fcm import FCMNotification
-
-try:
-    from .extensions.tornado import TornadoFCMNotification
-except ImportError:
-    pass
