@@ -162,14 +162,16 @@ Access response data.
 .. code-block:: python
 
     # Response from FCM Server.
-    print result['multicast_id'] #Unique ID (number) identifying the multicast message.
-    print result['success'] #Number of messages that were processed without an error.
-    print result['failure'] #Number of messages that could not be processed.
-    print result['canonical_ids'] #Number of results that contain a canonical registration token.
-    print result['results'] #Array of objects representing the status of the messages processed.
+    response['multicast_id'] #Unique ID (number) identifying the multicast message.
+    response['success'] #Number of messages that were processed without an error.
+    response['failure'] #Number of messages that could not be processed.
+    response['canonical_ids'] #Number of results that contain a canonical registration token.
+    response['results'] #Array of objects representing the status of the messages processed.
 
-    # The result objects are listed in the same order as the request (i.e., for each registration ID in the request,
-    # its result is listed in the same index in the response).
+    result = [{response dict},...]
+
+    # The response objects are listed in the same order as the request (i.e., for each registration ID in the request,
+    # its response is listed in the same index in the response).
     # message_id: String specifying a unique ID for each successfully processed message.
     # registration_id: Optional string specifying the canonical registration token for the client app that the message
     # was processed and sent to. Sender should use this value as the registration token for future requests. Otherwise,
