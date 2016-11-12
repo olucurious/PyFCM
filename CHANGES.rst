@@ -81,3 +81,10 @@ v1.0.1 (04-08-2016)
 - Added tornado support
 
 .. _Dmitry Nazarov: https://github.com/mkn8rd
+
+v1.1.4 (11-11-2016)
+-------------------
+
+- added body_loc_key support and notify single device single response
+
+.. _Emmanuel Olucurious: https://github.com/olucurious

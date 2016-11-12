@@ -168,7 +168,8 @@ Access response data.
     response['canonical_ids'] #Number of results that contain a canonical registration token.
     response['results'] #Array of objects representing the status of the messages processed.
 
-    result = [{response dict},...]
+    result = [{response dict},...] #if notify_multiple_devices is used
+    result = {response dict} #if notify_single_device is used
 
     # The response objects are listed in the same order as the request (i.e., for each registration ID in the request,
     # its response is listed in the same index in the response).
