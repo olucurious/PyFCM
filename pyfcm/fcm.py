@@ -82,7 +82,7 @@ class FCMNotification(BaseAPI):
                                      title_loc_args=title_loc_args)
 
         self.send_request([payload])
-        return self.parse_responses()
+        return self.parse_responses()[-1:]
 
     def notify_multiple_devices(self,
                                 registration_ids=None,
