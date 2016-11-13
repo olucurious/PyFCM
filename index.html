@@ -185,11 +185,14 @@ dry_run (bool, optional): If `True` no message will be sent but
 <p>.. code-block:: python</p>
 
 <pre><code># Response from FCM Server.
-print result['multicast_id'] #Unique ID (number) identifying the multicast message.
-print result['success'] #Number of messages that were processed without an error.
-print result['failure'] #Number of messages that could not be processed.
-print result['canonical_ids'] #Number of results that contain a canonical registration token.
-print result['results'] #Array of objects representing the status of the messages processed.
+response['multicast_id'] #Unique ID (number) identifying the multicast message.
+response['success'] #Number of messages that were processed without an error.
+response['failure'] #Number of messages that could not be processed.
+response['canonical_ids'] #Number of results that contain a canonical registration token.
+response['results'] #Array of objects representing the status of the messages processed.
+
+result = [{response dict},...] #if notify_multiple_devices is used
+result = {response dict} #if notify_single_device is used
 
 # The result objects are listed in the same order as the request (i.e., for each registration ID in the request,
 # its result is listed in the same index in the response).
