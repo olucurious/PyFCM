@@ -136,19 +136,6 @@ class BaseAPI(object):
                 'title': message_title,
                 'icon': message_icon
             }
-            if click_action:
-                fcm_payload['notification']['click_action'] = click_action
-            if badge:
-                fcm_payload['notification']['badge'] = badge
-            if color:
-                fcm_payload['notification']['color'] = color
-            if tag:
-                fcm_payload['notification']['tag'] = tag
-            # only add the 'sound' key if sound is not None
-            # otherwise a default sound will play -- even with empty string args.
-            if sound:
-                fcm_payload['notification']['sound'] = sound
-
         else:
             fcm_payload['notification'] = {'icon': message_icon}
             if body_loc_key:
@@ -162,6 +149,19 @@ class BaseAPI(object):
                 fcm_payload['notification']['title_loc_key'] = title_loc_key
             if title_loc_args:
                 fcm_payload['notification']['title_loc_args'] = title_loc_args
+
+        if click_action:
+            fcm_payload['notification']['click_action'] = click_action
+        if badge:
+            fcm_payload['notification']['badge'] = badge
+        if color:
+            fcm_payload['notification']['color'] = color
+        if tag:
+            fcm_payload['notification']['tag'] = tag
+        # only add the 'sound' key if sound is not None
+        # otherwise a default sound will play -- even with empty string args.
+        if sound:
+            fcm_payload['notification']['sound'] = sound
 
         if extra_kwargs:
             fcm_payload.update(extra_kwargs)
