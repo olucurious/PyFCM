@@ -88,3 +88,10 @@ v1.1.4 (11-11-2016)
 - added body_loc_key support and notify single device single response
 
 .. _Emmanuel Olucurious: https://github.com/olucurious
+
+v1.1.5 (16-11-2016)
+-------------------
+
+- Fix some message components not being sent if message_body is None (click_action, badge, sound, etc)
+
+.. _João Ricardo Lourenço: https://github.com/Jorl17
