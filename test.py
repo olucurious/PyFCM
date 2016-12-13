@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 __author__ = 'olucurious'
 from pyfcm import FCMNotification
-
-push_service = FCMNotification(api_key="<api-key>")
+from pprint import pprint
+push_service = FCMNotification(api_key="<server key>")
 registration_id="<device registration_id>"
 message = "Hope you're having fun this weekend, don't forget to check today's news"
+result = push_service.notify_single_device(registration_id='1')
+pprint(result)
+result = push_service.notify_multiple_devices(registration_ids=['1','2'])
+pprint(result)
 result = push_service.notify_topic_subscribers(topic_name="global", message_body=message)
-print(result)
+pprint(result)

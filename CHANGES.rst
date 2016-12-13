@@ -95,3 +95,12 @@ v1.1.5 (16-11-2016)
 - Fix some message components not being sent if message_body is None (click_action, badge, sound, etc)
 
 .. _João Ricardo Lourenço: https://github.com/Jorl17
+
+v1.2.0 (16-11-2016)
+-------------------
+
+- Updated response retrieval, notify_single_device response returns single dict while notify_multiple_devices returns a list of dicts
+- You can now pass extra argument by passing it as key value in a dictionary as extra_kwargs to any notification sending method you want to use
+- It is now possible to send a notification without setting body or content available
+
+.. _Emmanuel Olucurious: https://github.com/olucurious
