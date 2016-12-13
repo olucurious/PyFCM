@@ -86,6 +86,7 @@ class BaseAPI(object):
                       body_loc_args=None,
                       title_loc_key=None,
                       title_loc_args=None,
+                      content_available=None,
                       **extra_kwargs):
 
         """
@@ -140,15 +141,16 @@ class BaseAPI(object):
             fcm_payload['notification'] = {'icon': message_icon}
             if body_loc_key:
                 fcm_payload['notification']['body_loc_key'] = body_loc_key
-            else:
-                # This is needed for iOS when we are sending only custom data messages
-                fcm_payload['content_available'] = True
             if body_loc_args:
                 fcm_payload['notification']['body_loc_args'] = body_loc_args
             if title_loc_key:
                 fcm_payload['notification']['title_loc_key'] = title_loc_key
             if title_loc_args:
                 fcm_payload['notification']['title_loc_args'] = title_loc_args
+
+        # This is needed for iOS when we are sending only custom data messages
+        if content_available and isinstance(content_available, bool):
+            fcm_payload['content_available'] = content_available
 
         if click_action:
             fcm_payload['notification']['click_action'] = click_action
@@ -169,7 +171,7 @@ class BaseAPI(object):
         return self.json_dumps(fcm_payload)
 
     def send_request(self, payloads=None):
-
+        self.send_request_responses = []
         for payload in payloads:
             response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload)
             if self.FCM_REQ_PROXIES:

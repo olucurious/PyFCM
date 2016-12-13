@@ -18,6 +18,11 @@ Links
 - Project: https://github.com/olucurious/pyfcm
 - PyPi: https://pypi.python.org/pypi/pyfcm/
 
+Updates
+-------
+
+- MAJOR API UPDATES (DECEMBER 2016): https://github.com/olucurious/PyFCM/blob/master/README.rst
+
 
 Quickstart
 ==========
@@ -105,6 +110,13 @@ Send a data message.
     # To a single device
     result = push_service.notify_single_device(registration_id=registration_id, data_message=data_message)
 
+    # To send extra kwargs (keyword arguments not provided in any of the methods),
+    # pass it as a key value in a dictionary to the method being used
+    extra_kwargs = {
+        'content_available': True
+    }
+    result = push_service.notify_single_device(registration_id=registration_id, data_message=data_message, extra_kwargs=extra_kwargs)
+
     # Use notification messages when you want FCM to handle displaying a notification on your app's behalf.
     # Use data messages when you just want to process the messages only in your app.
     # PyFCM can send a message including both notification and data payloads.
@@ -168,8 +180,11 @@ Access response data.
     response['canonical_ids'] #Number of results that contain a canonical registration token.
     response['results'] #Array of objects representing the status of the messages processed.
 
-    result = [{response dict},...] #if notify_multiple_devices is used
-    result = {response dict} #if notify_single_device is used
+    # For notify_multiple_devices
+    result = [{response dict},...] #list of response dicts is returned
+
+    # For notify_single_device or notify_topic_subscribers
+    result = {response dict} #single response dict is returned
 
     # The response objects are listed in the same order as the request (i.e., for each registration ID in the request,
     # its response is listed in the same index in the response).

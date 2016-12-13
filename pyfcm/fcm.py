@@ -23,7 +23,9 @@ class FCMNotification(BaseAPI):
                              body_loc_key=None,
                              body_loc_args=None,
                              title_loc_key=None,
-                             title_loc_args=None):
+                             title_loc_args=None,
+                             content_available=None,
+                             extra_kwargs={}):
 
         """
         Send push notification to a single device
@@ -79,10 +81,12 @@ class FCMNotification(BaseAPI):
                                      body_loc_key=body_loc_key,
                                      body_loc_args=body_loc_args,
                                      title_loc_key=title_loc_key,
-                                     title_loc_args=title_loc_args)
+                                     title_loc_args=title_loc_args,
+                                     content_available=content_available,
+                                     **extra_kwargs)
 
         self.send_request([payload])
-        return self.parse_responses()[-1:]
+        return self.parse_responses()[-1:][0]
 
     def notify_multiple_devices(self,
                                 registration_ids=None,
@@ -105,7 +109,9 @@ class FCMNotification(BaseAPI):
                                 body_loc_key=None,
                                 body_loc_args=None,
                                 title_loc_key=None,
-                                title_loc_args=None):
+                                title_loc_args=None,
+                                content_available=None,
+                                extra_kwargs={}):
 
         """
         Sends push notification to multiple devices,
@@ -167,7 +173,9 @@ class FCMNotification(BaseAPI):
                                                    body_loc_key=body_loc_key,
                                                    body_loc_args=body_loc_args,
                                                    title_loc_key=title_loc_key,
-                                                   title_loc_args=title_loc_args))
+                                                   title_loc_args=title_loc_args,
+                                                   content_available=content_available,
+                                                   **extra_kwargs))
             self.send_request(payloads)
             return self.parse_responses()
         else:
@@ -188,7 +196,9 @@ class FCMNotification(BaseAPI):
                                          body_loc_key=body_loc_key,
                                          body_loc_args=body_loc_args,
                                          title_loc_key=title_loc_key,
-                                         title_loc_args=title_loc_args)
+                                         title_loc_args=title_loc_args,
+                                         content_available=content_available,
+                                         **extra_kwargs)
             self.send_request([payload])
             return self.parse_responses()
 
@@ -213,7 +223,9 @@ class FCMNotification(BaseAPI):
                                  body_loc_key=None,
                                  body_loc_args=None,
                                  title_loc_key=None,
-                                 title_loc_args=None):
+                                 title_loc_args=None,
+                                 content_available=None,
+                                 extra_kwargs={}):
 
         """
         Sends push notification to multiple devices subscribe to a topic
@@ -271,6 +283,8 @@ class FCMNotification(BaseAPI):
                                      body_loc_key=body_loc_key,
                                      body_loc_args=body_loc_args,
                                      title_loc_key=title_loc_key,
-                                     title_loc_args=title_loc_args)
+                                     title_loc_args=title_loc_args,
+                                     content_available=content_available,
+                                     **extra_kwargs)
         self.send_request([payload])
-        return self.parse_responses()
+        return self.parse_responses()[-1:][0]
