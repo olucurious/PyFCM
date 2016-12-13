@@ -21,7 +21,7 @@ Links
 Updates
 -------
 
-- MAJOR API UPDATES (DECEMBER 2016): https://github.com/olucurious/PyFCM/blob/master/README.rst
+- MAJOR API UPDATES (DECEMBER 2016): https://github.com/olucurious/PyFCM/releases/tag/1.2.0
 
 
 Quickstart
