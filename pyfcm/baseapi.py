@@ -106,7 +106,7 @@ class BaseAPI(object):
             # We have `Do not set this field (to) when sending to multiple topics`
             # Which is why it's in the `else` block since `condition` is used when multiple topics are being targeted
             if topic_name:
-                fcm_payload['to'] = '/topics/%s' % (topic_name)
+                fcm_payload['to'] = '/topics/%s' % topic_name
         if low_priority:
             fcm_payload['priority'] = self.FCM_LOW_PRIORITY
         else:
@@ -138,7 +138,9 @@ class BaseAPI(object):
                 'icon': message_icon
             }
         else:
-            fcm_payload['notification'] = {'icon': message_icon}
+            fcm_payload['notification'] = {}
+            if message_icon:
+                fcm_payload['notification']['icon'] = message_icon
             if body_loc_key:
                 fcm_payload['notification']['body_loc_key'] = body_loc_key
             if body_loc_args:
@@ -173,10 +175,11 @@ class BaseAPI(object):
     def send_request(self, payloads=None):
         self.send_request_responses = []
         for payload in payloads:
-            response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload)
             if self.FCM_REQ_PROXIES:
                 response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload,
                                          proxies=self.FCM_REQ_PROXIES)
+            else:
+                response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload)
             self.send_request_responses.append(response)
 
     def parse_responses(self):
