@@ -1,7 +1,7 @@
 import os
 import requests
 import json
-
+import time
 from .errors import *
 import logging
 
@@ -172,14 +172,22 @@ class BaseAPI(object):
 
         return self.json_dumps(fcm_payload)
 
+    def do_request(self, payload):
+        if self.FCM_REQ_PROXIES:
+            response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload,
+                                     proxies=self.FCM_REQ_PROXIES)
+        else:
+            response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload)
+        if 'Retry-After' in response.headers and int(response.headers['Retry-After']) > 0:
+            sleep_time = int(response.headers['Retry-After'])
+            time.sleep(sleep_time)
+            self.do_request(payload)
+        return response
+
     def send_request(self, payloads=None):
         self.send_request_responses = []
         for payload in payloads:
-            if self.FCM_REQ_PROXIES:
-                response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload,
-                                         proxies=self.FCM_REQ_PROXIES)
-            else:
-                response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload)
+            response = self.do_request(payload)
             self.send_request_responses.append(response)
 
     def parse_responses(self):
@@ -194,6 +202,7 @@ class BaseAPI(object):
                 """
                 if 'content-length' in response.headers and int(response.headers['content-length']) <= 0:
                     return {}
+
                 parsed_response = response.json()
 
                 multicast_id = parsed_response.get('multicast_id', None)
