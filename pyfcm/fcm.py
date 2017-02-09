@@ -2,6 +2,7 @@ from .baseapi import BaseAPI
 
 
 class FCMNotification(BaseAPI):
+
     def notify_single_device(self,
                              registration_id=None,
                              message_body=None,
