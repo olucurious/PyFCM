@@ -104,3 +104,10 @@ v1.2.0 (16-11-2016)
 - It is now possible to send a notification without setting body or content available
 
 .. _Emmanuel Olucurious: https://github.com/olucurious
+
+v1.2.3 (09-02-2017)
+-------------------
+
+- Added support for checking for and returning valid registration ids, useful for cleaning up database
+
+.. _baali: https://github.com/baali

@@ -129,6 +129,14 @@ Send a low priority message.
     # The default is low_priority == False
     result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_body=message, low_priority=True)
 
+Get valid registration ids (useful for cleaning up invalid registration ids in your database)
+
+.. code-block:: python
+
+    registration_ids = ['reg id 1', 'reg id 2', 'reg id 3', 'reg id 4', ...]
+    valid_registration_ids = push_service.clean_registration_ids(registration_ids)
+    # Shoutout to @baali for this
+
 Sending a message to a topic.
 
 .. code-block:: python
