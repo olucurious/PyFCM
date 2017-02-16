@@ -18,6 +18,11 @@ Links
 - Project: https://github.com/olucurious/pyfcm
 - PyPi: https://pypi.python.org/pypi/pyfcm/
 
+Looking for a Django version?
+-----------------------------
+Checkout fcm-django
+- Link: https://github.com/xtrinch/fcm-django
+
 Updates
 -------
 
@@ -211,7 +216,7 @@ The MIT License (MIT). Please see LICENSE.rst for more information.
 
 ::
 
-    Copyright (c) 2016 Emmanuel Adegbite
+    Copyright (c) 2017 Emmanuel Adegbite
 
     Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
     files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
