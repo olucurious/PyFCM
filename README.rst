@@ -19,7 +19,7 @@ Links
 - PyPi: https://pypi.python.org/pypi/pyfcm/
 
 Looking for a Django version?
-=============================
+-----------------------------
 Checkout fcm-django
 - Link: https://github.com/xtrinch/fcm-django
 
