@@ -181,7 +181,7 @@ class BaseAPI(object):
         if 'Retry-After' in response.headers and int(response.headers['Retry-After']) > 0:
             sleep_time = int(response.headers['Retry-After'])
             time.sleep(sleep_time)
-            self.do_request(payload)
+            return self.do_request(payload)
         return response
 
     def send_request(self, payloads=None):
