@@ -1,10 +1,13 @@
-import os
-import requests
 import json
+import os
 import time
-from .errors import *
-import logging
 
+import requests
+from requests_toolbelt.adapters import appengine
+
+from .errors import *
+
+appengine.monkeypatch()
 
 class BaseAPI(object):
     """
