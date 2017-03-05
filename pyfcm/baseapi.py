@@ -3,11 +3,14 @@ import os
 import time
 
 import requests
-from requests_toolbelt.adapters import appengine
 
 from .errors import *
 
-appengine.monkeypatch()
+try:
+    from requests_toolbelt.adapters import appengine
+    appengine.monkeypatch()
+except:
+    pass
 
 class BaseAPI(object):
     """
