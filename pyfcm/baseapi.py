@@ -151,8 +151,8 @@ class BaseAPI(object):
             if body_loc_args:
                 fcm_payload['notification']['body_loc_args'] = body_loc_args
         #If title is present, use it
-        if title:
-            fcm_payload['notification']['title'] = title
+        if message_title:
+            fcm_payload['notification']['title'] = message_title
         #Else use title_loc_key and title_loc_args for title
         else:
             if title_loc_key:
