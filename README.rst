@@ -122,6 +122,12 @@ Send a data message.
     }
     result = push_service.notify_single_device(registration_id=registration_id, data_message=data_message, extra_kwargs=extra_kwargs)
 
+    # To support rich notifications on iOS 10, set
+    extra_kwargs = {
+        'mutable_content': True
+    }
+    # and then write a NotificationService Extension in your app
+
     # Use notification messages when you want FCM to handle displaying a notification on your app's behalf.
     # Use data messages when you just want to process the messages only in your app.
     # PyFCM can send a message including both notification and data payloads.
