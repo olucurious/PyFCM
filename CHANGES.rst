@@ -111,3 +111,11 @@ v1.2.3 (09-02-2017)
 - Added support for checking for and returning valid registration ids, useful for cleaning up database
 
 .. _baali: https://github.com/baali
+
+
+v1.2.9 (07-04-2017)
+-------------------
+
+- Fixed issue with notification extra kwargs
+
+.. _Emmanuel Olucurious: https://github.com/olucurious

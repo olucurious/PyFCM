@@ -174,7 +174,7 @@ class BaseAPI(object):
             fcm_payload['notification']['sound'] = sound
 
         if extra_kwargs:
-            fcm_payload.update(extra_kwargs)
+            fcm_payload['notification'].update(extra_kwargs)
 
         return self.json_dumps(fcm_payload)
 
