@@ -173,6 +173,9 @@ class BaseAPI(object):
         if sound:
             fcm_payload['notification']['sound'] = sound
 
+        if 'mutable_content' in extra_kwargs:
+            fcm_payload['notification']['mutable_content'] = extra_kwargs['mutable_content']
+
         if extra_kwargs:
             fcm_payload['notification'].update(extra_kwargs)
 
