@@ -8,6 +8,9 @@ __url__ = 'https://github.com/olucurious/pyfcm'
 __version__ = '1.2.9'
 
 __install_requires__ = ['requests', 'requests-toolbelt']
+__extras_require__ = {
+    'async': ['aiohttp'],
+}
 
 __author__ = 'Emmanuel Adegbite'
 __email__ = 'olucurious@gmail.com'

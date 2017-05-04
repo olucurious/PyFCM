@@ -39,6 +39,7 @@ setup(
     long_description=read('README.rst'),
     packages=['pyfcm'],
     install_requires=meta['__install_requires__'],
+    extras_require=meta['__extras_require__'],
     tests_require=tests_require,
     test_suite="tests.get_tests",
     keywords='firebase fcm apns ios gcm android push notifications',
