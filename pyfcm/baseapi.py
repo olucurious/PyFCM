@@ -137,20 +137,24 @@ class BaseAPI(object):
                 fcm_payload['data'] = data_message
             else:
                 raise InvalidDataError("Provided data_message is in the wrong format")
+
+        fcm_payload['notification'] = {}
+        if message_icon:
+            fcm_payload['notification']['icon'] = message_icon
+        #If body is present, use it
         if message_body:
-            fcm_payload['notification'] = {
-                'body': message_body,
-                'title': message_title,
-                'icon': message_icon
-            }
+            fcm_payload['notification']['body'] = message_body
+        #Else use body_loc_key and body_loc_args for body
         else:
-            fcm_payload['notification'] = {}
-            if message_icon:
-                fcm_payload['notification']['icon'] = message_icon
             if body_loc_key:
                 fcm_payload['notification']['body_loc_key'] = body_loc_key
             if body_loc_args:
                 fcm_payload['notification']['body_loc_args'] = body_loc_args
+        #If title is present, use it
+        if message_title:
+            fcm_payload['notification']['title'] = message_title
+        #Else use title_loc_key and title_loc_args for title
+        else:
             if title_loc_key:
                 fcm_payload['notification']['title_loc_key'] = title_loc_key
             if title_loc_args:
