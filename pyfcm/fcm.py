@@ -26,6 +26,7 @@ class FCMNotification(BaseAPI):
                              title_loc_key=None,
                              title_loc_args=None,
                              content_available=None,
+                             is_ios=False,
                              extra_kwargs={}):
 
         """
@@ -84,6 +85,7 @@ class FCMNotification(BaseAPI):
                                      title_loc_key=title_loc_key,
                                      title_loc_args=title_loc_args,
                                      content_available=content_available,
+                                     is_ios=is_ios,
                                      **extra_kwargs)
 
         self.send_request([payload])
@@ -112,6 +114,7 @@ class FCMNotification(BaseAPI):
                                 title_loc_key=None,
                                 title_loc_args=None,
                                 content_available=None,
+                                is_ios=False,
                                 extra_kwargs={}):
 
         """
@@ -176,6 +179,7 @@ class FCMNotification(BaseAPI):
                                                    title_loc_key=title_loc_key,
                                                    title_loc_args=title_loc_args,
                                                    content_available=content_available,
+                                                   is_ios=is_ios,
                                                    **extra_kwargs))
             self.send_request(payloads)
             return self.parse_responses()
@@ -199,6 +203,7 @@ class FCMNotification(BaseAPI):
                                          title_loc_key=title_loc_key,
                                          title_loc_args=title_loc_args,
                                          content_available=content_available,
+                                         is_ios=is_ios,
                                          **extra_kwargs)
             self.send_request([payload])
             return self.parse_responses()
@@ -226,6 +231,7 @@ class FCMNotification(BaseAPI):
                                  title_loc_key=None,
                                  title_loc_args=None,
                                  content_available=None,
+                                 is_ios=False,
                                  extra_kwargs={}):
 
         """
@@ -286,6 +292,7 @@ class FCMNotification(BaseAPI):
                                      title_loc_key=title_loc_key,
                                      title_loc_args=title_loc_args,
                                      content_available=content_available,
+                                     is_ios=is_ios,
                                      **extra_kwargs)
         self.send_request([payload])
         return self.parse_responses()[-1:][0]
