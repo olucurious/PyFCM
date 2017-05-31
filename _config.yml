@@ -1,0 +1,8 @@
+title: Pyfcm
+description: Python client for FCM - Firebase Cloud Messaging (Android & iOS)
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
