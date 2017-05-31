@@ -93,7 +93,6 @@ class BaseAPI(object):
                       title_loc_key=None,
                       title_loc_args=None,
                       content_available=None,
-                      is_ios=False,
                       **extra_kwargs):
 
         """
@@ -148,32 +147,24 @@ class BaseAPI(object):
         #Else use body_loc_key and body_loc_args for body
         else:
             if body_loc_key:
-                if is_ios:
-                    fcm_payload['notification']['loc-key'] = body_loc_key
-                else:
-                    fcm_payload['notification']['body_loc_key'] = body_loc_key
+                fcm_payload['notification']['body_loc_key'] = body_loc_key
             if body_loc_args:
-                body_loc_args = str(body_loc_args)
-                if is_ios:
-                    fcm_payload['notification']['loc-args'] = body_loc_args
-                else:
+                if isinstance(body_loc_args, list):
                     fcm_payload['notification']['body_loc_args'] = body_loc_args
+                else:
+                    raise InvalidDataError('body_loc_args should be an array')
         #If title is present, use it
         if message_title:
             fcm_payload['notification']['title'] = message_title
         #Else use title_loc_key and title_loc_args for title
         else:
             if title_loc_key:
-                if is_ios:
-                    fcm_payload['notification']['title-loc-key'] = title_loc_key
-                else:
-                    fcm_payload['notification']['title_loc_key'] = title_loc_key
+                fcm_payload['notification']['title_loc_key'] = title_loc_key
             if title_loc_args:
-                title_loc_args = str(body_loc_args)
-                if is_ios:
-                    fcm_payload['notification']['title-loc-args'] = title_loc_args
-                else:
+                if isinstance(title_loc_args, list):
                     fcm_payload['notification']['title_loc_args'] = title_loc_args
+                else:
+                    raise InvalidDataError('title_loc_args should be an array')
 
         # This is needed for iOS when we are sending only custom data messages
         if content_available and isinstance(content_available, bool):
