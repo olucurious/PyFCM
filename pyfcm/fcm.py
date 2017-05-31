@@ -1,8 +1,8 @@
 from .baseapi import BaseAPI
+from .errors import *
 
 
 class FCMNotification(BaseAPI):
-
     def notify_single_device(self,
                              registration_id=None,
                              message_body=None,
@@ -26,7 +26,6 @@ class FCMNotification(BaseAPI):
                              title_loc_key=None,
                              title_loc_args=None,
                              content_available=None,
-                             is_ios=False,
                              extra_kwargs={}):
 
         """
@@ -65,12 +64,15 @@ class FCMNotification(BaseAPI):
             InvalidDataError: Invalid data provided
             InternalPackageError: Mostly from changes in the response of FCM, contact the project owner to resolve the issue
         """
+        if registration_id is None:
+            raise InvalidDataError('Invalid registration ID')
         # [registration_id] cos we're sending to a single device
         payload = self.parse_payload(registration_ids=[registration_id],
                                      message_body=message_body,
                                      message_title=message_title,
                                      message_icon=message_icon,
                                      sound=sound,
+                                     condition=condition,
                                      collapse_key=collapse_key,
                                      delay_while_idle=delay_while_idle,
                                      time_to_live=time_to_live,
@@ -85,7 +87,6 @@ class FCMNotification(BaseAPI):
                                      title_loc_key=title_loc_key,
                                      title_loc_args=title_loc_args,
                                      content_available=content_available,
-                                     is_ios=is_ios,
                                      **extra_kwargs)
 
         self.send_request([payload])
@@ -114,7 +115,6 @@ class FCMNotification(BaseAPI):
                                 title_loc_key=None,
                                 title_loc_args=None,
                                 content_available=None,
-                                is_ios=False,
                                 extra_kwargs={}):
 
         """
@@ -162,8 +162,9 @@ class FCMNotification(BaseAPI):
                 payloads.append(self.parse_payload(registration_ids=registration_ids,
                                                    message_body=message_body,
                                                    message_title=message_title,
-                                                   sound=sound,
                                                    message_icon=message_icon,
+                                                   sound=sound,
+                                                   condition=condition,
                                                    collapse_key=collapse_key,
                                                    delay_while_idle=delay_while_idle,
                                                    time_to_live=time_to_live,
@@ -179,7 +180,6 @@ class FCMNotification(BaseAPI):
                                                    title_loc_key=title_loc_key,
                                                    title_loc_args=title_loc_args,
                                                    content_available=content_available,
-                                                   is_ios=is_ios,
                                                    **extra_kwargs))
             self.send_request(payloads)
             return self.parse_responses()
@@ -189,6 +189,7 @@ class FCMNotification(BaseAPI):
                                          message_title=message_title,
                                          message_icon=message_icon,
                                          sound=sound,
+                                         condition=condition,
                                          collapse_key=collapse_key,
                                          delay_while_idle=delay_while_idle,
                                          time_to_live=time_to_live,
@@ -203,7 +204,6 @@ class FCMNotification(BaseAPI):
                                          title_loc_key=title_loc_key,
                                          title_loc_args=title_loc_args,
                                          content_available=content_available,
-                                         is_ios=is_ios,
                                          **extra_kwargs)
             self.send_request([payload])
             return self.parse_responses()
@@ -231,7 +231,6 @@ class FCMNotification(BaseAPI):
                                  title_loc_key=None,
                                  title_loc_args=None,
                                  content_available=None,
-                                 is_ios=False,
                                  extra_kwargs={}):
 
         """
@@ -292,7 +291,6 @@ class FCMNotification(BaseAPI):
                                      title_loc_key=title_loc_key,
                                      title_loc_args=title_loc_args,
                                      content_available=content_available,
-                                     is_ios=is_ios,
                                      **extra_kwargs)
         self.send_request([payload])
         return self.parse_responses()[-1:][0]
