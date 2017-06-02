@@ -230,23 +230,23 @@ class BaseAPI(object):
                 Returns a python dict of multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)
                 """
                 if 'content-length' in response.headers and int(response.headers['content-length']) <= 0:
-                    return {}
+                    response_list.append({})
+                else:
+                    parsed_response = response.json()
 
-                parsed_response = response.json()
-
-                multicast_id = parsed_response.get('multicast_id', None)
-                success = parsed_response.get('success', 0)
-                failure = parsed_response.get('failure', 0)
-                canonical_ids = parsed_response.get('canonical_ids', 0)
-                results = parsed_response.get('results', [])
-                message_id = parsed_response.get('message_id', None)  # for topic messages
-                if message_id:
-                    success = 1
-                response_list.append({'multicast_id': multicast_id,
-                                      'success': success,
-                                      'failure': failure,
-                                      'canonical_ids': canonical_ids,
-                                      'results': results})
+                    multicast_id = parsed_response.get('multicast_id', None)
+                    success = parsed_response.get('success', 0)
+                    failure = parsed_response.get('failure', 0)
+                    canonical_ids = parsed_response.get('canonical_ids', 0)
+                    results = parsed_response.get('results', [])
+                    message_id = parsed_response.get('message_id', None)  # for topic messages
+                    if message_id:
+                        success = 1
+                    response_list.append({'multicast_id': multicast_id,
+                                          'success': success,
+                                          'failure': failure,
+                                          'canonical_ids': canonical_ids,
+                                          'results': results})
             elif response.status_code == 401:
                 raise AuthenticationError("There was an error authenticating the sender account")
             elif response.status_code == 400:
