@@ -239,7 +239,7 @@ class BaseAPI(object):
                 server and tries to get out the important return variables
                 """
                 if 'content-length' in response.headers and int(response.headers['content-length']) <= 0:
-                    FCMServerError("FCM server connection error, the response is empty")
+                    raise FCMServerError("FCM server connection error, the response is empty")
                 else:
                     parsed_response = response.json()
 
