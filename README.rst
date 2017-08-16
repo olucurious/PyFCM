@@ -195,21 +195,20 @@ Other argument options
     dry_run (bool, optional): If `True` no message will be sent but
         request will be tested.
 
-Access response data.
+Get response data.
 
 .. code-block:: python
 
     # Response from PyFCM.
-    response = dict()
-    # Response from FCM Server.
-    response['multicast_ids'] # List of Unique ID (number) identifying the multicast message.
-    response['success'] #Number of messages that were processed without an error.
-    response['failure'] #Number of messages that could not be processed.
-    response['canonical_ids'] #Number of results that contain a canonical registration token.
-    response['results'] #Array of objects representing the status of the messages processed.
+    response_dict = {
+        'multicast_ids': list(), # List of Unique ID (number) identifying the multicast message.
+        'success': 0, #Number of messages that were processed without an error.
+        'failure': 0, #Number of messages that could not be processed.
+        'canonical_ids': 0, #Number of results that contain a canonical registration token.
+        'results': list(), #Array of dict objects representing the status of the messages processed.
+        'topic_message_id': None or str
+    }
 
-
-    # message_id: String specifying a unique ID for each successfully processed message.
     # registration_id: Optional string specifying the canonical registration token for the client app that the message
     # was processed and sent to. Sender should use this value as the registration token for future requests. Otherwise,
     # the messages might be rejected.
