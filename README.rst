@@ -23,10 +23,10 @@ Looking for a Django version?
 Checkout fcm-django
 - Link: https://github.com/xtrinch/fcm-django
 
-Updates
--------
+Updates (Breaking Changes)
+--------------------------
 
-- MAJOR API UPDATES (DECEMBER 2016): https://github.com/olucurious/PyFCM/releases/tag/1.2.0
+- MAJOR UPDATES (AUGUST 2017): https://github.com/olucurious/PyFCM/releases/tag/1.4.0
 
 
 Quickstart
@@ -195,26 +195,20 @@ Other argument options
     dry_run (bool, optional): If `True` no message will be sent but
         request will be tested.
 
-Access response data.
+Get response data.
 
 .. code-block:: python
 
-    # Response from FCM Server.
-    response['multicast_id'] #Unique ID (number) identifying the multicast message.
-    response['success'] #Number of messages that were processed without an error.
-    response['failure'] #Number of messages that could not be processed.
-    response['canonical_ids'] #Number of results that contain a canonical registration token.
-    response['results'] #Array of objects representing the status of the messages processed.
+    # Response from PyFCM.
+    response_dict = {
+        'multicast_ids': list(), # List of Unique ID (number) identifying the multicast message.
+        'success': 0, #Number of messages that were processed without an error.
+        'failure': 0, #Number of messages that could not be processed.
+        'canonical_ids': 0, #Number of results that contain a canonical registration token.
+        'results': list(), #Array of dict objects representing the status of the messages processed.
+        'topic_message_id': None or str
+    }
 
-    # For notify_multiple_devices
-    result = [{response dict},...] #list of response dicts is returned
-
-    # For notify_single_device or notify_topic_subscribers
-    result = {response dict} #single response dict is returned
-
-    # The response objects are listed in the same order as the request (i.e., for each registration ID in the request,
-    # its response is listed in the same index in the response).
-    # message_id: String specifying a unique ID for each successfully processed message.
     # registration_id: Optional string specifying the canonical registration token for the client app that the message
     # was processed and sent to. Sender should use this value as the registration token for future requests. Otherwise,
     # the messages might be rejected.

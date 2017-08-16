@@ -6,6 +6,7 @@ import requests
 
 from .errors import *
 
+
 class BaseAPI(object):
     """
     Base class for the pyfcm API wrapper for FCM
@@ -141,10 +142,10 @@ class BaseAPI(object):
         fcm_payload['notification'] = {}
         if message_icon:
             fcm_payload['notification']['icon'] = message_icon
-        #If body is present, use it
+        # If body is present, use it
         if message_body:
             fcm_payload['notification']['body'] = message_body
-        #Else use body_loc_key and body_loc_args for body
+        # Else use body_loc_key and body_loc_args for body
         else:
             if body_loc_key:
                 fcm_payload['notification']['body_loc_key'] = body_loc_key
@@ -153,10 +154,10 @@ class BaseAPI(object):
                     fcm_payload['notification']['body_loc_args'] = body_loc_args
                 else:
                     raise InvalidDataError('body_loc_args should be an array')
-        #If title is present, use it
+        # If title is present, use it
         if message_title:
             fcm_payload['notification']['title'] = message_title
-        #Else use title_loc_key and title_loc_args for title
+        # Else use title_loc_key and title_loc_args for title
         else:
             if title_loc_key:
                 fcm_payload['notification']['title_loc_key'] = title_loc_key
@@ -188,69 +189,79 @@ class BaseAPI(object):
 
         return self.json_dumps(fcm_payload)
 
-    def do_request(self, payload):
+    def do_request(self, payload, timeout):
         if self.FCM_REQ_PROXIES:
             response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload,
-                                     proxies=self.FCM_REQ_PROXIES)
+                                     proxies=self.FCM_REQ_PROXIES, timeout=timeout)
         else:
-            response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload)
+            response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload, timeout=timeout)
         if 'Retry-After' in response.headers and int(response.headers['Retry-After']) > 0:
             sleep_time = int(response.headers['Retry-After'])
             time.sleep(sleep_time)
-            return self.do_request(payload)
+            return self.do_request(payload, timeout)
         return response
 
-    def send_request(self, payloads=None):
+    def send_request(self, payloads=None, timeout=None):
         self.send_request_responses = []
         for payload in payloads:
-            response = self.do_request(payload)
+            response = self.do_request(payload, timeout)
             self.send_request_responses.append(response)
 
     def clean_registration_ids(self, registration_ids=[]):
         """Return list of active IDS from the list of registration_ids
-
         """
         valid_registration_ids = []
         for registration_id in registration_ids:
-            details = requests.get('https://iid.googleapis.com/iid/info/'+registration_id,
+            details = requests.get('https://iid.googleapis.com/iid/info/' + registration_id,
                                    headers=self.request_headers(),
-                                   params={'details':'true'})
+                                   params={'details': 'true'})
             if details.status_code == 200:
                 valid_registration_ids.append(registration_id)
         return valid_registration_ids
 
     def parse_responses(self):
-        response_list = list()
+        """
+        Returns a python dict of multicast_ids(list), success(int), failure(int), canonical_ids(int), results(list) and optional topic_message_id(str but None by default)
+        """
+        response_dict = {
+            'multicast_ids': list(),
+            'success': 0,
+            'failure': 0,
+            'canonical_ids': 0,
+            'results': list(),
+            'topic_message_id': None
+        }
+
         for response in self.send_request_responses:
             if response.status_code == 200:
                 """
                 Parses the json response sent back by the
                 server and tries to get out the important return variables
-
-                Returns a python dict of multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)
                 """
                 if 'content-length' in response.headers and int(response.headers['content-length']) <= 0:
-                    return {}
+                    FCMServerError("FCM server connection error, the response is empty")
+                else:
+                    parsed_response = response.json()
 
-                parsed_response = response.json()
-
-                multicast_id = parsed_response.get('multicast_id', None)
-                success = parsed_response.get('success', 0)
-                failure = parsed_response.get('failure', 0)
-                canonical_ids = parsed_response.get('canonical_ids', 0)
-                results = parsed_response.get('results', [])
-                message_id = parsed_response.get('message_id', None)  # for topic messages
-                if message_id:
-                    success = 1
-                response_list.append({'multicast_id': multicast_id,
-                                      'success': success,
-                                      'failure': failure,
-                                      'canonical_ids': canonical_ids,
-                                      'results': results})
+                    multicast_id = parsed_response.get('multicast_id', None)
+                    success = parsed_response.get('success', 0)
+                    failure = parsed_response.get('failure', 0)
+                    canonical_ids = parsed_response.get('canonical_ids', 0)
+                    results = parsed_response.get('results', [])
+                    message_id = parsed_response.get('message_id', None)  # for topic messages
+                    if message_id:
+                        success = 1
+                    if multicast_id:
+                        response_dict['multicast_id'].append(multicast_id)
+                    response_dict['success'] += success
+                    response_dict['failure'] += failure
+                    response_dict['canonical_ids'] += canonical_ids
+                    response_dict['results'].extend(results)
+                    response_dict['topic_message_id'] = message_id
             elif response.status_code == 401:
                 raise AuthenticationError("There was an error authenticating the sender account")
             elif response.status_code == 400:
                 raise InternalPackageError(response.text)
             else:
                 raise FCMServerError("FCM server is temporarily unavailable")
-        return response_list
+        return response_dict
