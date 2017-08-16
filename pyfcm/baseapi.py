@@ -252,7 +252,7 @@ class BaseAPI(object):
                     if message_id:
                         success = 1
                     if multicast_id:
-                        response_dict['multicast_id'].append(multicast_id)
+                        response_dict['multicast_ids'].append(multicast_id)
                     response_dict['success'] += success
                     response_dict['failure'] += failure
                     response_dict['canonical_ids'] += canonical_ids
