@@ -213,8 +213,7 @@ class BaseAPI(object):
         valid_registration_ids = []
         for registration_id in registration_ids:
             details = requests.get('https://iid.googleapis.com/iid/info/' + registration_id,
-                                   headers=self.request_headers(),
-                                   params={'details': 'true'})
+                                   headers=self.request_headers())
             if details.status_code == 200:
                 valid_registration_ids.append(registration_id)
         return valid_registration_ids
