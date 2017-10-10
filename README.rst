@@ -3,7 +3,7 @@ PyFCM
 *****
 |version| |license| 
 
-Python client for FCM - Firebase Cloud Messaging (Android & iOS)
+Python client for FCM - Firebase Cloud Messaging (Android, iOS and Web)
 
 Firebase Cloud Messaging (FCM) is the new version of GCM. It inherits the reliable and scalable GCM infrastructure, plus new features. GCM users are strongly recommended to upgrade to FCM.
 
@@ -43,7 +43,7 @@ Install using pip:
 
     pip install git+https://github.com/olucurious/PyFCM.git
 
-PyFCM supports Android and iOS.
+PyFCM supports Android, iOS and Web.
 
 Features
 --------
@@ -118,14 +118,22 @@ Send a data message.
     # To send extra kwargs (keyword arguments not provided in any of the methods),
     # pass it as a key value in a dictionary to the method being used
     extra_kwargs = {
-        'content_available': True
-    }
+        'priority': 'high'
+    }
     result = push_service.notify_single_device(registration_id=registration_id, data_message=data_message, extra_kwargs=extra_kwargs)
+
+    # To process background notifications in iOS 10, set content_available
+    result = push_service.notify_single_device(registration_id=registration_id, data_message=data_message, content_available=True)
 
     # To support rich notifications on iOS 10, set
     extra_kwargs = {
         'mutable_content': True
     }
+    
+
+    
+    
+    
     # and then write a NotificationService Extension in your app
 
     # Use notification messages when you want FCM to handle displaying a notification on your app's behalf.
