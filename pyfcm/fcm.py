@@ -105,8 +105,7 @@ class FCMNotification(BaseAPI):
                              dry_run=False,
                              data_message=None,
                              content_available=None,
-                             timeout=5,
-                             extra_kwargs={}):
+                             timeout=5):
 
         """
         Send push message to a single device
@@ -264,8 +263,7 @@ class FCMNotification(BaseAPI):
                                 dry_run=False,
                                 data_message=None,
                                 content_available=None,
-                                timeout=5,
-                                extra_kwargs={}):
+                                timeout=5):
 
         """
         Sends push message to multiple devices,
