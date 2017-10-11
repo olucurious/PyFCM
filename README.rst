@@ -160,7 +160,7 @@ Appengine users should define their environment
 
 .. code-block:: python
 
-    push_service = FCMNotification(api_key="<api-key>", proxy_dict=proxy_dict, env='app_engine)
+    push_service = FCMNotification(api_key="<api-key>", proxy_dict=proxy_dict, env='app_engine')
     result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_body=message, low_priority=True)
 
 Sending a message to a topic.
