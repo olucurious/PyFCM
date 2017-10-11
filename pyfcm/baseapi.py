@@ -207,16 +207,33 @@ class BaseAPI(object):
             response = self.do_request(payload, timeout)
             self.send_request_responses.append(response)
 
+    def registration_info_request(self, registration_id):
+        """ Makes a request for registration info and returns the response
+            object
+        """
+        response = requests.get('https://iid.googleapis.com/iid/info/' + registration_id,
+                               headers=self.request_headers(),
+                               params={'details': 'true'})
+        return response
+
     def clean_registration_ids(self, registration_ids=[]):
-        """Return list of active IDS from the list of registration_ids
+        """ Return list of active IDS from the list of registration_ids
         """
         valid_registration_ids = []
         for registration_id in registration_ids:
-            details = requests.get('https://iid.googleapis.com/iid/info/' + registration_id,
-                                   headers=self.request_headers())
+            details = self.registration_info_request(registration_id)
             if details.status_code == 200:
                 valid_registration_ids.append(registration_id)
         return valid_registration_ids
+
+    def get_registration_id_info(self, registration_id):
+        """ Returns details related to a registration id if it exists
+            otherwise return None
+        """
+        details = self.registration_info_request(registration_id)
+        if details.status_code == 200:
+            return details.json()
+        return None
 
     def parse_responses(self):
         """
