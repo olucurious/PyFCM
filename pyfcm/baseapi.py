@@ -94,6 +94,7 @@ class BaseAPI(object):
                       title_loc_key=None,
                       title_loc_args=None,
                       content_available=None,
+                      remove_notification=False,
                       **extra_kwargs):
 
         """
@@ -186,6 +187,10 @@ class BaseAPI(object):
 
         if extra_kwargs:
             fcm_payload['notification'].update(extra_kwargs)
+
+        # Do this if you only want to send a data message.
+        if remove_notification:
+            del fcm_payload['notification']
 
         return self.json_dumps(fcm_payload)
 

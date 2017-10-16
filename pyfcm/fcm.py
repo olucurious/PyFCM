@@ -94,6 +94,72 @@ class FCMNotification(BaseAPI):
         self.send_request([payload], timeout)
         return self.parse_responses()
 
+    def single_device_data_message(self,
+                                   registration_id=None,
+                                   condition=None,
+                                   collapse_key=None,
+                                   delay_while_idle=False,
+                                   time_to_live=None,
+                                   restricted_package_name=None,
+                                   low_priority=False,
+                                   dry_run=False,
+                                   data_message=None,
+                                   content_available=None,
+                                   timeout=5):
+
+        """
+        Send push message to a single device
+
+        Args:
+            registration_id (str): FCM device registration IDs.
+            data_message (dict): Data message payload to send alone or with the notification message
+
+        Keyword Args:
+            collapse_key (str, optional): Identifier for a group of messages
+                that can be collapsed so that only the last message gets sent
+                when delivery can be resumed. Defaults to ``None``.
+            delay_while_idle (bool, optional): If ``True`` indicates that the
+                message should not be sent until the device becomes active.
+            time_to_live (int, optional): How long (in seconds) the message
+                should be kept in FCM storage if the device is offline. The
+                maximum time to live supported is 4 weeks. Defaults to ``None``
+                which uses the FCM default of 4 weeks.
+            low_priority (boolean, optional): Whether to send notification with
+                the low priority flag. Defaults to ``False``.
+            restricted_package_name (str, optional): Package name of the
+                application where the registration IDs must match in order to
+                receive the message. Defaults to ``None``.
+            dry_run (bool, optional): If ``True`` no message will be sent but
+                request will be tested.
+            timeout (int, optional): set time limit for the request
+        Returns:
+            :dict:`multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)`:
+            Response from FCM server.
+
+        Raises:
+            AuthenticationError: If :attr:`api_key` is not set or provided or there is an error authenticating the sender.
+            FCMServerError: Internal server error or timeout error on Firebase cloud messaging server
+            InvalidDataError: Invalid data provided
+            InternalPackageError: Mostly from changes in the response of FCM, contact the project owner to resolve the issue
+        """
+        if registration_id is None:
+            raise InvalidDataError('Invalid registration ID')
+        # [registration_id] cos we're sending to a single device
+        payload = self.parse_payload(registration_ids=[registration_id],
+                                     condition=condition,
+                                     collapse_key=collapse_key,
+                                     delay_while_idle=delay_while_idle,
+                                     time_to_live=time_to_live,
+                                     restricted_package_name=restricted_package_name,
+                                     low_priority=low_priority,
+                                     dry_run=dry_run,
+                                     data_message=data_message,
+                                     content_available=content_available,
+                                     remove_notification=True)
+
+        self.send_request([payload], timeout)
+        return self.parse_responses()
+
     def notify_multiple_devices(self,
                                 registration_ids=None,
                                 message_body=None,
@@ -183,6 +249,72 @@ class FCMNotification(BaseAPI):
                                                title_loc_args=title_loc_args,
                                                content_available=content_available,
                                                **extra_kwargs))
+        self.send_request(payloads, timeout)
+        return self.parse_responses()
+
+    def multiple_devices_data_message(self,
+                                      registration_ids=None,
+                                      condition=None,
+                                      collapse_key=None,
+                                      delay_while_idle=False,
+                                      time_to_live=None,
+                                      restricted_package_name=None,
+                                      low_priority=False,
+                                      dry_run=False,
+                                      data_message=None,
+                                      content_available=None,
+                                      timeout=5):
+
+        """
+        Sends push message to multiple devices,
+        can send to over 1000 devices
+
+        Args:
+            registration_ids (list): FCM device registration IDs.
+            data_message (dict): Data message payload to send alone or with the notification message
+
+        Keyword Args:
+            collapse_key (str, optional): Identifier for a group of messages
+                that can be collapsed so that only the last message gets sent
+                when delivery can be resumed. Defaults to ``None``.
+            delay_while_idle (bool, optional): If ``True`` indicates that the
+                message should not be sent until the device becomes active.
+            time_to_live (int, optional): How long (in seconds) the message
+                should be kept in FCM storage if the device is offline. The
+                maximum time to live supported is 4 weeks. Defaults to ``None``
+                which uses the FCM default of 4 weeks.
+            low_priority (boolean, optional): Whether to send notification with
+                the low priority flag. Defaults to ``False``.
+            restricted_package_name (str, optional): Package name of the
+                application where the registration IDs must match in order to
+                receive the message. Defaults to ``None``.
+            dry_run (bool, optional): If ``True`` no message will be sent but
+                request will be tested.
+        Returns:
+            :tuple:`multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)`:
+            Response from FCM server.
+
+        Raises:
+            AuthenticationError: If :attr:`api_key` is not set or provided or there is an error authenticating the sender.
+            FCMServerError: Internal server error or timeout error on Firebase cloud messaging server
+            InvalidDataError: Invalid data provided
+            InternalPackageError: JSON parsing error, mostly from changes in the response of FCM, create a new github issue to resolve it.
+        """
+        payloads = list()
+        registration_id_chunks = self.registration_id_chunks(registration_ids)
+        for registration_ids in registration_id_chunks:
+            # appends a payload with a chunk of registration ids here
+            payloads.append(self.parse_payload(registration_ids=registration_ids,
+                                               condition=condition,
+                                               collapse_key=collapse_key,
+                                               delay_while_idle=delay_while_idle,
+                                               time_to_live=time_to_live,
+                                               restricted_package_name=restricted_package_name,
+                                               low_priority=low_priority,
+                                               dry_run=dry_run,
+                                               data_message=data_message,
+                                               content_available=content_available,
+                                               remove_notification=True))
         self.send_request(payloads, timeout)
         return self.parse_responses()
 
