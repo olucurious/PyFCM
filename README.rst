@@ -112,9 +112,9 @@ Send a data message.
 
     # Sending a data message only payload, do NOT include message_body also do NOT include notification body
     # To multiple devices
-    result = push_service.message_multiple_devices(registration_ids=registration_ids, data_message=data_message)
+    result = push_service.multiple_devices_data_message(registration_ids=registration_ids, data_message=data_message)
     # To a single device
-    result = push_service.message_single_device(registration_id=registration_id, data_message=data_message)
+    result = push_service.single_device_data_message(registration_id=registration_id, data_message=data_message)
 
     # To send extra kwargs (keyword arguments not provided in any of the methods),
     # pass it as a key value in a dictionary to the method being used

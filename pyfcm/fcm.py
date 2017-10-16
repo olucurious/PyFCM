@@ -94,18 +94,18 @@ class FCMNotification(BaseAPI):
         self.send_request([payload], timeout)
         return self.parse_responses()
 
-    def message_single_device(self,
-                             registration_id=None,
-                             condition=None,
-                             collapse_key=None,
-                             delay_while_idle=False,
-                             time_to_live=None,
-                             restricted_package_name=None,
-                             low_priority=False,
-                             dry_run=False,
-                             data_message=None,
-                             content_available=None,
-                             timeout=5):
+    def single_device_data_message(self,
+                                   registration_id=None,
+                                   condition=None,
+                                   collapse_key=None,
+                                   delay_while_idle=False,
+                                   time_to_live=None,
+                                   restricted_package_name=None,
+                                   low_priority=False,
+                                   dry_run=False,
+                                   data_message=None,
+                                   content_available=None,
+                                   timeout=5):
 
         """
         Send push message to a single device
@@ -252,18 +252,18 @@ class FCMNotification(BaseAPI):
         self.send_request(payloads, timeout)
         return self.parse_responses()
 
-    def message_multiple_devices(self,
-                                registration_ids=None,
-                                condition=None,
-                                collapse_key=None,
-                                delay_while_idle=False,
-                                time_to_live=None,
-                                restricted_package_name=None,
-                                low_priority=False,
-                                dry_run=False,
-                                data_message=None,
-                                content_available=None,
-                                timeout=5):
+    def multiple_devices_data_message(self,
+                                      registration_ids=None,
+                                      condition=None,
+                                      collapse_key=None,
+                                      delay_while_idle=False,
+                                      time_to_live=None,
+                                      restricted_package_name=None,
+                                      low_priority=False,
+                                      dry_run=False,
+                                      data_message=None,
+                                      content_available=None,
+                                      timeout=5):
 
         """
         Sends push message to multiple devices,
