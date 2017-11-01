@@ -119,3 +119,10 @@ v1.2.9 (07-04-2017)
 - Fixed issue with notification extra kwargs
 
 .. _Emmanuel Olucurious: https://github.com/olucurious
+
+Unreleased
+-------------------
+
+- Add optional json_encoder argument to BaseAPI to allow configuring the JSONEncoder used for parse_payload
+
+.. _Carlos Arrastia: https://github.com/carrasti
