@@ -119,3 +119,10 @@ v1.2.9 (07-04-2017)
 - Fixed issue with notification extra kwargs
 
 .. _Emmanuel Olucurious: https://github.com/olucurious
+
+Unreleased
+-------------------
+
+- Addition of a android dictionary to set fcm priority
+
+.. _Pratik Sayare: https://github.com/gizmopratik
