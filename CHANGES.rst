@@ -126,3 +126,7 @@ Unreleased
 - Add optional json_encoder argument to BaseAPI to allow configuring the JSONEncoder used for parse_payload
 
 .. _Carlos Arrastia: https://github.com/carrasti
+
+- Addition of a android dictionary to set fcm priority
+
+.. _Pratik Sayare: https://github.com/gizmopratik
