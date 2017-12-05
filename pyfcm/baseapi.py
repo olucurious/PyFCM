@@ -28,7 +28,7 @@ class BaseAPI(object):
     #: wake a sleeping device and open a network connection to your server.
     FCM_HIGH_PRIORITY = 'high'
 
-    def __init__(self, api_key=None, proxy_dict=None, env=None):
+    def __init__(self, api_key=None, proxy_dict=None, env=None, json_encoder=None):
         """
 
         :type proxy_dict: dict, api_key: string
@@ -49,6 +49,7 @@ class BaseAPI(object):
                 appengine.monkeypatch()
             except:
                 pass
+        self.json_encoder = json_encoder
 
     def request_headers(self):
         return {
@@ -67,7 +68,7 @@ class BaseAPI(object):
 
     def json_dumps(self, data):
         """Standardized json.dumps function with separators and sorted keys set."""
-        return (json.dumps(data, separators=(',', ':'), sort_keys=True)
+        return (json.dumps(data, separators=(',', ':'), sort_keys=True, cls=self.json_encoder)
                 .encode('utf8'))
 
     def parse_payload(self,
