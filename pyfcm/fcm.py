@@ -27,7 +27,7 @@ class FCMNotification(BaseAPI):
                              title_loc_args=None,
                              content_available=None,
                              timeout=5,
-                             extra_kwargs={}):
+                             extra_kwargs=None):
 
         """
         Send push notification to a single device
@@ -68,6 +68,8 @@ class FCMNotification(BaseAPI):
         """
         if registration_id is None:
             raise InvalidDataError('Invalid registration ID')
+        if extra_kwargs is None:
+            extra_kwargs = {}
         # [registration_id] cos we're sending to a single device
         payload = self.parse_payload(registration_ids=[registration_id],
                                      message_body=message_body,
@@ -184,7 +186,7 @@ class FCMNotification(BaseAPI):
                                 title_loc_args=None,
                                 content_available=None,
                                 timeout=5,
-                                extra_kwargs={}):
+                                extra_kwargs=None):
 
         """
         Sends push notification to multiple devices,
@@ -223,6 +225,8 @@ class FCMNotification(BaseAPI):
             InvalidDataError: Invalid data provided
             InternalPackageError: JSON parsing error, mostly from changes in the response of FCM, create a new github issue to resolve it.
         """
+        if extra_kwargs is None:
+            extra_kwargs = {}
         payloads = list()
         registration_id_chunks = self.registration_id_chunks(registration_ids)
         for registration_ids in registration_id_chunks:
@@ -342,7 +346,7 @@ class FCMNotification(BaseAPI):
                                  title_loc_args=None,
                                  content_available=None,
                                  timeout=5,
-                                 extra_kwargs={}):
+                                 extra_kwargs=None):
 
         """
         Sends push notification to multiple devices subscribed to a topic
@@ -382,6 +386,8 @@ class FCMNotification(BaseAPI):
             InvalidDataError: Invalid data provided
             InternalPackageError: JSON parsing error, mostly from changes in the response of FCM, create a new github issue to resolve it.
         """
+        if extra_kwargs is None:
+            extra_kwargs = {}
         payload = self.parse_payload(topic_name=topic_name,
                                      condition=condition,
                                      message_body=message_body,
