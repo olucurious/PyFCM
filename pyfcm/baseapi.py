@@ -243,48 +243,6 @@ class BaseAPI(object):
         if details.status_code == 200:
             return details.json()
         return None
-    
-    def subscribe_registration_ids_to_topic(self, registration_ids, topic_name):
-        """ Subscribes a list of registration ids to a topic
-        """
-        url = '''https://iid.googleapis.com/iid/v1:batchAdd'''
-        payload = json.dumps({
-            'to': '/topics/'+topic_name,
-            'registration_tokens': registration_ids,
-        })
-        response = requests.post(
-           url,
-           headers=self.request_headers(),
-           data=payload,
-        )
-        if response.status_code == 200:
-            return True
-        elif response.status_code == 400:
-            error = json.loads( response.content )
-            raise InvalidDataError(error['error'])
-        else:
-            raise FCMError()
-
-    def unsubscribe_registration_ids_from_topic(self, registration_ids, topic_name):
-        """ Unsubscribes a list of registration ids from a topic
-        """
-        url = '''https://iid.googleapis.com/iid/v1:batchRemove'''
-        payload = json.dumps({
-            'to': '/topics/'+topic_name,
-            'registration_tokens': registration_ids,
-        })
-        response = requests.post(
-           url, 
-           headers=self.request_headers(),
-           data=payload,
-        )
-        if response.status_code == 200:
-            return True
-        elif response.status_code == 400:
-            error = json.loads( response.content )
-            raise InvalidDataError(error['error'])
-        else:
-            raise FCMError()
 
     def parse_responses(self):
         """
