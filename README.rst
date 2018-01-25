@@ -248,7 +248,7 @@ The MIT License (MIT). Please see LICENSE.rst for more information.
 
 ::
 
-    Copyright (c) 2017 Emmanuel Adegbite
+    Copyright (c) 2018 Emmanuel Adegbite
 
     Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
     files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
