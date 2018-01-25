@@ -168,16 +168,16 @@ Manage subscriptions to a topic
 
 .. code-block:: python
 
-    service = FCMNotification(SERVER_KEY)
+    push_service = FCMNotification(SERVER_KEY)
     tokens = [
         <registration_id_1>,
         <registration_id_2>,
     ]
     
-    subscribed = service.subscribe_registration_ids_to_topic(tokens, 'test')
+    subscribed = push_service.subscribe_registration_ids_to_topic(tokens, 'test')
     # returns True if successful, raises error if unsuccessful
 
-    unsubscribed = service.unsubscribe_registration_ids_from_topic(tokens, 'test')
+    unsubscribed = push_service.unsubscribe_registration_ids_from_topic(tokens, 'test')
     # returns True if successful, raises error if unsuccessful
 
 Sending a message to a topic.
