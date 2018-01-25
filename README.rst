@@ -163,6 +163,22 @@ Appengine users should define their environment
 
     push_service = FCMNotification(api_key="<api-key>", proxy_dict=proxy_dict, env='app_engine')
     result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_body=message, low_priority=True)
+    
+Manage subscriptions to a topic
+
+.. code-block:: python
+
+    service = FCMNotification(SERVER_KEY)
+    tokens = [
+        <registration_id_1>,
+        <registration_id_2>,
+    ]
+    
+    subscribed = service.subscribe_registration_ids_to_topic(tokens, 'test')
+    # returns True if successful, raises error if unsuccessful
+
+    unsubscribed = service.unsubscribe_registration_ids_from_topic(tokens, 'test')
+    # returns True if successful, raises error if unsuccessful
 
 Sending a message to a topic.
 
