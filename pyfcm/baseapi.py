@@ -28,7 +28,7 @@ class BaseAPI(object):
     #: wake a sleeping device and open a network connection to your server.
     FCM_HIGH_PRIORITY = 'high'
 
-    def __init__(self, api_key=None, proxy_dict=None, env=None):
+    def __init__(self, api_key=None, proxy_dict=None, env=None, json_encoder=None):
         """
 
         :type proxy_dict: dict, api_key: string
@@ -49,6 +49,7 @@ class BaseAPI(object):
                 appengine.monkeypatch()
             except:
                 pass
+        self.json_encoder = json_encoder
 
     def request_headers(self):
         return {
@@ -67,7 +68,7 @@ class BaseAPI(object):
 
     def json_dumps(self, data):
         """Standardized json.dumps function with separators and sorted keys set."""
-        return (json.dumps(data, separators=(',', ':'), sort_keys=True)
+        return (json.dumps(data, separators=(',', ':'), sort_keys=True, cls=self.json_encoder)
                 .encode('utf8'))
 
     def parse_payload(self,
@@ -115,10 +116,13 @@ class BaseAPI(object):
             # Which is why it's in the `else` block since `condition` is used when multiple topics are being targeted
             if topic_name:
                 fcm_payload['to'] = '/topics/%s' % topic_name
+        # Add a object within the payload to set priority of the messages with reference to
+        # https://firebase.google.com/docs/cloud-messaging/concept-options#setting-the-priority-of-a-message
+        # required for legacy http otherwise data messages with priority as high are sent with normal priority
         if low_priority:
-            fcm_payload['priority'] = self.FCM_LOW_PRIORITY
+            fcm_payload['android'] = dict(priority=self.FCM_LOW_PRIORITY)
         else:
-            fcm_payload['priority'] = self.FCM_HIGH_PRIORITY
+            fcm_payload['android'] = dict(priority=self.FCM_HIGH_PRIORITY)
 
         if delay_while_idle:
             fcm_payload['delay_while_idle'] = delay_while_idle
@@ -174,7 +178,7 @@ class BaseAPI(object):
 
         if click_action:
             fcm_payload['notification']['click_action'] = click_action
-        if badge:
+        if isinstance(badge, int) and badge >= 0:
             fcm_payload['notification']['badge'] = badge
         if color:
             fcm_payload['notification']['color'] = color
@@ -240,6 +244,48 @@ class BaseAPI(object):
             return details.json()
         return None
 
+    def subscribe_registration_ids_to_topic(self, registration_ids, topic_name):
+        """ Subscribes a list of registration ids to a topic
+        """
+        url = '''https://iid.googleapis.com/iid/v1:batchAdd'''
+        payload = json.dumps({
+            'to': '/topics/'+topic_name,
+            'registration_tokens': registration_ids,
+        })
+        response = requests.post(
+           url,
+           headers=self.request_headers(),
+           data=payload,
+        )
+        if response.status_code == 200:
+            return True
+        elif response.status_code == 400:
+            error = json.loads( response.content )
+            raise InvalidDataError(error['error'])
+        else:
+            raise FCMError()
+
+    def unsubscribe_registration_ids_from_topic(self, registration_ids, topic_name):
+        """ Unsubscribes a list of registration ids from a topic
+        """
+        url = '''https://iid.googleapis.com/iid/v1:batchRemove'''
+        payload = json.dumps({
+            'to': '/topics/'+topic_name,
+            'registration_tokens': registration_ids,
+        })
+        response = requests.post(
+           url, 
+           headers=self.request_headers(),
+           data=payload,
+        )
+        if response.status_code == 200:
+            return True
+        elif response.status_code == 400:
+            error = json.loads( response.content )
+            raise InvalidDataError(error['error'])
+        else:
+            raise FCMError()
+        
     def parse_responses(self):
         """
         Returns a python dict of multicast_ids(list), success(int), failure(int), canonical_ids(int), results(list) and optional topic_message_id(str but None by default)

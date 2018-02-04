@@ -119,8 +119,8 @@ Send a data message.
     # To send extra kwargs (keyword arguments not provided in any of the methods),
     # pass it as a key value in a dictionary to the method being used
     extra_kwargs = {
-        'priority': 'high'
-    }
+        'priority': 'high'
+    }
     result = push_service.notify_single_device(registration_id=registration_id, data_message=data_message, extra_kwargs=extra_kwargs)
 
     # To process background notifications in iOS 10, set content_available
@@ -163,6 +163,22 @@ Appengine users should define their environment
 
     push_service = FCMNotification(api_key="<api-key>", proxy_dict=proxy_dict, env='app_engine')
     result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_body=message, low_priority=True)
+    
+Manage subscriptions to a topic
+
+.. code-block:: python
+
+    push_service = FCMNotification(SERVER_KEY)
+    tokens = [
+        <registration_id_1>,
+        <registration_id_2>,
+    ]
+    
+    subscribed = push_service.subscribe_registration_ids_to_topic(tokens, 'test')
+    # returns True if successful, raises error if unsuccessful
+
+    unsubscribed = push_service.unsubscribe_registration_ids_from_topic(tokens, 'test')
+    # returns True if successful, raises error if unsuccessful
 
 Sending a message to a topic.
 
@@ -232,7 +248,7 @@ The MIT License (MIT). Please see LICENSE.rst for more information.
 
 ::
 
-    Copyright (c) 2017 Emmanuel Adegbite
+    Copyright (c) 2018 Emmanuel Adegbite
 
     Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
     files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
