@@ -95,6 +95,7 @@ class BaseAPI(object):
                       title_loc_key=None,
                       title_loc_args=None,
                       content_available=None,
+                      mutable_content=None,
                       remove_notification=False,
                       **extra_kwargs):
 
@@ -175,6 +176,11 @@ class BaseAPI(object):
         # This is needed for iOS when we are sending only custom data messages
         if content_available and isinstance(content_available, bool):
             fcm_payload['content_available'] = content_available
+            
+        # This is needed for iOS when we are sending rich notifications for iOS 10+
+        # https://firebase.google.com/docs/cloud-messaging/http-server-ref#downstream-http-messages-json
+        if mutable_content and isinstance(mutable_content, bool):
+            fcm_payload['mutable_content'] = mutable_content
 
         if click_action:
             fcm_payload['notification']['click_action'] = click_action
