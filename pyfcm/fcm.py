@@ -27,7 +27,8 @@ class FCMNotification(BaseAPI):
                              title_loc_args=None,
                              content_available=None,
                              timeout=5,
-                             extra_kwargs=None):
+                             extra_notification_kwargs=None,
+                             extra_kwargs={}):
 
         """
         Send push notification to a single device
@@ -68,8 +69,6 @@ class FCMNotification(BaseAPI):
         """
         if registration_id is None:
             raise InvalidDataError('Invalid registration ID')
-        if extra_kwargs is None:
-            extra_kwargs = {}
         # [registration_id] cos we're sending to a single device
         payload = self.parse_payload(registration_ids=[registration_id],
                                      message_body=message_body,
@@ -91,6 +90,7 @@ class FCMNotification(BaseAPI):
                                      title_loc_key=title_loc_key,
                                      title_loc_args=title_loc_args,
                                      content_available=content_available,
+                                     extra_notification_kwargs=extra_notification_kwargs,
                                      **extra_kwargs)
 
         self.send_request([payload], timeout)
@@ -107,7 +107,9 @@ class FCMNotification(BaseAPI):
                                    dry_run=False,
                                    data_message=None,
                                    content_available=None,
-                                   timeout=5):
+                                   timeout=5,
+                                   extra_notification_kwargs=None,
+                                   extra_kwargs={}):
 
         """
         Send push message to a single device
@@ -157,7 +159,9 @@ class FCMNotification(BaseAPI):
                                      dry_run=dry_run,
                                      data_message=data_message,
                                      content_available=content_available,
-                                     remove_notification=True)
+                                     remove_notification=True,
+                                     extra_notification_kwargs=extra_notification_kwargs,
+                                     **extra_kwargs)
 
         self.send_request([payload], timeout)
         return self.parse_responses()
@@ -186,7 +190,8 @@ class FCMNotification(BaseAPI):
                                 title_loc_args=None,
                                 content_available=None,
                                 timeout=5,
-                                extra_kwargs=None):
+                                extra_notification_kwargs=None,
+                                extra_kwargs={}):
 
         """
         Sends push notification to multiple devices,
@@ -225,8 +230,6 @@ class FCMNotification(BaseAPI):
             InvalidDataError: Invalid data provided
             InternalPackageError: JSON parsing error, mostly from changes in the response of FCM, create a new github issue to resolve it.
         """
-        if extra_kwargs is None:
-            extra_kwargs = {}
         payloads = list()
         registration_id_chunks = self.registration_id_chunks(registration_ids)
         for registration_ids in registration_id_chunks:
@@ -252,6 +255,7 @@ class FCMNotification(BaseAPI):
                                                title_loc_key=title_loc_key,
                                                title_loc_args=title_loc_args,
                                                content_available=content_available,
+                                               extra_notification_kwargs=extra_notification_kwargs,
                                                **extra_kwargs))
         self.send_request(payloads, timeout)
         return self.parse_responses()
@@ -267,7 +271,9 @@ class FCMNotification(BaseAPI):
                                       dry_run=False,
                                       data_message=None,
                                       content_available=None,
-                                      timeout=5):
+                                      timeout=5,
+                                      extra_notification_kwargs=None,
+                                      extra_kwargs={}):
 
         """
         Sends push message to multiple devices,
@@ -318,7 +324,9 @@ class FCMNotification(BaseAPI):
                                                dry_run=dry_run,
                                                data_message=data_message,
                                                content_available=content_available,
-                                               remove_notification=True))
+                                               remove_notification=True,
+                                               extra_notification_kwargs=extra_notification_kwargs,
+                                               **extra_kwargs))
         self.send_request(payloads, timeout)
         return self.parse_responses()
 
@@ -346,7 +354,8 @@ class FCMNotification(BaseAPI):
                                  title_loc_args=None,
                                  content_available=None,
                                  timeout=5,
-                                 extra_kwargs=None):
+                                 extra_notification_kwargs=None,
+                                 extra_kwargs={}):
 
         """
         Sends push notification to multiple devices subscribed to a topic
@@ -408,6 +417,7 @@ class FCMNotification(BaseAPI):
                                      title_loc_key=title_loc_key,
                                      title_loc_args=title_loc_args,
                                      content_available=content_available,
+                                     extra_notification_kwargs=extra_notification_kwargs,
                                      **extra_kwargs)
         self.send_request([payload], timeout)
         return self.parse_responses()
