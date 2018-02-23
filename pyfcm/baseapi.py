@@ -96,6 +96,7 @@ class BaseAPI(object):
                       title_loc_args=None,
                       content_available=None,
                       remove_notification=False,
+                      extra_notification_kwargs={},
                       **extra_kwargs):
 
         """
@@ -190,7 +191,10 @@ class BaseAPI(object):
             fcm_payload['notification']['sound'] = sound
 
         if extra_kwargs:
-            fcm_payload['notification'].update(extra_kwargs)
+            fcm_payload.update(extra_kwargs)
+
+        if extra_notification_kwargs:
+            fcm_payload['notification'].update(extra_notification_kwargs)
 
         # Do this if you only want to send a data message.
         if remove_notification:
