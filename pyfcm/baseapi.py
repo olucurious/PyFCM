@@ -226,7 +226,7 @@ class BaseAPI(object):
                     "Required sleep time %s is greater than max_retry_after %s",
                     sleep_time, self.max_retry_after
                 )
-                sleep_time = self.max_retry_after
+                raise RetryAfterException(sleep_time)
             time.sleep(sleep_time)
             return self.do_request(payload, timeout)
         return response
