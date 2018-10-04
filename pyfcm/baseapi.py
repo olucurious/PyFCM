@@ -1,10 +1,14 @@
 import json
 import os
 import time
+import logging
 
 import requests
 
 from .errors import *
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseAPI(object):
@@ -28,7 +32,7 @@ class BaseAPI(object):
     #: wake a sleeping device and open a network connection to your server.
     FCM_HIGH_PRIORITY = 'high'
 
-    def __init__(self, api_key=None, proxy_dict=None, env=None, json_encoder=None):
+    def __init__(self, api_key=None, proxy_dict=None, env=None, json_encoder=None, max_retry_after=None):
         """
 
         :type proxy_dict: dict, api_key: string
@@ -50,6 +54,7 @@ class BaseAPI(object):
             except:
                 pass
         self.json_encoder = json_encoder
+        self.max_retry_after = max_retry_after
 
     def request_headers(self):
         return {
@@ -177,7 +182,7 @@ class BaseAPI(object):
         # This is needed for iOS when we are sending only custom data messages
         if content_available and isinstance(content_available, bool):
             fcm_payload['content_available'] = content_available
-            
+
         # This is needed for iOS when we are sending rich notifications for iOS 10+
         # https://firebase.google.com/docs/cloud-messaging/http-server-ref#downstream-http-messages-json
         if mutable_content and isinstance(mutable_content, bool):
@@ -216,6 +221,12 @@ class BaseAPI(object):
             response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload, timeout=timeout)
         if 'Retry-After' in response.headers and int(response.headers['Retry-After']) > 0:
             sleep_time = int(response.headers['Retry-After'])
+            if self.max_retry_after is not None and sleep_time > self.max_retry_after:
+                logger.error(
+                    "Required sleep time %s is greater than max_retry_after %s",
+                    sleep_time, self.max_retry_after
+                )
+                raise RetryAfterException(sleep_time)
             time.sleep(sleep_time)
             return self.do_request(payload, timeout)
         return response
@@ -284,7 +295,7 @@ class BaseAPI(object):
             'registration_tokens': registration_ids,
         })
         response = requests.post(
-           url, 
+           url,
            headers=self.request_headers(),
            data=payload,
         )
@@ -295,7 +306,7 @@ class BaseAPI(object):
             raise InvalidDataError(error['error'])
         else:
             raise FCMError()
-        
+
     def parse_responses(self):
         """
         Returns a python dict of multicast_ids(list), success(int), failure(int), canonical_ids(int), results(list) and optional topic_message_id(str but None by default)
