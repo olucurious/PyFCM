@@ -130,3 +130,7 @@ Unreleased
 - Addition of a android dictionary to set fcm priority
 
 .. _Pratik Sayare: https://github.com/gizmopratik
+
+- Add android_channel_id
+
+-- _Lucas Hild: https://github.com/Lanseuo
