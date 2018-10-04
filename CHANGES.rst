@@ -130,7 +130,3 @@ Unreleased
 - Addition of a android dictionary to set fcm priority
 
 .. _Pratik Sayare: https://github.com/gizmopratik
-
-- Utilize requests.Session
-
-.. _Jon Snyder: https://github.com/razor-1

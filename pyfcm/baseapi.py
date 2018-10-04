@@ -40,11 +40,8 @@ class BaseAPI(object):
         else:
             raise AuthenticationError("Please provide the api_key in the google-services.json file")
         self.FCM_REQ_PROXIES = None
-        self.requests_session = requests.Session()
-        self.requests_session.headers.update(self.request_headers())
         if proxy_dict and isinstance(proxy_dict, dict) and (('http' in proxy_dict) or ('https' in proxy_dict)):
             self.FCM_REQ_PROXIES = proxy_dict
-            self.requests_session.proxies.update(proxy_dict)
         self.send_request_responses = list()
         if env == 'app_engine':
             try:
@@ -206,7 +203,11 @@ class BaseAPI(object):
         return self.json_dumps(fcm_payload)
 
     def do_request(self, payload, timeout):
-        response = self.requests_session.post(self.FCM_END_POINT, data=payload, timeout=timeout)
+        if self.FCM_REQ_PROXIES:
+            response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload,
+                                     proxies=self.FCM_REQ_PROXIES, timeout=timeout)
+        else:
+            response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload, timeout=timeout)
         if 'Retry-After' in response.headers and int(response.headers['Retry-After']) > 0:
             sleep_time = int(response.headers['Retry-After'])
             time.sleep(sleep_time)
@@ -223,8 +224,9 @@ class BaseAPI(object):
         """ Makes a request for registration info and returns the response
             object
         """
-        response = self.requests_session.get('https://iid.googleapis.com/iid/info/' + registration_id,
-                                             params={'details': 'true'})
+        response = requests.get('https://iid.googleapis.com/iid/info/' + registration_id,
+                               headers=self.request_headers(),
+                               params={'details': 'true'})
         return response
 
     def clean_registration_ids(self, registration_ids=[]):
@@ -254,7 +256,11 @@ class BaseAPI(object):
             'to': '/topics/'+topic_name,
             'registration_tokens': registration_ids,
         })
-        response = self.requests_session.post(url, data=payload)
+        response = requests.post(
+           url,
+           headers=self.request_headers(),
+           data=payload,
+        )
         if response.status_code == 200:
             return True
         elif response.status_code == 400:
@@ -271,7 +277,11 @@ class BaseAPI(object):
             'to': '/topics/'+topic_name,
             'registration_tokens': registration_ids,
         })
-        response = self.requests_session.post(url, data=payload)
+        response = requests.post(
+           url, 
+           headers=self.request_headers(),
+           data=payload,
+        )
         if response.status_code == 200:
             return True
         elif response.status_code == 400:
