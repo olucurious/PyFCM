@@ -30,3 +30,11 @@ class InternalPackageError(FCMError):
     JSON parsing error, please create a new github issue describing what you're doing
     """
     pass
+
+
+class RetryAfterException(Exception):
+    """
+    Retry-After must be handled by external logic.
+    """
+    def __init__(self, delay):
+        self.delay = delay

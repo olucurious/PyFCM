@@ -1,15 +1,10 @@
 import json
 import os
-import requests
 import time
 
-from .errors import (
-    AuthenticationError,
-    FCMError,
-    FCMServerError,
-    InternalPackageError,
-    InvalidDataError
-)
+import requests
+
+from .errors import *
 
 
 class BaseAPI(object):
@@ -35,22 +30,21 @@ class BaseAPI(object):
 
     def __init__(self, api_key=None, proxy_dict=None, env=None, json_encoder=None):
         """
-        Parameters:
-            api_key (str): Firebase API key
-            proxy_dict (dict): proxy used for requests with keys "http" and "https"
-            env (str)
-            json_encoder: custom json encoder
+
+        :type proxy_dict: dict, api_key: string
         """
         if api_key:
             self._FCM_API_KEY = api_key
         elif os.getenv('FCM_API_KEY', None):
             self._FCM_API_KEY = os.getenv('FCM_API_KEY', None)
         else:
-            raise AuthenticationError(
-                "Please provide the api_key as an argument or in the google-services.json file")
+            raise AuthenticationError("Please provide the api_key in the google-services.json file")
         self.FCM_REQ_PROXIES = None
+        self.requests_session = requests.Session()
+        self.requests_session.headers.update(self.request_headers())
         if proxy_dict and isinstance(proxy_dict, dict) and (('http' in proxy_dict) or ('https' in proxy_dict)):
             self.FCM_REQ_PROXIES = proxy_dict
+            self.requests_session.proxies.update(proxy_dict)
         self.send_request_responses = list()
         if env == 'app_engine':
             try:
@@ -61,12 +55,6 @@ class BaseAPI(object):
         self.json_encoder = json_encoder
 
     def request_headers(self):
-        """
-        Generates request headers
-
-        Returns:
-            dict: "Content-Type" and "Authorization"
-        """
         return {
             "Content-Type": self.CONTENT_TYPE,
             "Authorization": "key=" + self._FCM_API_KEY,
@@ -111,12 +99,12 @@ class BaseAPI(object):
                       title_loc_args=None,
                       content_available=None,
                       remove_notification=False,
-                      android_channel_id=None,
                       extra_notification_kwargs={},
                       **extra_kwargs):
+
         """
-        Returns:
-            dict: fcm payload
+
+        :rtype: json
         """
         fcm_payload = dict()
         if registration_ids:
@@ -148,8 +136,7 @@ class BaseAPI(object):
             if isinstance(time_to_live, int):
                 fcm_payload['time_to_live'] = time_to_live
             else:
-                raise InvalidDataError(
-                    "Provided time_to_live is not an integer")
+                raise InvalidDataError("Provided time_to_live is not an integer")
         if restricted_package_name:
             fcm_payload['restricted_package_name'] = restricted_package_name
         if dry_run:
@@ -159,8 +146,7 @@ class BaseAPI(object):
             if isinstance(data_message, dict):
                 fcm_payload['data'] = data_message
             else:
-                raise InvalidDataError(
-                    "Provided data_message is in the wrong format")
+                raise InvalidDataError("Provided data_message is in the wrong format")
 
         fcm_payload['notification'] = {}
         if message_icon:
@@ -189,9 +175,6 @@ class BaseAPI(object):
                     fcm_payload['notification']['title_loc_args'] = title_loc_args
                 else:
                     raise InvalidDataError('title_loc_args should be an array')
-
-        if android_channel_id:
-            fcm_payload['notification']['android_channel_id'] = android_channel_id
 
         # This is needed for iOS when we are sending only custom data messages
         if content_available and isinstance(content_available, bool):
@@ -223,18 +206,7 @@ class BaseAPI(object):
         return self.json_dumps(fcm_payload)
 
     def do_request(self, payload, timeout):
-        if self.FCM_REQ_PROXIES:
-            response = requests.post(
-                self.FCM_END_POINT,
-                headers=self.request_headers(),
-                data=payload,
-                proxies=self.FCM_REQ_PROXIES, timeout=timeout)
-        else:
-            response = requests.post(
-                self.FCM_END_POINT,
-                headers=self.request_headers(),
-                data=payload,
-                timeout=timeout)
+        response = self.requests_session.post(self.FCM_END_POINT, data=payload, timeout=timeout)
         if 'Retry-After' in response.headers and int(response.headers['Retry-After']) > 0:
             sleep_time = int(response.headers['Retry-After'])
             time.sleep(sleep_time)
@@ -248,17 +220,16 @@ class BaseAPI(object):
             self.send_request_responses.append(response)
 
     def registration_info_request(self, registration_id):
+        """ Makes a request for registration info and returns the response
+            object
         """
-        Makes a request for registration info and returns the response object
-        """
-        response = requests.get(
-            'https://iid.googleapis.com/iid/info/' + registration_id,
-            headers=self.request_headers(),
-            params={'details': 'true'})
+        response = self.requests_session.get('https://iid.googleapis.com/iid/info/' + registration_id,
+                                             params={'details': 'true'})
         return response
 
     def clean_registration_ids(self, registration_ids=[]):
-        """Return list of active IDS from the list of registration_ids"""
+        """ Return list of active IDS from the list of registration_ids
+        """
         valid_registration_ids = []
         for registration_id in registration_ids:
             details = self.registration_info_request(registration_id)
@@ -267,8 +238,8 @@ class BaseAPI(object):
         return valid_registration_ids
 
     def get_registration_id_info(self, registration_id):
-        """
-        Returns details related to a registration id if it exists otherwise return None
+        """ Returns details related to a registration id if it exists
+            otherwise return None
         """
         details = self.registration_info_request(registration_id)
         if details.status_code == 200:
@@ -276,57 +247,42 @@ class BaseAPI(object):
         return None
 
     def subscribe_registration_ids_to_topic(self, registration_ids, topic_name):
-        """Subscribes a list of registration ids to a topic"""
-        url = "https://iid.googleapis.com/iid/v1:batchAdd"
+        """ Subscribes a list of registration ids to a topic
+        """
+        url = '''https://iid.googleapis.com/iid/v1:batchAdd'''
         payload = json.dumps({
-            'to': '/topics/' + topic_name,
+            'to': '/topics/'+topic_name,
             'registration_tokens': registration_ids,
         })
-        response = requests.post(
-            url,
-            headers=self.request_headers(),
-            data=payload,
-        )
+        response = self.requests_session.post(url, data=payload)
         if response.status_code == 200:
             return True
         elif response.status_code == 400:
-            error = json.loads(response.content)
+            error = json.loads( response.content )
             raise InvalidDataError(error['error'])
         else:
             raise FCMError()
 
     def unsubscribe_registration_ids_from_topic(self, registration_ids, topic_name):
-        """
-        Unsubscribes a list of registration ids from a topic
-
-        Arguments:
-            registration_ids (list): devices that will be unsubscribed
-            topic_name (str): name of topic
+        """ Unsubscribes a list of registration ids from a topic
         """
         url = '''https://iid.googleapis.com/iid/v1:batchRemove'''
         payload = json.dumps({
             'to': '/topics/'+topic_name,
             'registration_tokens': registration_ids,
         })
-        response = requests.post(
-            url,
-            headers=self.request_headers(),
-            data=payload,
-        )
+        response = self.requests_session.post(url, data=payload)
         if response.status_code == 200:
             return True
         elif response.status_code == 400:
-            error = json.loads(response.content)
+            error = json.loads( response.content )
             raise InvalidDataError(error['error'])
         else:
             raise FCMError()
-
+        
     def parse_responses(self):
         """
-        Parses responses from FCM API
-
-        Returns:
-            dict: multicast_ids(list), success(int), failure(int), canonical_ids(int), results(list) and optional topic_message_id(str but None by default)
+        Returns a python dict of multicast_ids(list), success(int), failure(int), canonical_ids(int), results(list) and optional topic_message_id(str but None by default)
         """
         response_dict = {
             'multicast_ids': list(),
@@ -344,8 +300,7 @@ class BaseAPI(object):
                 server and tries to get out the important return variables
                 """
                 if 'content-length' in response.headers and int(response.headers['content-length']) <= 0:
-                    raise FCMServerError(
-                        "FCM server connection error, the response is empty")
+                    raise FCMServerError("FCM server connection error, the response is empty")
                 else:
                     parsed_response = response.json()
 
@@ -354,8 +309,7 @@ class BaseAPI(object):
                     failure = parsed_response.get('failure', 0)
                     canonical_ids = parsed_response.get('canonical_ids', 0)
                     results = parsed_response.get('results', [])
-                    message_id = parsed_response.get(
-                        'message_id', None)  # for topic messages
+                    message_id = parsed_response.get('message_id', None)  # for topic messages
                     if message_id:
                         success = 1
                     if multicast_id:
@@ -366,8 +320,7 @@ class BaseAPI(object):
                     response_dict['results'].extend(results)
                     response_dict['topic_message_id'] = message_id
             elif response.status_code == 401:
-                raise AuthenticationError(
-                    "There was an error authenticating the sender account")
+                raise AuthenticationError("There was an error authenticating the sender account")
             elif response.status_code == 400:
                 raise InternalPackageError(response.text)
             else:
