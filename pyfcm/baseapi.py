@@ -1,14 +1,10 @@
 import json
 import os
 import time
-import logging
 
 import requests
 
 from .errors import *
-
-
-logger = logging.getLogger(__name__)
 
 
 class BaseAPI(object):
@@ -32,7 +28,7 @@ class BaseAPI(object):
     #: wake a sleeping device and open a network connection to your server.
     FCM_HIGH_PRIORITY = 'high'
 
-    def __init__(self, api_key=None, proxy_dict=None, env=None, json_encoder=None, max_retry_after=None):
+    def __init__(self, api_key=None, proxy_dict=None, env=None, json_encoder=None):
         """
 
         :type proxy_dict: dict, api_key: string
@@ -44,8 +40,11 @@ class BaseAPI(object):
         else:
             raise AuthenticationError("Please provide the api_key in the google-services.json file")
         self.FCM_REQ_PROXIES = None
+        self.requests_session = requests.Session()
+        self.requests_session.headers.update(self.request_headers())
         if proxy_dict and isinstance(proxy_dict, dict) and (('http' in proxy_dict) or ('https' in proxy_dict)):
             self.FCM_REQ_PROXIES = proxy_dict
+            self.requests_session.proxies.update(proxy_dict)
         self.send_request_responses = list()
         if env == 'app_engine':
             try:
@@ -54,7 +53,6 @@ class BaseAPI(object):
             except:
                 pass
         self.json_encoder = json_encoder
-        self.max_retry_after = max_retry_after
 
     def request_headers(self):
         return {
@@ -100,7 +98,6 @@ class BaseAPI(object):
                       title_loc_key=None,
                       title_loc_args=None,
                       content_available=None,
-                      mutable_content=None,
                       remove_notification=False,
                       extra_notification_kwargs={},
                       **extra_kwargs):
@@ -183,11 +180,6 @@ class BaseAPI(object):
         if content_available and isinstance(content_available, bool):
             fcm_payload['content_available'] = content_available
 
-        # This is needed for iOS when we are sending rich notifications for iOS 10+
-        # https://firebase.google.com/docs/cloud-messaging/http-server-ref#downstream-http-messages-json
-        if mutable_content and isinstance(mutable_content, bool):
-            fcm_payload['mutable_content'] = mutable_content
-
         if click_action:
             fcm_payload['notification']['click_action'] = click_action
         if isinstance(badge, int) and badge >= 0:
@@ -214,19 +206,9 @@ class BaseAPI(object):
         return self.json_dumps(fcm_payload)
 
     def do_request(self, payload, timeout):
-        if self.FCM_REQ_PROXIES:
-            response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload,
-                                     proxies=self.FCM_REQ_PROXIES, timeout=timeout)
-        else:
-            response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload, timeout=timeout)
+        response = self.requests_session.post(self.FCM_END_POINT, data=payload, timeout=timeout)
         if 'Retry-After' in response.headers and int(response.headers['Retry-After']) > 0:
             sleep_time = int(response.headers['Retry-After'])
-            if self.max_retry_after is not None and sleep_time > self.max_retry_after:
-                logger.error(
-                    "Required sleep time %s is greater than max_retry_after %s",
-                    sleep_time, self.max_retry_after
-                )
-                raise RetryAfterException(sleep_time)
             time.sleep(sleep_time)
             return self.do_request(payload, timeout)
         return response
@@ -241,9 +223,8 @@ class BaseAPI(object):
         """ Makes a request for registration info and returns the response
             object
         """
-        response = requests.get('https://iid.googleapis.com/iid/info/' + registration_id,
-                               headers=self.request_headers(),
-                               params={'details': 'true'})
+        response = self.requests_session.get('https://iid.googleapis.com/iid/info/' + registration_id,
+                                             params={'details': 'true'})
         return response
 
     def clean_registration_ids(self, registration_ids=[]):
@@ -273,11 +254,7 @@ class BaseAPI(object):
             'to': '/topics/'+topic_name,
             'registration_tokens': registration_ids,
         })
-        response = requests.post(
-           url,
-           headers=self.request_headers(),
-           data=payload,
-        )
+        response = self.requests_session.post(url, data=payload)
         if response.status_code == 200:
             return True
         elif response.status_code == 400:
@@ -294,11 +271,7 @@ class BaseAPI(object):
             'to': '/topics/'+topic_name,
             'registration_tokens': registration_ids,
         })
-        response = requests.post(
-           url,
-           headers=self.request_headers(),
-           data=payload,
-        )
+        response = self.requests_session.post(url, data=payload)
         if response.status_code == 200:
             return True
         elif response.status_code == 400:
@@ -306,7 +279,7 @@ class BaseAPI(object):
             raise InvalidDataError(error['error'])
         else:
             raise FCMError()
-
+        
     def parse_responses(self):
         """
         Returns a python dict of multicast_ids(list), success(int), failure(int), canonical_ids(int), results(list) and optional topic_message_id(str but None by default)

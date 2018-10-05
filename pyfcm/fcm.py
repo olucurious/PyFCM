@@ -26,10 +26,10 @@ class FCMNotification(BaseAPI):
                              title_loc_key=None,
                              title_loc_args=None,
                              content_available=None,
+                             android_channel_id=None,
                              timeout=5,
                              extra_notification_kwargs=None,
                              extra_kwargs={}):
-
         """
         Send push notification to a single device
 
@@ -56,7 +56,9 @@ class FCMNotification(BaseAPI):
                 receive the message. Defaults to ``None``.
             dry_run (bool, optional): If ``True`` no message will be sent but
                 request will be tested.
+            android_channel_id (str): new in Android O
             timeout (int, optional): set time limit for the request
+
         Returns:
             :dict:`multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)`:
             Response from FCM server.
@@ -89,6 +91,7 @@ class FCMNotification(BaseAPI):
                                      body_loc_args=body_loc_args,
                                      title_loc_key=title_loc_key,
                                      title_loc_args=title_loc_args,
+                                     android_channel_id=android_channel_id,
                                      content_available=content_available,
                                      extra_notification_kwargs=extra_notification_kwargs,
                                      **extra_kwargs)
@@ -107,10 +110,10 @@ class FCMNotification(BaseAPI):
                                    dry_run=False,
                                    data_message=None,
                                    content_available=None,
+                                   android_channel_id=None,
                                    timeout=5,
                                    extra_notification_kwargs=None,
                                    extra_kwargs={}):
-
         """
         Send push message to a single device
 
@@ -135,7 +138,9 @@ class FCMNotification(BaseAPI):
                 receive the message. Defaults to ``None``.
             dry_run (bool, optional): If ``True`` no message will be sent but
                 request will be tested.
+            android_channel_id (str): new in Android O
             timeout (int, optional): set time limit for the request
+
         Returns:
             :dict:`multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)`:
             Response from FCM server.
@@ -160,6 +165,7 @@ class FCMNotification(BaseAPI):
                                      data_message=data_message,
                                      content_available=content_available,
                                      remove_notification=True,
+                                     android_channel_id=android_channel_id,
                                      extra_notification_kwargs=extra_notification_kwargs,
                                      **extra_kwargs)
 
@@ -189,10 +195,10 @@ class FCMNotification(BaseAPI):
                                 title_loc_key=None,
                                 title_loc_args=None,
                                 content_available=None,
+                                android_channel_id=None,
                                 timeout=5,
                                 extra_notification_kwargs=None,
                                 extra_kwargs={}):
-
         """
         Sends push notification to multiple devices,
         can send to over 1000 devices
@@ -220,6 +226,8 @@ class FCMNotification(BaseAPI):
                 receive the message. Defaults to ``None``.
             dry_run (bool, optional): If ``True`` no message will be sent but
                 request will be tested.
+            android_channel_id (str): new in Android O
+
         Returns:
             :tuple:`multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)`:
             Response from FCM server.
@@ -255,6 +263,7 @@ class FCMNotification(BaseAPI):
                                                title_loc_key=title_loc_key,
                                                title_loc_args=title_loc_args,
                                                content_available=content_available,
+                                               android_channel_id=android_channel_id,
                                                extra_notification_kwargs=extra_notification_kwargs,
                                                **extra_kwargs))
         self.send_request(payloads, timeout)
@@ -274,7 +283,6 @@ class FCMNotification(BaseAPI):
                                       timeout=5,
                                       extra_notification_kwargs=None,
                                       extra_kwargs={}):
-
         """
         Sends push message to multiple devices,
         can send to over 1000 devices
@@ -300,6 +308,7 @@ class FCMNotification(BaseAPI):
                 receive the message. Defaults to ``None``.
             dry_run (bool, optional): If ``True`` no message will be sent but
                 request will be tested.
+
         Returns:
             :tuple:`multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)`:
             Response from FCM server.
@@ -353,10 +362,10 @@ class FCMNotification(BaseAPI):
                                  title_loc_key=None,
                                  title_loc_args=None,
                                  content_available=None,
+                                 android_channel_id=None,
                                  timeout=5,
                                  extra_notification_kwargs=None,
                                  extra_kwargs={}):
-
         """
         Sends push notification to multiple devices subscribed to a topic
 
@@ -385,6 +394,8 @@ class FCMNotification(BaseAPI):
                 receive the message. Defaults to ``None``.
             dry_run (bool, optional): If ``True`` no message will be sent but
                 request will be tested.
+            android_channel_id (str): new in Android O
+
         Returns:
             :tuple:`multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)`:
             Response from FCM server.
@@ -417,6 +428,7 @@ class FCMNotification(BaseAPI):
                                      title_loc_key=title_loc_key,
                                      title_loc_args=title_loc_args,
                                      content_available=content_available,
+                                     android_channel_id=android_channel_id,
                                      extra_notification_kwargs=extra_notification_kwargs,
                                      **extra_kwargs)
         self.send_request([payload], timeout)
