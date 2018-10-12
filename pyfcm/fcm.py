@@ -433,3 +433,72 @@ class FCMNotification(BaseAPI):
                                      **extra_kwargs)
         self.send_request([payload], timeout)
         return self.parse_responses()
+
+    def topic_subscribers_data_message(self,
+                                       topic_name=None,
+                                       condition=None,
+                                       collapse_key=None,
+                                       delay_while_idle=False,
+                                       time_to_live=None,
+                                       restricted_package_name=None,
+                                       low_priority=False,
+                                       dry_run=False,
+                                       data_message=None,
+                                       content_available=None,
+                                       timeout=5,
+                                       extra_notification_kwargs=None,
+                                       extra_kwargs={}):                                 
+        """
+        Sends data notification to multiple devices subscribed to a topic
+
+        Args:
+            topic_name (topic_name): Name of the topic to deliver messages to
+            condition (condition): Topic condition to deliver messages to
+            A topic name is a string that can be formed with any character in [a-zA-Z0-9-_.~%]
+            data_message (dict): Data message payload to send alone or with the notification message
+            
+        Keyword Args:
+            collapse_key (str, optional): Identifier for a group of messages
+                that can be collapsed so that only the last message gets sent
+                when delivery can be resumed. Defaults to ``None``.
+            delay_while_idle (bool, optional): If ``True`` indicates that the
+                message should not be sent until the device becomes active.
+            time_to_live (int, optional): How long (in seconds) the message
+                should be kept in FCM storage if the device is offline. The
+                maximum time to live supported is 4 weeks. Defaults to ``None``
+                which uses the FCM default of 4 weeks.
+            low_priority (boolean, optional): Whether to send notification with
+                the low priority flag. Defaults to ``False``.
+            restricted_package_name (str, optional): Package name of the
+                application where the registration IDs must match in order to
+                receive the message. Defaults to ``None``.
+            dry_run (bool, optional): If ``True`` no message will be sent but
+                request will be tested.
+            
+        Returns:
+            :tuple:`multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)`:
+            Response from FCM server.
+
+        Raises:
+            AuthenticationError: If :attr:`api_key` is not set or provided or there is an error authenticating the sender.
+            FCMServerError: Internal server error or timeout error on Firebase cloud messaging server
+            InvalidDataError: Invalid data provided
+            InternalPackageError: JSON parsing error, mostly from changes in the response of FCM, create a new github issue to resolve it.
+        """
+        if extra_kwargs is None:
+            extra_kwargs = {}
+        payload = self.parse_payload(topic_name=topic_name,
+                                     condition=condition,
+                                     collapse_key=collapse_key,
+                                     delay_while_idle=delay_while_idle,
+                                     time_to_live=time_to_live,
+                                     restricted_package_name=restricted_package_name,
+                                     low_priority=low_priority,
+                                     dry_run=dry_run,
+                                     data_message=data_message,
+                                     content_available=content_available,
+                                     remove_notification=True,
+                                     extra_notification_kwargs=extra_notification_kwargs,
+                                     **extra_kwargs)
+        self.send_request([payload], )
+        return self.parse_responses()
