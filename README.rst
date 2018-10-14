@@ -118,10 +118,10 @@ Send a data message.
 
     # To send extra kwargs (notification keyword arguments not provided in any of the methods),
     # pass it as a key value in a dictionary to the method being used
-    notification_extra_kwargs = {
+    extra_notification_kwargs = {
         'android_channel_id': 2
     }
-    result = push_service.notify_single_device(registration_id=registration_id, data_message=data_message, notification_extra_kwargs=notification_extra_kwargs)
+    result = push_service.notify_single_device(registration_id=registration_id, data_message=data_message, extra_notification_kwargs=extra_notification_kwargs)
 
     # To process background notifications in iOS 10, set content_available
     result = push_service.notify_single_device(registration_id=registration_id, data_message=data_message, content_available=True)
