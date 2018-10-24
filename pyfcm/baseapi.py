@@ -71,8 +71,13 @@ class BaseAPI(object):
 
     def json_dumps(self, data):
         """Standardized json.dumps function with separators and sorted keys set."""
-        return (json.dumps(data, separators=(',', ':'), sort_keys=True, cls=self.json_encoder)
-                .encode('utf8'))
+        return json.dumps(
+            data, 
+            separators=(',', ':'), 
+            sort_keys=True, 
+            cls=self.json_encoder, 
+            ensure_ascii=False
+        ).encode('utf8')
 
     def parse_payload(self,
                       registration_ids=None,
