@@ -22,7 +22,7 @@ Guidelines
 
 Some simple guidelines to follow when contributing code:
 
-- Adhere to `PEP8`_.
+- Adhere to `PEP8`.
 - Clean, well documented code.
 
 
@@ -34,7 +34,11 @@ Before commiting your changes, please run the tests. For running the tests you n
 **Please do not use an API key, which is used in production!** 
 
 ::
+
+    pip install . ".[test]"
+
     export FCM_TEST_API_KEY=AAA...
+
     python -m pytest
 
 If you add a new fixture or fix a bug, please make sure to write a new unit test. This makes development easier and avoids new bugs.
