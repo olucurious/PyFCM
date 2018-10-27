@@ -81,6 +81,7 @@ def test_parse_payload(base_api):
     data = json.loads(json_string.decode("utf-8"))
 
     assert data["notification"] == {
+        "android_channel_id": "Test",
         "body": "Test",
         "click_action": "Test",
         "color": "Test",

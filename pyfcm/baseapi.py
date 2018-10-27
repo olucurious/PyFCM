@@ -252,6 +252,9 @@ class BaseAPI(object):
                 else:
                     raise InvalidDataError('title_loc_args should be an array')
 
+        if android_channel_id:
+            fcm_payload['notification']['android_channel_id'] = android_channel_id
+
         # This is needed for iOS when we are sending only custom data messages
         if content_available and isinstance(content_available, bool):
             fcm_payload['content_available'] = content_available
