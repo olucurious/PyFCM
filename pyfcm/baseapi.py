@@ -4,7 +4,7 @@ import time
 
 import requests
 
-from .errors import *
+from .errors import AuthenticationError, InvalidDataError, FCMError, FCMServerError
 
 
 class BaseAPI(object):
@@ -13,7 +13,7 @@ class BaseAPI(object):
 
     Attributes:
         api_key (str): Firebase API key
-        proxy_dict (dict): use proxy (keys: http, https)
+        proxy_dict (dict): use proxy (keys: `http`, `https`)
         env (str): for example "app_engine"
         json_encoder
     """
@@ -49,35 +49,58 @@ class BaseAPI(object):
         if proxy_dict and isinstance(proxy_dict, dict) and (('http' in proxy_dict) or ('https' in proxy_dict)):
             self.FCM_REQ_PROXIES = proxy_dict
             self.requests_session.proxies.update(proxy_dict)
-        self.send_request_responses = list()
+        self.send_request_responses = []
 
         if env == 'app_engine':
             try:
                 from requests_toolbelt.adapters import appengine
                 appengine.monkeypatch()
-            except:
+            except ModuleNotFoundError:
                 pass
-        
+
         self.json_encoder = json_encoder
 
     def request_headers(self):
-        """Generates request headers including Content-Type and Authorization"""
+        """
+        Generates request headers including Content-Type and Authorization
+
+        Returns:
+            dict: request headers
+        """
         return {
             "Content-Type": self.CONTENT_TYPE,
             "Authorization": "key=" + self._FCM_API_KEY,
         }
 
     def registration_id_chunks(self, registration_ids):
+        """
+        Splits registration ids in several lists of max 1000 registration ids per list
+
+        Args:
+            registration_ids (list): FCM device registration ID
+
+        Yields:
+            generator: list including lists with registration ids
+        """
         try:
             xrange
         except NameError:
             xrange = range
-        """Yield successive 1000-sized (max fcm recipients per request) chunks from registration_ids."""
+
+        # Yield successive 1000-sized (max fcm recipients per request) chunks from registration_ids
         for i in xrange(0, len(registration_ids), self.FCM_MAX_RECIPIENTS):
             yield registration_ids[i:i + self.FCM_MAX_RECIPIENTS]
 
     def json_dumps(self, data):
-        """Standardized json.dumps function with separators and sorted keys set."""
+        """
+        Standardized json.dumps function with separators and sorted keys set
+
+        Args:
+            data (dict or list): data to be dumped
+
+        Returns:
+            string: json
+        """
         return (json.dumps(data, separators=(',', ':'), sort_keys=True, cls=self.json_encoder)
                 .encode('utf8'))
 
@@ -106,12 +129,58 @@ class BaseAPI(object):
                       title_loc_args=None,
                       content_available=None,
                       remove_notification=False,
+                      android_channel_id=None,
                       extra_notification_kwargs={},
                       **extra_kwargs):
-
         """
+        Parses parameters of FCMNotification's methods to FCM nested json
+
+        Args:
+            registration_ids (list, optional): FCM device registration IDs
+            topic_name (str, optional): Name of the topic to deliver messages to
+            message_body (str, optional): Message string to display in the notification tray
+            message_title (str, optional): Message title to display in the notification tray
+            message_icon (str, optional): Icon that apperas next to the notification
+            sound (str, optional): The sound file name to play. Specify "Default" for device default sound.
+            condition (str, optiona): Topic condition to deliver messages to
+            collapse_key (str, optional): Identifier for a group of messages
+                that can be collapsed so that only the last message gets sent
+                when delivery can be resumed. Defaults to `None`.
+            delay_while_idle (bool, optional): deprecated
+            time_to_live (int, optional): How long (in seconds) the message
+                should be kept in FCM storage if the device is offline. The
+                maximum time to live supported is 4 weeks. Defaults to `None`
+                which uses the FCM default of 4 weeks.
+            restricted_package_name (str, optional): Name of package
+            low_priority (bool, optional): Whether to send notification with
+                the low priority flag. Defaults to `False`.
+            dry_run (bool, optional): If `True` no message will be sent but request will be tested.
+            data_message (dict, optional): Custom key-value pairs
+            click_action (str, optional): Action associated with a user click on the notification
+            badge (str, optional): Badge of notification
+            color (str, optional): Color of the icon
+            tag (str, optional): Group notification by tag
+            body_loc_key (str, optional): Indicates the key to the body string for localization
+            body_loc_args (list, optional): Indicates the string value to replace format
+                specifiers in body string for localization
+            title_loc_key (str, optional): Indicates the key to the title string for localization
+            title_loc_args (list, optional): Indicates the string value to replace format
+                specifiers in title string for localization
+            content_available (bool, optional): Inactive client app is awoken
+            remove_notification (bool, optional): Only send a data message
+            android_channel_id (str, optional): Starting in Android 8.0 (API level 26),
+                all notifications must be assigned to a channel. For each channel, you can set the
+                visual and auditory behavior that is applied to all notifications in that channel.
+                Then, users can change these settings and decide which notification channels from
+                your app should be intrusive or visible at all.
+            extra_notification_kwargs (dict, optional): More notification keyword arguments
+            **extra_kwargs (dict, optional): More keyword arguments
+
         Returns:
             string: json
+
+        Raises:
+            InvalidDataError: parameters do have the wrong type or format
         """
         fcm_payload = dict()
         if registration_ids:
@@ -227,19 +296,26 @@ class BaseAPI(object):
             self.send_request_responses.append(response)
 
     def registration_info_request(self, registration_id):
-        """Makes a request for registration info and returns the response object"""
-        response = self.requests_session.get(
+        """
+        Makes a request for registration info and returns the response object
+
+        Args:
+            registration_id: id to be checked
+
+        Returns:
+            response of registration info request
+        """
+        return self.requests_session.get(
             'https://iid.googleapis.com/iid/info/' + registration_id,
             params={'details': 'true'}
         )
-        return response
 
     def clean_registration_ids(self, registration_ids=[]):
         """
         Checks registration ids and excludes inactive ids
-        
+
         Args:
-            registration_ids (list)
+            registration_ids (list, optional): list of ids to be cleaned
 
         Returns:
             list: cleaned registration ids
@@ -253,11 +329,10 @@ class BaseAPI(object):
 
     def get_registration_id_info(self, registration_id):
         """
-        Retrieves 
         Returns details related to a registration id if it exists otherwise return None
-        
+
         Args:
-            registration_id
+            registration_id: id to be checked
 
         Returns:
             dict: info about registration id
@@ -273,8 +348,8 @@ class BaseAPI(object):
         Subscribes a list of registration ids to a topic
 
         Args:
-            registration_ids (list)
-            topic_name (str)
+            registration_ids (list): ids to be subscribed
+            topic_name (str): name of topic
 
         Returns:
             True: if operation succeeded
@@ -302,8 +377,8 @@ class BaseAPI(object):
         Unsubscribes a list of registration ids from a topic
 
         Args:
-            registration_ids (list)
-            topic_name (str)
+            registration_ids (list): ids to be unsubscribed
+            topic_name (str): name of topic
 
         Returns:
             True: if operation succeeded
@@ -325,19 +400,19 @@ class BaseAPI(object):
             raise InvalidDataError(error['error'])
         else:
             raise FCMError()
-        
+
     def parse_responses(self):
         """
         Parses the json response sent back by the server and tries to get out the important return variables
 
         Returns:
             dict: multicast_ids (list), success (int), failure (int), canonical_ids (int),
-                  results (list) and optional topic_message_id (str but None by default)
+                results (list) and optional topic_message_id (str but None by default)
 
         Raises:
-            FCMServerError
-            AuthenticationError
-            InvalidDataError
+            FCMServerError: FCM is temporary not available
+            AuthenticationError: error authenticating the sender account
+            InvalidDataError: data passed to FCM was incorrecly structured
         """
         response_dict = {
             'multicast_ids': [],
