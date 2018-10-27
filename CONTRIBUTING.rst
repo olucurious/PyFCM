@@ -11,9 +11,10 @@ Overview
 
 1. Fork the repo.
 2. Improve/fix the code.
-3. Add your changes to CHANGES.rst
-4. Add your name to AUTHORS.rst
-5. Push to your fork and submit a pull request to the ``develop`` branch.
+3. Write and run tests_
+4. Add your changes to CHANGES.rst
+5. Add your name to AUTHORS.rst
+6. Push to your fork and submit a pull request to the ``develop`` branch.
 
 
 Guidelines
@@ -23,6 +24,20 @@ Some simple guidelines to follow when contributing code:
 
 - Adhere to `PEP8`_.
 - Clean, well documented code.
+
+
+Tests
+-----
+
+Before commiting your changes, please run the tests. For running the tests you need an FCM API key.
+
+**Please do not use an API key, which is used in production!** 
+
+::
+    export FCM_TEST_API_KEY=AAA...
+    python -m pytest
+
+If you add a new fixture or fix a bug, please make sure to write a new unit test. This makes development easier and avoids new bugs.
 
 
 Branching
