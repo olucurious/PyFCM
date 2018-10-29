@@ -134,3 +134,7 @@ Unreleased
 - Add android_channel_id
 
 -- _Lucas Hild: https://github.com/Lanseuo
+
+- Force to not ensure ascii when dumping payload to json
+
+-- _Roman Tolkachyov: https://gihub.com/romantolkachyov
