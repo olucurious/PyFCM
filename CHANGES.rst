@@ -133,4 +133,9 @@ Unreleased
 
 - Add android_channel_id
 
--- _Lucas Hild: https://github.com/Lanseuo
+.. _Lucas Hild: https://github.com/Lanseuo
+
+- Handled requests.ConnectionError raising FCMServerError to allow single
+error handling for the end library user
+
+.. _Mayank Jain: https://github.com/mj8894

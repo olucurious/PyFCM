@@ -38,11 +38,13 @@ class BaseAPI(object):
         elif os.getenv('FCM_API_KEY', None):
             self._FCM_API_KEY = os.getenv('FCM_API_KEY', None)
         else:
-            raise AuthenticationError("Please provide the api_key in the google-services.json file")
+            raise AuthenticationError(
+                "Please provide the api_key in the google-services.json file")
         self.FCM_REQ_PROXIES = None
         self.requests_session = requests.Session()
         self.requests_session.headers.update(self.request_headers())
-        if proxy_dict and isinstance(proxy_dict, dict) and (('http' in proxy_dict) or ('https' in proxy_dict)):
+        if proxy_dict and isinstance(proxy_dict, dict) and (
+                    ('http' in proxy_dict) or ('https' in proxy_dict)):
             self.FCM_REQ_PROXIES = proxy_dict
             self.requests_session.proxies.update(proxy_dict)
         self.send_request_responses = list()
@@ -65,42 +67,49 @@ class BaseAPI(object):
             xrange
         except NameError:
             xrange = range
-        """Yield successive 1000-sized (max fcm recipients per request) chunks from registration_ids."""
+        """
+        Yield successive 1000-sized (max fcm recipients per request) 
+        chunks from registration_ids.
+        """
         for i in xrange(0, len(registration_ids), self.FCM_MAX_RECIPIENTS):
             yield registration_ids[i:i + self.FCM_MAX_RECIPIENTS]
 
     def json_dumps(self, data):
-        """Standardized json.dumps function with separators and sorted keys set."""
-        return (json.dumps(data, separators=(',', ':'), sort_keys=True, cls=self.json_encoder)
+        """
+        Standardized json.dumps function with separators and sorted keys set.
+        """
+        return (json.dumps(
+            data, separators=(',', ':'), sort_keys=True, cls=self.json_encoder)
                 .encode('utf8'))
 
-    def parse_payload(self,
-                      registration_ids=None,
-                      topic_name=None,
-                      message_body=None,
-                      message_title=None,
-                      message_icon=None,
-                      sound=None,
-                      condition=None,
-                      collapse_key=None,
-                      delay_while_idle=False,
-                      time_to_live=None,
-                      restricted_package_name=None,
-                      low_priority=False,
-                      dry_run=False,
-                      data_message=None,
-                      click_action=None,
-                      badge=None,
-                      color=None,
-                      tag=None,
-                      body_loc_key=None,
-                      body_loc_args=None,
-                      title_loc_key=None,
-                      title_loc_args=None,
-                      content_available=None,
-                      remove_notification=False,
-                      extra_notification_kwargs={},
-                      **extra_kwargs):
+    def parse_payload(
+            self,
+            registration_ids=None,
+            topic_name=None,
+            message_body=None,
+            message_title=None,
+            message_icon=None,
+            sound=None,
+            condition=None,
+            collapse_key=None,
+            delay_while_idle=False,
+            time_to_live=None,
+            restricted_package_name=None,
+            low_priority=False,
+            dry_run=False,
+            data_message=None,
+            click_action=None,
+            badge=None,
+            color=None,
+            tag=None,
+            body_loc_key=None,
+            body_loc_args=None,
+            title_loc_key=None,
+            title_loc_args=None,
+            content_available=None,
+            remove_notification=False,
+            extra_notification_kwargs={},
+            **extra_kwargs):
 
         """
 
@@ -115,7 +124,8 @@ class BaseAPI(object):
         if condition:
             fcm_payload['condition'] = condition
         else:
-            # In the `to` reference at: https://firebase.google.com/docs/cloud-messaging/http-server-ref#send-downstream
+            # In the `to` reference at:
+            # https://firebase.google.com/docs/cloud-messaging/http-server-ref#send-downstream
             # We have `Do not set this field (to) when sending to multiple topics`
             # Which is why it's in the `else` block since `condition` is used when multiple topics are being targeted
             if topic_name:
@@ -146,7 +156,8 @@ class BaseAPI(object):
             if isinstance(data_message, dict):
                 fcm_payload['data'] = data_message
             else:
-                raise InvalidDataError("Provided data_message is in the wrong format")
+                raise InvalidDataError(
+                    "Provided data_message is in the wrong format")
 
         fcm_payload['notification'] = {}
         if message_icon:
@@ -172,7 +183,8 @@ class BaseAPI(object):
                 fcm_payload['notification']['title_loc_key'] = title_loc_key
             if title_loc_args:
                 if isinstance(title_loc_args, list):
-                    fcm_payload['notification']['title_loc_args'] = title_loc_args
+                    fcm_payload['notification'][
+                        'title_loc_args'] = title_loc_args
                 else:
                     raise InvalidDataError('title_loc_args should be an array')
 
@@ -206,11 +218,20 @@ class BaseAPI(object):
         return self.json_dumps(fcm_payload)
 
     def do_request(self, payload, timeout):
-        response = self.requests_session.post(self.FCM_END_POINT, data=payload, timeout=timeout)
-        if 'Retry-After' in response.headers and int(response.headers['Retry-After']) > 0:
-            sleep_time = int(response.headers['Retry-After'])
-            time.sleep(sleep_time)
-            return self.do_request(payload, timeout)
+        try:
+            response = self.requests_session.post(
+                self.FCM_END_POINT, data=payload, timeout=timeout)
+            if 'Retry-After' in response.headers and int(
+                    response.headers['Retry-After']) > 0:
+                sleep_time = int(response.headers['Retry-After'])
+                time.sleep(sleep_time)
+                return self.do_request(payload, timeout)
+        except requests.ConnectTimeout as err_two:
+            raise FCMServerError(
+                "Could not connect to FCM servers in {} seconds".format(
+                    timeout))
+        except requests.ConnectionError as err:
+            raise FCMServerError("Could not connect to FCM servers.")
         return response
 
     def send_request(self, payloads=None, timeout=None):
@@ -223,8 +244,9 @@ class BaseAPI(object):
         """ Makes a request for registration info and returns the response
             object
         """
-        response = self.requests_session.get('https://iid.googleapis.com/iid/info/' + registration_id,
-                                             params={'details': 'true'})
+        response = self.requests_session.get(
+            'https://iid.googleapis.com/iid/info/' + registration_id,
+            params={'details': 'true'})
         return response
 
     def clean_registration_ids(self, registration_ids=[]):
@@ -258,12 +280,13 @@ class BaseAPI(object):
         if response.status_code == 200:
             return True
         elif response.status_code == 400:
-            error = json.loads( response.content )
+            error = json.loads(response.content)
             raise InvalidDataError(error['error'])
         else:
             raise FCMError()
 
-    def unsubscribe_registration_ids_from_topic(self, registration_ids, topic_name):
+    def unsubscribe_registration_ids_from_topic(
+            self, registration_ids, topic_name):
         """ Unsubscribes a list of registration ids from a topic
         """
         url = '''https://iid.googleapis.com/iid/v1:batchRemove'''
@@ -275,14 +298,16 @@ class BaseAPI(object):
         if response.status_code == 200:
             return True
         elif response.status_code == 400:
-            error = json.loads( response.content )
+            error = json.loads(response.content)
             raise InvalidDataError(error['error'])
         else:
             raise FCMError()
         
     def parse_responses(self):
         """
-        Returns a python dict of multicast_ids(list), success(int), failure(int), canonical_ids(int), results(list) and optional topic_message_id(str but None by default)
+        Returns a python dict of multicast_ids(list), success(int),
+        failure(int), canonical_ids(int), results(list) and
+        optional topic_message_id(str but None by default)
         """
         response_dict = {
             'multicast_ids': list(),
@@ -299,17 +324,19 @@ class BaseAPI(object):
                 Parses the json response sent back by the
                 server and tries to get out the important return variables
                 """
-                if 'content-length' in response.headers and int(response.headers['content-length']) <= 0:
-                    raise FCMServerError("FCM server connection error, the response is empty")
+                if 'content-length' in response.headers and int(
+                        response.headers['content-length']) <= 0:
+                    raise FCMServerError(
+                        "FCM server connection error, the response is empty")
                 else:
                     parsed_response = response.json()
-
                     multicast_id = parsed_response.get('multicast_id', None)
                     success = parsed_response.get('success', 0)
                     failure = parsed_response.get('failure', 0)
                     canonical_ids = parsed_response.get('canonical_ids', 0)
                     results = parsed_response.get('results', [])
-                    message_id = parsed_response.get('message_id', None)  # for topic messages
+                    message_id = parsed_response.get(
+                        'message_id', None)  # for topic messages
                     if message_id:
                         success = 1
                     if multicast_id:
@@ -320,7 +347,8 @@ class BaseAPI(object):
                     response_dict['results'].extend(results)
                     response_dict['topic_message_id'] = message_id
             elif response.status_code == 401:
-                raise AuthenticationError("There was an error authenticating the sender account")
+                raise AuthenticationError(
+                    "There was an error authenticating the sender account")
             elif response.status_code == 400:
                 raise InternalPackageError(response.text)
             else:
