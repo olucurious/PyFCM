@@ -4,6 +4,7 @@ class FCMError(Exception):
     """
     pass
 
+
 class AuthenticationError(FCMError):
     """
     API key not found or there was an error authenticating the sender
