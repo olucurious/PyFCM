@@ -3,6 +3,8 @@ import os
 import time
 
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3 import Retry
 
 from .errors import *
 
@@ -41,6 +43,10 @@ class BaseAPI(object):
             raise AuthenticationError("Please provide the api_key in the google-services.json file")
         self.FCM_REQ_PROXIES = None
         self.requests_session = requests.Session()
+        retries = Retry(backoff_factor=1, status_forcelist=[502, 503, 504],
+                        method_whitelist=(Retry.DEFAULT_METHOD_WHITELIST | frozenset(['POST'])))
+        self.requests_session.mount('http://', HTTPAdapter(max_retries=retries))
+        self.requests_session.mount('https://', HTTPAdapter(max_retries=retries))
         self.requests_session.headers.update(self.request_headers())
         if proxy_dict and isinstance(proxy_dict, dict) and (('http' in proxy_dict) or ('https' in proxy_dict)):
             self.FCM_REQ_PROXIES = proxy_dict
