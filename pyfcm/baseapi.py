@@ -127,13 +127,11 @@ class BaseAPI(object):
             # Which is why it's in the `else` block since `condition` is used when multiple topics are being targeted
             if topic_name:
                 fcm_payload['to'] = '/topics/%s' % topic_name
-        # Add a object within the payload to set priority of the messages with reference to
-        # https://firebase.google.com/docs/cloud-messaging/concept-options#setting-the-priority-of-a-message
-        # required for legacy http otherwise data messages with priority as high are sent with normal priority
+        # Revert to legacy API compatible priority
         if low_priority:
-            fcm_payload['android'] = dict(priority=self.FCM_LOW_PRIORITY)
+            fcm_payload['priority'] = self.FCM_LOW_PRIORITY
         else:
-            fcm_payload['android'] = dict(priority=self.FCM_HIGH_PRIORITY)
+            fcm_payload['priority'] = self.FCM_HIGH_PRIORITY
 
         if delay_while_idle:
             fcm_payload['delay_while_idle'] = delay_while_idle
