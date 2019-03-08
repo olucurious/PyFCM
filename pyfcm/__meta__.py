@@ -5,7 +5,7 @@ __title__ = 'pyfcm'
 __summary__ = 'Python client for FCM - Firebase Cloud Messaging (Android, iOS and Web)'
 __url__ = 'https://github.com/olucurious/pyfcm'
 
-__version__ = '1.4.5'
+__version__ = '1.4.6'
 
 __install_requires__ = ['requests', 'requests-toolbelt']
 
