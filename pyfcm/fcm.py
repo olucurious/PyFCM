@@ -280,6 +280,7 @@ class FCMNotification(BaseAPI):
                                       dry_run=False,
                                       data_message=None,
                                       content_available=None,
+                                      android_channel_id=None,
                                       timeout=5,
                                       extra_notification_kwargs=None,
                                       extra_kwargs={}):
@@ -308,6 +309,7 @@ class FCMNotification(BaseAPI):
                 receive the message. Defaults to ``None``.
             dry_run (bool, optional): If ``True`` no message will be sent but
                 request will be tested.
+            android_channel_id (str): new in Android O
 
         Returns:
             :tuple:`multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)`:
@@ -333,6 +335,7 @@ class FCMNotification(BaseAPI):
                                                dry_run=dry_run,
                                                data_message=data_message,
                                                content_available=content_available,
+                                               android_channel_id=android_channel_id,
                                                remove_notification=True,
                                                extra_notification_kwargs=extra_notification_kwargs,
                                                **extra_kwargs))
