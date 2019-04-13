@@ -312,7 +312,7 @@ class BaseAPI(object):
         Returns:
             response of registration info request
         """
-        response = self.requests_session.get(
+        return self.requests_session.get(
             self.INFO_END_POINT + registration_id,
             params={'details': 'true'}
         )
