@@ -2,10 +2,8 @@
 pyfcm
 ========
 
-Python client for FCM - Firebase Cloud Messaging (Android & iOS)
-
+Python client for FCM - Firebase Cloud Messaging (Android, iOS and Web)
 Project: https://github.com/olucurious/pyfcm
-
 """
 
 import os
@@ -17,10 +15,13 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-tests_require = ["mock", "unittest2"]
+install_requires = ['requests']
+tests_require = ['pytest']
 
+# We can't get the values using `from pyfcm import __meta__`, because this would import
+# the other modules too and raise an exception (dependencies are not installed at this point yet).
 meta = {}
-exec (read('pyfcm/__meta__.py'), meta)
+exec(read('pyfcm/__meta__.py'), meta)
 
 if sys.argv[-1] == 'publish':
     os.system("rm dist/*.gz dist/*.whl")
@@ -40,9 +41,10 @@ setup(
     description=meta['__summary__'],
     long_description=read('README.rst'),
     packages=['pyfcm'],
-    install_requires=meta['__install_requires__'],
+    install_requires=install_requires,
     tests_require=tests_require,
     test_suite="tests.get_tests",
+    extras_require={'test': tests_require},
     keywords='firebase fcm apns ios gcm android push notifications',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
