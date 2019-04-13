@@ -134,3 +134,7 @@ Unreleased
 - Add android_channel_id
 
 -- _Lucas Hild: https://github.com/Lanseuo
+
+- Add configurable retries to info endpoint
+
+-- _Christy O'Reilly: https://github.com/c-oreills

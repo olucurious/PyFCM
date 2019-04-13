@@ -3,6 +3,7 @@ import os
 import time
 
 import requests
+from requests.adapters import HTTPAdapter
 
 from .errors import *
 
@@ -20,6 +21,7 @@ class BaseAPI(object):
 
     CONTENT_TYPE = "application/json"
     FCM_END_POINT = "https://fcm.googleapis.com/fcm/send"
+    INFO_END_POINT = 'https://iid.googleapis.com/iid/info/'
     # FCM only allows up to 1000 reg ids per bulk message.
     FCM_MAX_RECIPIENTS = 1000
 
@@ -34,6 +36,9 @@ class BaseAPI(object):
     #: wake a sleeping device and open a network connection to your server.
     FCM_HIGH_PRIORITY = 'high'
 
+    # Number of times to retry calls to info endpoint
+    INFO_RETRIES = 3
+
     def __init__(self, api_key=None, proxy_dict=None, env=None, json_encoder=None):
         if api_key:
             self._FCM_API_KEY = api_key
@@ -45,6 +50,7 @@ class BaseAPI(object):
         self.FCM_REQ_PROXIES = None
         self.requests_session = requests.Session()
         self.requests_session.headers.update(self.request_headers())
+        self.requests_session.mount(self.INFO_END_POINT, HTTPAdapter(max_retries=self.INFO_RETRIES))
 
         if proxy_dict and isinstance(proxy_dict, dict) and (('http' in proxy_dict) or ('https' in proxy_dict)):
             self.FCM_REQ_PROXIES = proxy_dict
@@ -227,7 +233,7 @@ class BaseAPI(object):
     def registration_info_request(self, registration_id):
         """Makes a request for registration info and returns the response object"""
         response = self.requests_session.get(
-            'https://iid.googleapis.com/iid/info/' + registration_id,
+            self.INFO_END_POINT + registration_id,
             params={'details': 'true'}
         )
         return response
