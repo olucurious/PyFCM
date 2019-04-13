@@ -8,7 +8,7 @@ v0.0.1 (05-06-2016)
 
 - First release.
 
-.. _Emmanuel Olucurious: https://github.com/olucurious
+.. _Emmanuel Adegbite: https://github.com/olucurious
 
 
 v0.0.2 (07-06-2016)
@@ -16,7 +16,7 @@ v0.0.2 (07-06-2016)
 
 - Added topic messaging functionality.
 
-.. _Emmanuel Olucurious: https://github.com/olucurious
+.. _Emmanuel Adegbite: https://github.com/olucurious
 
 
 v0.0.3 (08-06-2016)
@@ -24,14 +24,14 @@ v0.0.3 (08-06-2016)
 
 - changes in README.rst
 
-.. _Emmanuel Olucurious: https://github.com/olucurious
+.. _Emmanuel Adegbite: https://github.com/olucurious
 
 v0.0.4 (09-06-2016)
 -------------------
 
 - Fixed "registration_id of notify_single_device does not work with a str input"
 
-.. _Emmanuel Olucurious: https://github.com/olucurious
+.. _Emmanuel Adegbite: https://github.com/olucurious
 
 v0.0.5 (22-06-2016)
 -------------------
@@ -45,14 +45,14 @@ v0.0.6 (23-06-2016)
 
 - Fixed xrange issue in python3
 
-.. _Emmanuel Olucurious: https://github.com/olucurious
+.. _Emmanuel Adegbite: https://github.com/olucurious
 
 v0.0.7 (24-06-2016)
 -------------------
 
 - Added support for sending data only messages
 
-.. _Emmanuel Olucurious: https://github.com/olucurious
+.. _Emmanuel Adegbite: https://github.com/olucurious
 
 v0.0.8 (26-06-2016)
 -------------------
@@ -66,7 +66,7 @@ v1.0.0 (12-07-2016)
 
 - Added proxy support, more fcm arguments and bump version to 1.0.0
 
-.. _Emmanuel Olucurious: https://github.com/olucurious
+.. _Emmanuel Adegbite: https://github.com/olucurious
 
 v1.0.0 (16-07-2016)
 -------------------
@@ -87,7 +87,7 @@ v1.1.4 (11-11-2016)
 
 - added body_loc_key support and notify single device single response
 
-.. _Emmanuel Olucurious: https://github.com/olucurious
+.. _Emmanuel Adegbite: https://github.com/olucurious
 
 v1.1.5 (16-11-2016)
 -------------------
@@ -103,7 +103,7 @@ v1.2.0 (16-11-2016)
 - You can now pass extra argument by passing it as key value in a dictionary as extra_kwargs to any notification sending method you want to use
 - It is now possible to send a notification without setting body or content available
 
-.. _Emmanuel Olucurious: https://github.com/olucurious
+.. _Emmanuel Adegbite: https://github.com/olucurious
 
 v1.2.3 (09-02-2017)
 -------------------
@@ -118,7 +118,7 @@ v1.2.9 (07-04-2017)
 
 - Fixed issue with notification extra kwargs
 
-.. _Emmanuel Olucurious: https://github.com/olucurious
+.. _Emmanuel Adegbite: https://github.com/olucurious
 
 Unreleased
 -------------------
@@ -133,8 +133,8 @@ Unreleased
 
 - Add android_channel_id
 
--- _Lucas Hild: https://github.com/Lanseuo
+.. _Lucas Hild: https://github.com/Lanseuo
 
 - Add configurable retries to info endpoint
 
--- _Christy O'Reilly: https://github.com/c-oreills
+.. _Christy O'Reilly: https://github.com/c-oreills
