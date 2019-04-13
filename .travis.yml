@@ -1,4 +1,7 @@
 language: python
+env:
+  global:
+    - FCM_TEST_API_KEY=AIzaSyCCRBsh8Sw3YdycGcpU71MeUiXxciqW0go
 python: 
   - "2.7"
   - "3.4"
