@@ -1,0 +1,13 @@
+language: python
+env:
+  global:
+    - FCM_TEST_API_KEY=AIzaSyCCRBsh8Sw3YdycGcpU71MeUiXxciqW0go
+python: 
+  - "2.7"
+  - "3.4"
+  - "3.6"
+  - "3.7-dev"
+install:
+  - pip install . ".[test]"
+script:
+  - pytest
