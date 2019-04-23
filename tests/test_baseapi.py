@@ -58,7 +58,7 @@ def test_parse_payload(base_api):
         sound="Test",
         collapse_key="Test",
         delay_while_idle=False,
-        time_to_live=100,
+        time_to_live=0,
         restricted_package_name="Test",
         low_priority=False,
         dry_run=False,
@@ -90,6 +90,9 @@ def test_parse_payload(base_api):
         "tag": "Test",
         "title": "Test"
     }
+
+    assert 'time_to_live' in data
+    assert data['time_to_live'] == 0
 
 
 def test_clean_registration_ids(base_api):

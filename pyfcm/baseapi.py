@@ -222,7 +222,7 @@ class BaseAPI(object):
             fcm_payload['delay_while_idle'] = delay_while_idle
         if collapse_key:
             fcm_payload['collapse_key'] = collapse_key
-        if time_to_live:
+        if time_to_live is not None:
             if isinstance(time_to_live, int):
                 fcm_payload['time_to_live'] = time_to_live
             else:
