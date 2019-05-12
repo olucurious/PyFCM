@@ -6,7 +6,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3 import Retry
 
-from .errors import AuthenticationError, InvalidDataError, FCMError, FCMServerError
+from .errors import AuthenticationError, InvalidDataError, FCMError, FCMServerError, FCMNotRegisteredError
 
 
 class BaseAPI(object):
@@ -113,10 +113,10 @@ class BaseAPI(object):
             string: json
         """
         return json.dumps(
-            data, 
-            separators=(',', ':'), 
-            sort_keys=True, 
-            cls=self.json_encoder, 
+            data,
+            separators=(',', ':'),
+            sort_keys=True,
+            cls=self.json_encoder,
             ensure_ascii=False
         ).encode('utf8')
 
@@ -467,6 +467,8 @@ class BaseAPI(object):
                 raise AuthenticationError("There was an error authenticating the sender account")
             elif response.status_code == 400:
                 raise InvalidDataError(response.text)
+            elif response.status_code == 404:
+                raise FCMNotRegisteredError("Token not registered")
             else:
                 raise FCMServerError("FCM server is temporarily unavailable")
         return response_dict
