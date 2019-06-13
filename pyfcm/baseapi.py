@@ -414,7 +414,7 @@ class BaseAPI(object):
         if response.status_code == 200:
             return True
         elif response.status_code == 400:
-            error = response.json
+            error = response.json()
             raise InvalidDataError(error['error'])
         else:
             raise FCMError()
