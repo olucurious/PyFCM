@@ -6,7 +6,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3 import Retry
 
-from .errors import AuthenticationError, InvalidDataError, FCMError, FCMServerError
+from .errors import AuthenticationError, InvalidDataError, FCMError, FCMServerError, FCMNotRegisteredError
 
 
 class BaseAPI(object):
@@ -18,6 +18,7 @@ class BaseAPI(object):
         proxy_dict (dict): use proxy (keys: `http`, `https`)
         env (str): for example "app_engine"
         json_encoder
+        adapter: requests.adapters.HTTPAdapter()
     """
 
     CONTENT_TYPE = "application/json"
@@ -40,7 +41,7 @@ class BaseAPI(object):
     # Number of times to retry calls to info endpoint
     INFO_RETRIES = 3
 
-    def __init__(self, api_key=None, proxy_dict=None, env=None, json_encoder=None):
+    def __init__(self, api_key=None, proxy_dict=None, env=None, json_encoder=None, adapter=None):
         if api_key:
             self._FCM_API_KEY = api_key
         elif os.getenv('FCM_API_KEY', None):
@@ -52,8 +53,8 @@ class BaseAPI(object):
         self.requests_session = requests.Session()
         retries = Retry(backoff_factor=1, status_forcelist=[502, 503, 504],
                         method_whitelist=(Retry.DEFAULT_METHOD_WHITELIST | frozenset(['POST'])))
-        self.requests_session.mount('http://', HTTPAdapter(max_retries=retries))
-        self.requests_session.mount('https://', HTTPAdapter(max_retries=retries))
+        self.requests_session.mount('http://', adapter or HTTPAdapter(max_retries=retries))
+        self.requests_session.mount('https://', adapter or HTTPAdapter(max_retries=retries))
         self.requests_session.headers.update(self.request_headers())
         self.requests_session.mount(self.INFO_END_POINT, HTTPAdapter(max_retries=self.INFO_RETRIES))
 
@@ -113,10 +114,10 @@ class BaseAPI(object):
             string: json
         """
         return json.dumps(
-            data, 
-            separators=(',', ':'), 
-            sort_keys=True, 
-            cls=self.json_encoder, 
+            data,
+            separators=(',', ':'),
+            sort_keys=True,
+            cls=self.json_encoder,
             ensure_ascii=False
         ).encode('utf8')
 
@@ -222,7 +223,7 @@ class BaseAPI(object):
             fcm_payload['delay_while_idle'] = delay_while_idle
         if collapse_key:
             fcm_payload['collapse_key'] = collapse_key
-        if time_to_live:
+        if time_to_live is not None:
             if isinstance(time_to_live, int):
                 fcm_payload['time_to_live'] = time_to_live
             else:
@@ -413,7 +414,7 @@ class BaseAPI(object):
         if response.status_code == 200:
             return True
         elif response.status_code == 400:
-            error = response.json
+            error = response.json()
             raise InvalidDataError(error['error'])
         else:
             raise FCMError()
@@ -467,6 +468,8 @@ class BaseAPI(object):
                 raise AuthenticationError("There was an error authenticating the sender account")
             elif response.status_code == 400:
                 raise InvalidDataError(response.text)
+            elif response.status_code == 404:
+                raise FCMNotRegisteredError("Token not registered")
             else:
                 raise FCMServerError("FCM server is temporarily unavailable")
         return response_dict

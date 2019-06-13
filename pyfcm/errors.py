@@ -11,6 +11,14 @@ class AuthenticationError(FCMError):
     pass
 
 
+class FCMNotRegisteredError(FCMError):
+    """
+    push token is not registered
+    https://firebase.google.com/docs/reference/fcm/rest/v1/ErrorCode
+    """
+    pass
+
+
 class FCMServerError(FCMError):
     """
     Internal server error or timeout error on Firebase cloud messaging server

@@ -138,3 +138,7 @@ Unreleased
 - Add configurable retries to info endpoint
 
 .. _Christy O'Reilly: https://github.com/c-oreills
+
+- Fix time_to_live check to allow 0
+
+.. _Stephen Kwong: https://github.com/skwong2
