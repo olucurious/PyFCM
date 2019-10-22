@@ -21,15 +21,6 @@ def test_push_service_without_credentials():
 
 
 def test_notify_single_device(push_service):
-    try:
-        push_service.notify_single_device(
-            message_body="Test",
-            dry_run=True
-        )
-        assert False, "Should raise InvalidDataError without registration id"
-    except errors.InvalidDataError:
-        pass
-
     response = push_service.notify_single_device(
         registration_id="Test",
         message_body="Test",
@@ -60,15 +51,6 @@ def test_single_device_data_message(push_service):
 
 
 def test_notify_multiple_devices(push_service):
-    try:
-        push_service.notify_multiple_devices(
-            message_body="Test",
-            dry_run=True
-        )
-        assert False, "Should raise InvalidDataError without registration id"
-    except errors.InvalidDataError:
-        pass
-
     response = push_service.notify_multiple_devices(
         registration_ids=["Test"],
         message_body="Test",
