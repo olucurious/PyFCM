@@ -51,7 +51,7 @@ class BaseAPI(object):
 
         self.FCM_REQ_PROXIES = None
         self.requests_session = requests.Session()
-        retries = Retry(backoff_factor=1, status_forcelist=[502, 503, 504],
+        retries = Retry(backoff_factor=1, status_forcelist=[502, 503],
                         method_whitelist=(Retry.DEFAULT_METHOD_WHITELIST | frozenset(['POST'])))
         self.requests_session.mount('http://', adapter or HTTPAdapter(max_retries=retries))
         self.requests_session.mount('https://', adapter or HTTPAdapter(max_retries=retries))
