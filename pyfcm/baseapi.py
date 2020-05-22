@@ -51,7 +51,7 @@ class BaseAPI(object):
 
         self.FCM_REQ_PROXIES = None
         self.requests_session = requests.Session()
-        retries = Retry(backoff_factor=1, status_forcelist=[502, 503, 504],
+        retries = Retry(backoff_factor=1, status_forcelist=[502, 503],
                         method_whitelist=(Retry.DEFAULT_METHOD_WHITELIST | frozenset(['POST'])))
         self.requests_session.mount('http://', adapter or HTTPAdapter(max_retries=retries))
         self.requests_session.mount('https://', adapter or HTTPAdapter(max_retries=retries))
@@ -473,3 +473,15 @@ class BaseAPI(object):
             else:
                 raise FCMServerError("FCM server is temporarily unavailable")
         return response_dict
+
+    def send_async_request(self,params_list,timeout):
+
+        import asyncio
+        from .async_fcm import fetch_tasks
+
+        payloads = [ self.parse_payload(**params) for params in params_list ]
+        responses = asyncio.new_event_loop().run_until_complete(fetch_tasks(end_point=self.FCM_END_POINT,headers=self.request_headers(),payloads=payloads,timeout=timeout))
+
+        return responses
+
+

@@ -128,3 +128,32 @@ def test_notify_with_args(push_service):
         extra_notification_kwargs={},
         extra_kwargs={}
     )
+def test_async_notify(push_service):
+    params = {"registration_ids" : ['Test'],
+    "message_body" : "Test",
+    "message_title" : "Test",
+    "message_icon" : "Test",
+    "sound" : "Test",
+    "collapse_key" : "Test",
+    "delay_while_idle" : False,
+    "time_to_live" : 100,
+    "restricted_package_name" : "Test",
+    "low_priority" : False,
+    "dry_run" : True,
+    "data_message" : {"test": "test"},
+    "click_action" : "Test",
+    "badge" : "Test",
+    "color" : "Test",
+    "tag" : "Test",
+    "body_loc_key" : "Test",
+    "body_loc_args" : "Test",
+    "title_loc_key" : "Test",
+    "title_loc_args" : "Test",
+    "content_available" : "Test",
+    "android_channel_id" : "Test"
+    }
+
+    params_list = [params for _ in range(100)]
+
+    push_service.send_async_request(params_list,timeout=5)
+
