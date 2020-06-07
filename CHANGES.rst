@@ -146,3 +146,7 @@ Unreleased
 - Add pycharm and vscode to gitignore
 
 .. _Alexandr Sukhryn: https://github.com/alexsukhrin
+
+- Fix CONTRIBUTING.rst
+
+.. _Alexandr Sukhryn: https://github.com/alexsukhrin
