@@ -142,3 +142,7 @@ Unreleased
 - Fix time_to_live check to allow 0
 
 .. _Stephen Kwong: https://github.com/skwong2
+
+- Add pycharm and vscode to gitignore
+
+.. _Alexandr Sukhryn: https://github.com/alexsukhrin
