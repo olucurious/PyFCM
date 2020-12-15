@@ -142,3 +142,15 @@ Unreleased
 - Fix time_to_live check to allow 0
 
 .. _Stephen Kwong: https://github.com/skwong2
+
+- Add pycharm and vscode to gitignore
+
+.. _Alexandr Sukhryn: https://github.com/alexsukhrin
+
+- Fix CONTRIBUTING.rst
+
+.. _Alexandr Sukhryn: https://github.com/alexsukhrin
+
+- Replace deprecated urllib3.Retry options
+
+.. _Frederico Jordan: https://github.com/fredericojordan

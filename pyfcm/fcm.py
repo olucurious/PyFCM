@@ -4,7 +4,7 @@ from .errors import InvalidDataError
 
 class FCMNotification(BaseAPI):
     def notify_single_device(self,
-                             registration_id=None,
+                             registration_id,
                              message_body=None,
                              message_title=None,
                              message_icon=None,
@@ -84,8 +84,7 @@ class FCMNotification(BaseAPI):
             InternalPackageError: Mostly from changes in the response of FCM,
                 contact the project owner to resolve the issue
         """
-        if registration_id is None:
-            raise InvalidDataError('Invalid registration ID')
+
         # [registration_id] cos we're sending to a single device
         payload = self.parse_payload(
             registration_ids=[registration_id],
@@ -195,7 +194,7 @@ class FCMNotification(BaseAPI):
         return self.parse_responses()
 
     def notify_multiple_devices(self,
-                                registration_ids=None,
+                                registration_ids,
                                 message_body=None,
                                 message_title=None,
                                 message_icon=None,
@@ -494,7 +493,7 @@ class FCMNotification(BaseAPI):
         )
         self.send_request([payload], timeout)
         return self.parse_responses()
-    
+
     def topic_subscribers_data_message(self,
                                        topic_name=None,
                                        condition=None,
@@ -508,7 +507,7 @@ class FCMNotification(BaseAPI):
                                        content_available=None,
                                        timeout=120,
                                        extra_notification_kwargs=None,
-                                       extra_kwargs={}):                                 
+                                       extra_kwargs={}):
         """
         Sends data notification to multiple devices subscribed to a topic
         Args:
@@ -516,7 +515,7 @@ class FCMNotification(BaseAPI):
             condition (condition): Topic condition to deliver messages to
             A topic name is a string that can be formed with any character in [a-zA-Z0-9-_.~%]
             data_message (dict): Data message payload to send alone or with the notification message
-            
+
         Keyword Args:
             collapse_key (str, optional): Identifier for a group of messages
                 that can be collapsed so that only the last message gets sent
@@ -534,7 +533,7 @@ class FCMNotification(BaseAPI):
                 receive the message. Defaults to ``None``.
             dry_run (bool, optional): If ``True`` no message will be sent but
                 request will be tested.
-            
+
         Returns:
             :tuple:`multicast_id(long), success(int), failure(int), canonical_ids(int), results(list)`:
             Response from FCM server.
@@ -561,3 +560,17 @@ class FCMNotification(BaseAPI):
                                      **extra_kwargs)
         self.send_request([payload], timeout)
         return self.parse_responses()
+
+    def async_notify_multiple_devices(self,params_list:list=[],timeout=5):
+        """
+                Sends push notification to multiple devices with personalized templates
+
+                Args:
+                    params_list (list): list of parameters ( the sames as notify_multiple_devices)
+                    timeout (int, optional): set time limit for the request
+
+        """
+
+        payloads = [ self.parse_payload(params) for params in params_list ]
+
+        return self.send_async_request(payloads=payloads,timeout=timeout)

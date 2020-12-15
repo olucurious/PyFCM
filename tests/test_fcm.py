@@ -21,15 +21,6 @@ def test_push_service_without_credentials():
 
 
 def test_notify_single_device(push_service):
-    try:
-        push_service.notify_single_device(
-            message_body="Test",
-            dry_run=True
-        )
-        assert False, "Should raise InvalidDataError without registration id"
-    except errors.InvalidDataError:
-        pass
-
     response = push_service.notify_single_device(
         registration_id="Test",
         message_body="Test",
@@ -60,15 +51,6 @@ def test_single_device_data_message(push_service):
 
 
 def test_notify_multiple_devices(push_service):
-    try:
-        push_service.notify_multiple_devices(
-            message_body="Test",
-            dry_run=True
-        )
-        assert False, "Should raise InvalidDataError without registration id"
-    except errors.InvalidDataError:
-        pass
-
     response = push_service.notify_multiple_devices(
         registration_ids=["Test"],
         message_body="Test",
@@ -146,3 +128,32 @@ def test_notify_with_args(push_service):
         extra_notification_kwargs={},
         extra_kwargs={}
     )
+def test_async_notify(push_service):
+    params = {"registration_ids" : ['Test'],
+    "message_body" : "Test",
+    "message_title" : "Test",
+    "message_icon" : "Test",
+    "sound" : "Test",
+    "collapse_key" : "Test",
+    "delay_while_idle" : False,
+    "time_to_live" : 100,
+    "restricted_package_name" : "Test",
+    "low_priority" : False,
+    "dry_run" : True,
+    "data_message" : {"test": "test"},
+    "click_action" : "Test",
+    "badge" : "Test",
+    "color" : "Test",
+    "tag" : "Test",
+    "body_loc_key" : "Test",
+    "body_loc_args" : "Test",
+    "title_loc_key" : "Test",
+    "title_loc_args" : "Test",
+    "content_available" : "Test",
+    "android_channel_id" : "Test"
+    }
+
+    params_list = [params for _ in range(100)]
+
+    push_service.send_async_request(params_list,timeout=5)
+
