@@ -142,3 +142,7 @@ Unreleased
 - Fix time_to_live check to allow 0
 
 .. _Stephen Kwong: https://github.com/skwong2
+
+- Replace deprecated urllib3.Retry options
+
+.. _Frederico Jordan: https://github.com/fredericojordan
