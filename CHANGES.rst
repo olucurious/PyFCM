@@ -150,3 +150,7 @@ Unreleased
 - Fix CONTRIBUTING.rst
 
 .. _Alexandr Sukhryn: https://github.com/alexsukhrin
+
+- Replace deprecated urllib3.Retry options
+
+.. _Frederico Jordan: https://github.com/fredericojordan
