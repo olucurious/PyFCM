@@ -154,3 +154,7 @@ Unreleased
 - Replace deprecated urllib3.Retry options
 
 .. _Frederico Jordan: https://github.com/fredericojordan
+
+- Replace deprecated urllib3.Retry options v2
+
+.. _Łukasz Rogowski: https://github.com/Rogalek
