@@ -15,7 +15,10 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-install_requires = ['requests']
+install_requires = [
+    "requests",
+    "urllib3>=1.26.0",
+]
 tests_require = ['pytest']
 
 # We can't get the values using `from pyfcm import __meta__`, because this would import
