@@ -2,7 +2,7 @@ import asyncio
 import aiohttp
 import json
 
-async def fetch_tasks(end_point:str,headers:dict,payloads:list,timeout:int):
+async def fetch_tasks(end_point,headers,payloads,timeout):
     """
 
     :param end_point (str) : FCM endpoint
