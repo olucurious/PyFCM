@@ -561,7 +561,7 @@ class FCMNotification(BaseAPI):
         self.send_request([payload], timeout)
         return self.parse_responses()
 
-    def async_notify_multiple_devices(self,params_list:list=[],timeout=5):
+    def async_notify_multiple_devices(self,params_list=[],timeout=5):
         """
                 Sends push notification to multiple devices with personalized templates
 
