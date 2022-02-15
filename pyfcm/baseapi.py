@@ -71,7 +71,7 @@ class BaseAPI(object):
 
     @property
     def requests_session(self):
-        if getattr(self.thread_local, "session", None) is None:
+        if getattr(self.thread_local, "requests_session", None) is None:
             retries = Retry(
                 backoff_factor=1,
                 status_forcelist=[502, 503],
