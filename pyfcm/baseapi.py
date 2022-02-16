@@ -1,6 +1,7 @@
 import json
 import os
 import time
+import threading
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -51,13 +52,8 @@ class BaseAPI(object):
             raise AuthenticationError("Please provide the api_key in the google-services.json file")
 
         self.FCM_REQ_PROXIES = None
-        self.requests_session = requests.Session()
-        retries = Retry(backoff_factor=1, status_forcelist=[502, 503],
-                        allowed_methods=(Retry.DEFAULT_ALLOWED_METHODS | frozenset(['POST'])))
-        self.requests_session.mount('http://', adapter or HTTPAdapter(max_retries=retries))
-        self.requests_session.mount('https://', adapter or HTTPAdapter(max_retries=retries))
-        self.requests_session.headers.update(self.request_headers())
-        self.requests_session.mount(self.INFO_END_POINT, HTTPAdapter(max_retries=self.INFO_RETRIES))
+        self.custom_adapter = adapter
+        self.thread_local = threading.local()
 
         if proxy_dict and isinstance(proxy_dict, dict) and (('http' in proxy_dict) or ('https' in proxy_dict)):
             self.FCM_REQ_PROXIES = proxy_dict
@@ -72,6 +68,24 @@ class BaseAPI(object):
                 pass
 
         self.json_encoder = json_encoder
+
+    @property
+    def requests_session(self):
+        if getattr(self.thread_local, "requests_session", None) is None:
+            retries = Retry(
+                backoff_factor=1,
+                status_forcelist=[502, 503],
+                allowed_methods=(Retry.DEFAULT_ALLOWED_METHODS | frozenset(["POST"])),
+            )
+            adapter = self.custom_adapter or HTTPAdapter(max_retries=retries)
+            self.thread_local.requests_session = requests.Session()
+            self.thread_local.requests_session.mount("http://", adapter)
+            self.thread_local.requests_session.mount("https://", adapter)
+            self.thread_local.requests_session.headers.update(self.request_headers())
+            self.thread_local.requests_session.mount(
+                self.INFO_END_POINT, HTTPAdapter(max_retries=self.INFO_RETRIES)
+            )
+        return self.thread_local.requests_session
 
     def request_headers(self):
         """
@@ -484,5 +498,3 @@ class BaseAPI(object):
         responses = asyncio.new_event_loop().run_until_complete(fetch_tasks(end_point=self.FCM_END_POINT,headers=self.request_headers(),payloads=payloads,timeout=timeout))
 
         return responses
-
-
