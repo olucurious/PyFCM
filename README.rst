@@ -224,17 +224,22 @@ Other argument options
     collapse_key (str, optional): Identifier for a group of messages
         that can be collapsed so that only the last message gets sent
         when delivery can be resumed. Defaults to `None`.
+        
     delay_while_idle (bool, optional): If `True` indicates that the
         message should not be sent until the device becomes active.
+        
     time_to_live (int, optional): How long (in seconds) the message
         should be kept in FCM storage if the device is offline. The
         maximum time to live supported is 4 weeks. Defaults to ``None``
         which uses the FCM default of 4 weeks.
+        
     low_priority (boolean, optional): Whether to send notification with
         the low priority flag. Defaults to `False`.
+        
     restricted_package_name (str, optional): Package name of the
         application where the registration IDs must match in order to
         receive the message. Defaults to `None`.
+        
     dry_run (bool, optional): If `True` no message will be sent but
         request will be tested.
 
