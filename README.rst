@@ -29,11 +29,10 @@ Updates (Breaking Changes)
 - MAJOR UPDATES (AUGUST 2017): https://github.com/olucurious/PyFCM/releases/tag/1.4.0
 
 
-Quickstart
+Installation
 ==========
 
 Install using pip:
-
 
 ::
 
@@ -45,17 +44,20 @@ Install using pip:
 
 PyFCM supports Android, iOS and Web.
 
+
 Features
---------
+========
 
 - All FCM functionality covered
 - Tornado support
 
 
 Examples
---------
+========
+|
 
-Send notifications using the ``FCMNotification`` class:
+Send notifications using the ``FCMNotification`` class
+-------------------------------------------------------
 
 .. code-block:: python
 
@@ -87,7 +89,10 @@ Send notifications using the ``FCMNotification`` class:
 
     print result
 
-Send a data message.
+| 
+
+Send a data message
+--------------------
 
 .. code-block:: python
 
@@ -131,10 +136,6 @@ Send a data message.
         'mutable_content': True
     }
     
-
-    
-    
-    
     # and then write a NotificationService Extension in your app
 
     # Use notification messages when you want FCM to handle displaying a notification on your app's behalf.
@@ -142,14 +143,20 @@ Send a data message.
     # PyFCM can send a message including both notification and data payloads.
     # In such cases, FCM handles displaying the notification payload, and the client app handles the data payload.
 
-Send a low priority message.
+|
+
+Send a low priority message
+----------------------------
 
 .. code-block:: python
 
     # The default is low_priority == False
     result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_body=message, low_priority=True)
 
+|
+
 Get valid registration ids (useful for cleaning up invalid registration ids in your database)
+---------------------------------------------------------------------------------------------
 
 .. code-block:: python
 
@@ -157,14 +164,20 @@ Get valid registration ids (useful for cleaning up invalid registration ids in y
     valid_registration_ids = push_service.clean_registration_ids(registration_ids)
     # Shoutout to @baali for this
 
+|
+
 Appengine users should define their environment
+-----------------------------------------------
 
 .. code-block:: python
 
     push_service = FCMNotification(api_key="<api-key>", proxy_dict=proxy_dict, env='app_engine')
     result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_body=message, low_priority=True)
-    
+
+|
+
 Manage subscriptions to a topic
+-------------------------------
 
 .. code-block:: python
 
@@ -180,8 +193,10 @@ Manage subscriptions to a topic
     unsubscribed = push_service.unsubscribe_registration_ids_from_topic(tokens, 'test')
     # returns True if successful, raises error if unsuccessful
 
-Sending a message to a topic.
+|
 
+Sending a message to a topic
+-----------------------------
 .. code-block:: python
 
     # Send a message to devices subscribed to a topic.
@@ -198,7 +213,10 @@ Sending a message to a topic.
     # Conditions for topics support two operators per expression, and parentheses are supported.
     # For more information, check: https://firebase.google.com/docs/cloud-messaging/topic-messaging
 
+|
+
 Other argument options
+----------------------
 
 ::
 
@@ -220,18 +238,21 @@ Other argument options
     dry_run (bool, optional): If `True` no message will be sent but
         request will be tested.
 
-Get response data.
+|
+
+Get response data
+------------------
 
 .. code-block:: python
 
     # Response from PyFCM.
     response_dict = {
-        'multicast_ids': list(), # List of Unique ID (number) identifying the multicast message.
-        'success': 0, #Number of messages that were processed without an error.
-        'failure': 0, #Number of messages that could not be processed.
-        'canonical_ids': 0, #Number of results that contain a canonical registration token.
-        'results': list(), #Array of dict objects representing the status of the messages processed.
-        'topic_message_id': None or str
+        'multicast_ids': list, # List of Unique ID (number) identifying the multicast message.
+        'success': int, #Number of messages that were processed without an error.
+        'failure': int, #Number of messages that could not be processed.
+        'canonical_ids': int, #Number of results that contain a canonical registration token.
+        'results': list, #Array of dict objects representing the status of the messages processed.
+        'topic_message_id': None | str
     }
 
     # registration_id: Optional string specifying the canonical registration token for the client app that the message
@@ -239,11 +260,11 @@ Get response data.
     # the messages might be rejected.
     # error: String specifying the error that occurred when processing the message for the recipient
     
-    
+
+|
+
 .. |version| image:: http://img.shields.io/pypi/v/pyfcm.svg?style=flat-square
     :target: https://pypi.python.org/pypi/pyfcm/
 
 .. |license| image:: http://img.shields.io/pypi/l/pyfcm.svg?style=flat-square
     :target: https://pypi.python.org/pypi/pyfcm/
-
-
