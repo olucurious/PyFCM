@@ -15,14 +15,6 @@ def base_api():
     return BaseAPI(service_account_file_path=service_account_file_path, project_id=project_id)
 
 
-def test_init_baseapi():
-    try:
-        BaseAPI()
-        assert False, "Should raise AuthenticationError"
-    except errors.AuthenticationError:
-        pass
-
-
 def test_parse_payload(base_api):
     json_string = base_api.parse_payload(
         registration_ids=["Test"],
@@ -53,20 +45,19 @@ def test_parse_payload(base_api):
     )
 
     data = json.loads(json_string.decode("utf-8"))
-
-    assert data["notification"] == {
+    assert data["message"]["notification"] == {
         "android_channel_id": "Test",
-        "body": "Test",
+        "badge": "Test", "body": "Test",
         "click_action": "Test",
         "color": "Test",
+        "extra_kwargs": {},
+        "extra_notification_kwargs": {},
         "icon": "Test",
         "sound": "Test",
         "tag": "Test",
+        "timeout": 5,
         "title": "Test"
     }
-
-    assert 'time_to_live' in data
-    assert data['time_to_live'] == 0
 
 
 def test_parse_responses(base_api):

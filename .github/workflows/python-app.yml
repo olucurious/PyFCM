@@ -33,4 +33,6 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
+        export FCM_TEST_API_KEY=AAA
+        export FCM_TEST_PROJECT_ID=test
         pytest
