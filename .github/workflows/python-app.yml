@@ -35,4 +35,5 @@ jobs:
       run: |
         export FCM_TEST_API_KEY=AAA
         export FCM_TEST_PROJECT_ID=test
-        pytest
+        pip install . ".[test]"
+        python -m pytest .
