@@ -6,4 +6,5 @@ pyasn1-modules==0.4.0
 rsa==4.9
 requests>=2.6.0
 urllib3==1.26.5
+pytest-mock==3.14.0
 
