@@ -10,9 +10,13 @@ from pyfcm.v1.baseapi import BaseAPI
 def base_api():
     service_account_file_path = "service_account.json"
     project_id = os.getenv("FCM_TEST_PROJECT_ID", None)
-    assert project_id, "Please set the environment variables for testing according to CONTRIBUTING.rst"
+    assert (
+        project_id
+    ), "Please set the environment variables for testing according to CONTRIBUTING.rst"
 
-    return BaseAPI(service_account_file_path=service_account_file_path, project_id=project_id)
+    return BaseAPI(
+        service_account_file_path=service_account_file_path, project_id=project_id
+    )
 
 
 def test_parse_payload(base_api):
@@ -41,13 +45,14 @@ def test_parse_payload(base_api):
         android_channel_id="Test",
         timeout=5,
         extra_notification_kwargs={},
-        extra_kwargs={}
+        extra_kwargs={},
     )
 
     data = json.loads(json_string.decode("utf-8"))
     assert data["message"]["notification"] == {
         "android_channel_id": "Test",
-        "badge": "Test", "body": "Test",
+        "badge": "Test",
+        "body": "Test",
         "click_action": "Test",
         "color": "Test",
         "extra_kwargs": {},
@@ -56,7 +61,7 @@ def test_parse_payload(base_api):
         "sound": "Test",
         "tag": "Test",
         "timeout": 5,
-        "title": "Test"
+        "title": "Test",
     }
 
 
@@ -69,5 +74,5 @@ def test_parse_responses(base_api):
         "failure": 0,
         "canonical_ids": 0,
         "results": [],
-        "topic_message_id": None
+        "topic_message_id": None,
     }

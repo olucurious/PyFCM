@@ -1,17 +1,8 @@
 import os
 import json
-import pytest
 
 from pyfcm import errors
 from pyfcm.baseapi import BaseAPI
-
-
-@pytest.fixture(scope="module")
-def base_api():
-    api_key = os.getenv("FCM_TEST_API_KEY", None)
-    assert api_key, "Please set the environment variables for testing according to CONTRIBUTING.rst"
-
-    return BaseAPI(api_key=api_key)
 
 
 def test_init_baseapi():
@@ -39,14 +30,9 @@ def test_registration_id_chunks(base_api):
 
 
 def test_json_dumps(base_api):
-    json_string = base_api.json_dumps(
-        [
-            {"test": "Test"},
-            {"test2": "Test2"}
-        ]
-    )
+    json_string = base_api.json_dumps([{"test": "Test"}, {"test2": "Test2"}])
 
-    assert json_string == b"[{\"test\":\"Test\"},{\"test2\":\"Test2\"}]"
+    assert json_string == b'[{"test":"Test"},{"test2":"Test2"}]'
 
 
 def test_parse_payload(base_api):
@@ -75,7 +61,7 @@ def test_parse_payload(base_api):
         android_channel_id="Test",
         timeout=5,
         extra_notification_kwargs={},
-        extra_kwargs={}
+        extra_kwargs={},
     )
 
     data = json.loads(json_string.decode("utf-8"))
@@ -88,11 +74,11 @@ def test_parse_payload(base_api):
         "icon": "Test",
         "sound": "Test",
         "tag": "Test",
-        "title": "Test"
+        "title": "Test",
     }
 
-    assert 'time_to_live' in data
-    assert data['time_to_live'] == 0
+    assert "time_to_live" in data
+    assert data["time_to_live"] == 0
 
 
 def test_clean_registration_ids(base_api):
@@ -119,5 +105,5 @@ def test_parse_responses(base_api):
         "failure": 0,
         "canonical_ids": 0,
         "results": [],
-        "topic_message_id": None
+        "topic_message_id": None,
     }
