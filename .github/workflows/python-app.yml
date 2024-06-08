@@ -5,9 +5,16 @@ name: Python application
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - '**'
+  create:
+    branches:
+      - '**'
+    tags:
+      - '**'
   pull_request:
-    branches: [ master ]
+    branches:
+      - master  # Run on pull requests targeting the master branch
 
 jobs:
   build:
@@ -31,6 +38,13 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Check formatting
+      run: |
+        # stop the build if there are formatting is error in any python codes
+        # to check whether the codes are formatted or not before merge
+        pip install black==24.4.2
+        pip install click==8.1.7
+        python -m black -t py310 --check .
     - name: Test with pytest
       run: |
         export FCM_TEST_API_KEY=AAA
