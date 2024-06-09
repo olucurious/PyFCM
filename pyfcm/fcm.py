@@ -113,7 +113,7 @@ class FCMNotification(BaseAPI):
             android_channel_id=android_channel_id,
             content_available=content_available,
             extra_notification_kwargs=extra_notification_kwargs,
-            **extra_kwargs
+            **extra_kwargs,
         )
 
         self.send_request([payload], timeout)
@@ -193,7 +193,7 @@ class FCMNotification(BaseAPI):
             remove_notification=True,
             android_channel_id=android_channel_id,
             extra_notification_kwargs=extra_notification_kwargs,
-            **extra_kwargs
+            **extra_kwargs,
         )
 
         self.send_request([payload], timeout)
@@ -316,7 +316,7 @@ class FCMNotification(BaseAPI):
                     content_available=content_available,
                     android_channel_id=android_channel_id,
                     extra_notification_kwargs=extra_notification_kwargs,
-                    **extra_kwargs
+                    **extra_kwargs,
                 )
             )
         self.send_request(payloads, timeout)
@@ -394,7 +394,7 @@ class FCMNotification(BaseAPI):
                     content_available=content_available,
                     remove_notification=True,
                     extra_notification_kwargs=extra_notification_kwargs,
-                    **extra_kwargs
+                    **extra_kwargs,
                 )
             )
         self.send_request(payloads, timeout)
@@ -511,7 +511,7 @@ class FCMNotification(BaseAPI):
             content_available=content_available,
             android_channel_id=android_channel_id,
             extra_notification_kwargs=extra_notification_kwargs,
-            **extra_kwargs
+            **extra_kwargs,
         )
         self.send_request([payload], timeout)
         return self.parse_responses()
@@ -583,7 +583,7 @@ class FCMNotification(BaseAPI):
             content_available=content_available,
             remove_notification=True,
             extra_notification_kwargs=extra_notification_kwargs,
-            **extra_kwargs
+            **extra_kwargs,
         )
         self.send_request([payload], timeout)
         return self.parse_responses()

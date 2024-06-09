@@ -179,7 +179,7 @@ class BaseAPI(object):
         remove_notification=False,
         android_channel_id=None,
         extra_notification_kwargs={},
-        **extra_kwargs
+        **extra_kwargs,
     ):
         """
         Parses parameters of FCMNotification's methods to FCM nested json
