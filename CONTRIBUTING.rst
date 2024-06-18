@@ -28,7 +28,7 @@ Some simple guidelines to follow when contributing code:
 Tests
 -----
 
-Before commiting your changes, please run the tests. For running the tests you need an FCM API key.
+Before commiting your changes, please run the tests. For running the tests you need a service account.
 
 **Please do not use a service account, which is used in production!**
 
