@@ -28,15 +28,15 @@ Some simple guidelines to follow when contributing code:
 Tests
 -----
 
-Before commiting your changes, please run the tests. For running the tests you need an FCM API key.
+Before commiting your changes, please run the tests. For running the tests you need a service account.
 
-**Please do not use an API key, which is used in production!** 
+**Please do not use a service account, which is used in production!**
 
 ::
 
     pip install . ".[test]"
 
-    export FCM_TEST_API_KEY=AAA...
+    export GOOGLE_APPLICATION_CREDENTIALS="service_account.json"
 
     python -m pytest
 
