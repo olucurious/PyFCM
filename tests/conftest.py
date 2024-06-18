@@ -10,12 +10,15 @@ from pyfcm.baseapi import BaseAPI
 
 @pytest.fixture(scope="module")
 def push_service():
-    service_account = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "TEST")
+    service_account_file = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", None)
+    project_id = os.getenv("FCM_TEST_PROJECT_ID", None)
     assert (
-        service_account
+        service_account_file
     ), "Please set the service_account for testing according to CONTRIBUTING.rst"
 
-    return FCMNotification(service_account_file=service_account, project_id="TEST")
+    return FCMNotification(
+        service_account_file=service_account_file, project_id=project_id
+    )
 
 
 @pytest.fixture

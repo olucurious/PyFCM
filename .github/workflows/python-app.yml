@@ -47,7 +47,6 @@ jobs:
         python -m black -t py310 --check .
     - name: Test with pytest
       run: |
-        export FCM_TEST_API_KEY=AAA
         export FCM_TEST_PROJECT_ID=test
         pip install . ".[test]"
         python -m pytest .
