@@ -1,6 +1,7 @@
 import pytest
 from pyfcm import FCMNotification, errors
 
+
 def test_push_service_without_credentials():
     try:
         FCMNotification(service_account_file="", project_id="")
@@ -11,10 +12,14 @@ def test_push_service_without_credentials():
 
 def test_notify(push_service, generate_response):
     response = push_service.notify(
-        fcm_token="Test", notification_body="Test", notification_title="Test", dry_run=True
+        fcm_token="Test",
+        notification_body="Test",
+        notification_title="Test",
+        dry_run=True,
     )
 
     assert isinstance(response, dict)
+
 
 def test_async_notify(push_service, mock_aiohttp_session):
     params = {

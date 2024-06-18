@@ -14,10 +14,8 @@ def base_api():
         project_id
     ), "Please set the environment variables for testing according to CONTRIBUTING.rst"
 
-    return BaseAPI(
-        service_account_file=service_account_file,
-        project_id=project_id
-    )
+    return BaseAPI(service_account_file=service_account_file, project_id=project_id)
+
 
 def test_json_dumps(base_api):
     json_string = base_api.json_dumps([{"test": "Test"}, {"test2": "Test2"}])
