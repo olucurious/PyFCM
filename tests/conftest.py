@@ -10,12 +10,12 @@ from pyfcm.baseapi import BaseAPI
 
 @pytest.fixture(scope="module")
 def push_service():
-    api_key = os.getenv("FCM_TEST_API_KEY", "TEST")
+    service_account = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "TEST")
     assert (
-        api_key
-    ), "Please set the environment variables for testing according to CONTRIBUTING.rst"
+        service_account
+    ), "Please set the service_account for testing according to CONTRIBUTING.rst"
 
-    return FCMNotification(api_key=api_key)
+    return FCMNotification(service_account_file=service_account, project_id="TEST")
 
 
 @pytest.fixture
@@ -25,7 +25,7 @@ def generate_response(mocker):
     mock_response.json.return_value = response
     mock_response.status_code = 200
     mock_response.headers = {"Content-Length": "123"}
-    mocker.patch("pyfcm.baseapi.BaseAPI.do_request", return_value=mock_response)
+    mocker.patch("pyfcm.baseapi.BaseAPI.send_request", return_value=mock_response)
 
 
 @pytest.fixture
@@ -46,9 +46,9 @@ def mock_aiohttp_session(mocker):
 
 @pytest.fixture(scope="module")
 def base_api():
-    api_key = os.getenv("FCM_TEST_API_KEY", None)
+    service_account = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", None)
     assert (
-        api_key
-    ), "Please set the environment variables for testing according to CONTRIBUTING.rst"
+        service_account
+    ), "Please set the service_account for testing according to CONTRIBUTING.rst"
 
-    return BaseAPI(api_key=api_key)
+    return BaseAPI(api_key=service_account)
