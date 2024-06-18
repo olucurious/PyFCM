@@ -20,6 +20,7 @@ from pyfcm.errors import (
 
 # Migration to v1 - https://firebase.google.com/docs/cloud-messaging/migrate-v1
 
+
 class BaseAPI(object):
     FCM_END_POINT = "https://fcm.googleapis.com/v1/projects"
 
@@ -49,7 +50,7 @@ class BaseAPI(object):
         self.custom_adapter = adapter
         self.thread_local = threading.local()
 
-        if (not service_account_file):
+        if not service_account_file:
             raise AuthenticationError(
                 "Please provide a service account file path in the constructor"
             )
@@ -191,16 +192,15 @@ class BaseAPI(object):
                 return response.json()
 
         elif response.status_code == 401:
-            raise  (
-                "There was an error authenticating the sender account"
-            )
+            raise ("There was an error authenticating the sender account")
         elif response.status_code == 400:
             raise InvalidDataError(response.text)
         elif response.status_code == 404:
             raise FCMNotRegisteredError("Token not registered")
         else:
-            raise FCMServerError(f"FCM server error: Unexpected status code {response.status_code}. The server might be temporarily unavailable.")
-
+            raise FCMServerError(
+                f"FCM server error: Unexpected status code {response.status_code}. The server might be temporarily unavailable."
+            )
 
     def parse_payload(
         self,
@@ -261,7 +261,9 @@ class BaseAPI(object):
             else:
                 raise InvalidDataError("Provided fcm_options is in the wrong format")
 
-        fcm_payload["notification"] = {} # - https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#notification
+        fcm_payload["notification"] = (
+            {}
+        )  # - https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#notification
         # If title is present, use it
         if notification_title:
             fcm_payload["notification"]["title"] = notification_title

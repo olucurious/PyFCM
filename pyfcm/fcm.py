@@ -17,7 +17,7 @@ class FCMNotification(BaseAPI):
         apns_config=None,
         fcm_options=None,
         dry_run=False,
-        timeout=120
+        timeout=120,
     ):
         """
         Send push notification to a single device
@@ -61,11 +61,10 @@ class FCMNotification(BaseAPI):
             apns_config=apns_config,
             webpush_config=webpush_config,
             fcm_options=fcm_options,
-            dry_run=dry_run
+            dry_run=dry_run,
         )
         response = self.send_request(payload, timeout)
         return self.parse_response(response)
-
 
     def async_notify_multiple_devices(self, params_list=None, timeout=5):
         """
