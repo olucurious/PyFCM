@@ -47,6 +47,7 @@ jobs:
         python -m black -t py310 --check .
     - name: Test with pytest
       run: |
+        export GOOGLE_APPLICATION_CREDENTIALS=service-account.json
         export FCM_TEST_PROJECT_ID=test
         pip install . ".[test]"
         python -m pytest .
