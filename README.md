@@ -56,7 +56,7 @@ PyFCM supports Android, iOS and Web.
 # Send to single device.
 from pyfcm import FCMNotification
 
-push_service = FCMNotification(service_account_file="<service-account-json-path>")
+fcm = FCMNotification(service_account_file="<service-account-json-path>", project_id="<project-id>")
 
 # OR initialize with proxies
 
@@ -64,7 +64,7 @@ proxy_dict = {
           "http"  : "http://127.0.0.1",
           "https" : "http://127.0.0.1",
         }
-push_service = FCMNotification(service_account_file="<service-account-json-path>", proxy_dict=proxy_dict)
+fcm = FCMNotification(service_account_file="<service-account-json-path>", project_id="<project-id>", proxy_dict=proxy_dict)
 
 # Your service account file can be gotten from:  https://console.firebase.google.com/u/0/project/_/settings/serviceaccounts/adminsdk
 
@@ -72,7 +72,7 @@ fcm_token = "<fcm token>"
 notification_title = "Uber update"
 notification_body = "Hi John, your order is on the way!"
 notification_image = "https://example.com/image.png"
-result = push_service.notify(fcm_token=fcm_token, notification_title=notification_title, notification_body=notification_body, notification_image=notification_image)
+result = fcm.notify(fcm_token=fcm_token, notification_title=notification_title, notification_body=notification_body, notification_image=notification_image)
 print result
 ```
 
@@ -94,11 +94,11 @@ data_payload = {
     "room": "PortugalVSDenmark"
 }
 # To a single device
-result = push_service.notify(fcm_token=fcm_token, notification_body=notification_body, data_payload=data_payload)
+result = fcm.notify(fcm_token=fcm_token, notification_body=notification_body, data_payload=data_payload)
 
 # Sending a data message only payload, do NOT include notification_body also do NOT include notification body
 # To a single device
-result = push_service.notify(fcm_token=fcm_token, data_payload=data_payload)
+result = fcm.notify(fcm_token=fcm_token, data_payload=data_payload)
 
 # Use notification messages when you want FCM to handle displaying a notification on your app's behalf.
 # Use data messages when you just want to process the messages only in your app.
@@ -109,19 +109,19 @@ result = push_service.notify(fcm_token=fcm_token, data_payload=data_payload)
 ### Appengine users should define their environment
 
 ``` python
-push_service = FCMNotification(api_key="<service-account-json-path>", proxy_dict=proxy_dict, env='app_engine')
-result = push_service.notify(fcm_token=fcm_token, notification_body=message)
+fcm = FCMNotification(service_account_file="<service-account-json-path>", project_id="<project-id>", proxy_dict=proxy_dict, env='app_engine')
+result = fcm.notify(fcm_token=fcm_token, notification_body=message)
 ```
 
 ### Sending a message to a topic
 
 ``` python
 # Send a message to devices subscribed to a topic.
-result = push_service.notify(topic_name="news", notification_body=message)
+result = fcm.notify(topic_name="news", notification_body=message)
 
 # Conditional topic messaging
 topic_condition = "'TopicA' in topics && ('TopicB' in topics || 'TopicC' in topics)"
-result = push_service.notify(notification_body=message, topic_condition=topic_condition)
+result = fcm.notify(notification_body=message, topic_condition=topic_condition)
 # FCM first evaluates any conditions in parentheses, and then evaluates the expression from left to right.
 # In the above expression, a user subscribed to any single topic does not receive the message. Likewise,
 # a user who does not subscribe to TopicA does not receive the message. These combinations do receive it:
