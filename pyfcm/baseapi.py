@@ -192,7 +192,9 @@ class BaseAPI(object):
                 return response.json()
 
         elif response.status_code == 401:
-            raise AuthenticationError("There was an error authenticating the sender account")
+            raise AuthenticationError(
+                "There was an error authenticating the sender account"
+            )
         elif response.status_code == 400:
             raise InvalidDataError(response.text)
         elif response.status_code == 404:
