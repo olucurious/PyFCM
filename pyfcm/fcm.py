@@ -77,5 +77,4 @@ class FCMNotification(BaseAPI):
         if params_list is None:
             params_list = []
 
-        payloads = [self.parse_payload(**params) for params in params_list]
-        return self.send_async_request(payloads=payloads, timeout=timeout)
+        return self.send_async_request(params_list=params_list, timeout=timeout)
