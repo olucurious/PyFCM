@@ -85,7 +85,12 @@ class BaseAPI(object):
             self.thread_local.requests_session = requests.Session()
             self.thread_local.requests_session.mount("http://", adapter)
             self.thread_local.requests_session.mount("https://", adapter)
+            self.thread_local.token_expiry = 0
+
+        current_timestamp = time.time()
+        if self.thread_local.token_expiry < current_timestamp:
             self.thread_local.requests_session.headers.update(self.request_headers())
+            self.thread_local.token_expiry = current_timestamp + 1800
         return self.thread_local.requests_session
 
     def send_request(self, payload=None, timeout=None):
