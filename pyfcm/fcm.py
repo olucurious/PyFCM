@@ -5,7 +5,7 @@ from .errors import InvalidDataError
 class FCMNotification(BaseAPI):
     def notify(
         self,
-        fcm_token,
+        fcm_token=None,
         notification_title=None,
         notification_body=None,
         notification_image=None,
@@ -23,7 +23,7 @@ class FCMNotification(BaseAPI):
         Send push notification to a single device
 
         Args:
-            fcm_token (str): FCM device registration ID
+            fcm_token (str, optional): FCM device registration ID
             notification_title (str, optional): Message title to display in the notification tray
             notification_body (str, optional): Message string to display in the notification tray
             notification_image (str, optional): Icon that appears next to the notification
