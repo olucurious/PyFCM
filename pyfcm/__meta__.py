@@ -2,7 +2,7 @@ __title__ = "pyfcm"
 __summary__ = "Python client for FCM - Firebase Cloud Messaging (Android, iOS and Web)"
 __url__ = "https://github.com/olucurious/pyfcm"
 
-__version__ = "2.0.3"
+__version__ = "2.0.4"
 
 __author__ = "Emmanuel Adegbite"
 __email__ = "olucurious@gmail.com"
