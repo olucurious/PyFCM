@@ -58,6 +58,10 @@ from pyfcm import FCMNotification
 
 fcm = FCMNotification(service_account_file="<service-account-json-path>", project_id="<project-id>")
 
+# Google oauth2 credentials(such as ADC, impersonate credentials) can be used instead of service account file.
+
+fcm = FCMNotification(credentials=your_credentials, project_id="<project-id>")
+
 # OR initialize with proxies
 
 proxy_dict = {
