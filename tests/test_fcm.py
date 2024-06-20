@@ -4,7 +4,7 @@ from pyfcm import FCMNotification, errors
 
 def test_push_service_without_credentials():
     try:
-        FCMNotification(service_account_file="", project_id="")
+        FCMNotification(service_account_file="", project_id="", credentials=None)
         assert False, "Should raise AuthenticationError without credentials"
     except errors.AuthenticationError:
         pass
