@@ -137,21 +137,18 @@ result = fcm.notify(notification_body=message, topic_condition=topic_condition)
 # For more information, check: https://firebase.google.com/docs/cloud-messaging/topic-messaging
 ```
 
-### Other argument options
+### Extra argument options
 
-:
+-   android_config (dict, optional): Android specific options for messages -
+        <https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#androidconfig>
 
-    android_config (dict, optional): Android specific options for messages -
-        https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#androidconfig
+-   apns_config (dict, optional): Apple Push Notification Service specific options -
+        <https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#apnsconfig>
 
-    apns_config (dict, optional): Apple Push Notification Service specific options -
-        https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#apnsconfig
+-   webpush_config (dict, optional): Webpush protocol options -
+        <https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#webpushconfig>
 
-    webpush_config (dict, optional): Webpush protocol options -
-        https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#webpushconfig
-
-    fcm_options (dict, optional): Platform independent options for features provided by the FCM SDKs -
-        https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#fcmoptions
-
-    dry_run (bool, optional): If `True` no message will be sent but
+-   fcm_options (dict, optional): Platform independent options for features provided by the FCM SDKs -
+        <https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#fcmoptions>
+-  dry_run (bool, optional): If `True` no message will be sent but
         request will be tested.
