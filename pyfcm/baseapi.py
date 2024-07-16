@@ -1,4 +1,4 @@
-#from __future__ import annotations
+# from __future__ import annotations
 
 import json
 import os
@@ -34,7 +34,7 @@ class BaseAPI(object):
         proxy_dict=None,
         env=None,
         json_encoder=None,
-        adapter=None
+        adapter=None,
     ):
         """
         Override existing init function to give ability to use v1 endpoints of Firebase Cloud Messaging API
