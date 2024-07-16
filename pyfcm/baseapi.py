@@ -1,4 +1,4 @@
-from __future__ import annotations
+# from __future__ import annotations
 
 import json
 import os
@@ -28,7 +28,7 @@ class BaseAPI(object):
 
     def __init__(
         self,
-        service_account_file: str | None,
+        service_account_file: str,
         project_id: str,
         credentials=None,
         proxy_dict=None,
