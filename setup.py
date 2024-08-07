@@ -19,7 +19,7 @@ install_requires = [
     "requests",
     "urllib3>=1.26.0",
     "google-auth>=2.22.0",
-    "aiohttp==3.8.6",
+    "aiohttp>=3.8.6",
 ]
 tests_require = ["pytest"]
 
