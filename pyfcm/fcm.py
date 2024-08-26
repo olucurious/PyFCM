@@ -41,7 +41,7 @@ class FCMNotification(BaseAPI):
             timeout (int, optional): Set time limit for the request
 
         Returns:
-            dict: name (str) - uThe identifier of the message sent, in the format of projects/*/messages/{message_id}
+            dict: name (str) - The identifier of the message sent, in the format of projects/*/messages/{message_id}
 
         Raises:
             AuthenticationError: If api_key is not set or provided or there is an error authenticating the sender.

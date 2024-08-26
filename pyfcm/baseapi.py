@@ -186,7 +186,7 @@ class BaseAPI(object):
         Parses the json response sent back by the server and tries to get out the important return variables
 
         Returns:
-            dict: name (str) - uThe identifier of the message sent, in the format of projects/*/messages/{message_id}
+            dict: name (str) - The identifier of the message sent, in the format of projects/*/messages/{message_id}
 
         Raises:
             FCMServerError: FCM is temporary not available
