@@ -16,6 +16,7 @@ from pyfcm.errors import (
     AuthenticationError,
     InvalidDataError,
     FCMError,
+    FCMSenderIdMismatchError,
     FCMServerError,
     FCMNotRegisteredError,
 )
@@ -210,6 +211,10 @@ class BaseAPI(object):
             )
         elif response.status_code == 400:
             raise InvalidDataError(response.text)
+        elif response.status_code == 403:
+            raise FCMSenderIdMismatchError(
+                "The authenticated sender ID is different from the sender ID for the registration token."
+            )
         elif response.status_code == 404:
             raise FCMNotRegisteredError("Token not registered")
         else:

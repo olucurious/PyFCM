@@ -158,3 +158,7 @@ Unreleased
 - Replace deprecated urllib3.Retry options v2
 
 .. _Łukasz Rogowski: https://github.com/Rogalek
+
+- Explicitly handle 403 SENDER_ID_MISMATCH response
+
+.. _James Priebe: https://github.com/J-Priebe/
