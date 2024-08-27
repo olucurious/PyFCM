@@ -192,6 +192,8 @@ class BaseAPI(object):
             FCMServerError: FCM is temporary not available
             AuthenticationError: error authenticating the sender account
             InvalidDataError: data passed to FCM was incorrecly structured
+            FCMSenderIdMismatchError: the authenticated sender is different from the sender registered to the token
+            FCMNotRegisteredError: device token is missing, not registered, or invalid
         """
 
         if response.status_code == 200:

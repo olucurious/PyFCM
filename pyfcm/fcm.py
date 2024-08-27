@@ -44,10 +44,11 @@ class FCMNotification(BaseAPI):
             dict: name (str) - The identifier of the message sent, in the format of projects/*/messages/{message_id}
 
         Raises:
-            AuthenticationError: If api_key is not set or provided or there is an error authenticating the sender.
-            FCMServerError: Internal server error or timeout error on Firebase cloud messaging server
-            InvalidDataError: Invalid data provided
-            InternalPackageError: Mostly from changes in the response of FCM, contact the project owner to resolve the issue
+            FCMServerError: FCM is temporary not available
+            AuthenticationError: error authenticating the sender account
+            InvalidDataError: data passed to FCM was incorrecly structured
+            FCMSenderIdMismatchError: the authenticated sender is different from the sender registered to the token
+            FCMNotRegisteredError: device token is missing, not registered, or invalid
         """
         payload = self.parse_payload(
             fcm_token=fcm_token,
