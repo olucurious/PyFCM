@@ -23,6 +23,15 @@ class FCMNotRegisteredError(FCMError):
     pass
 
 
+class FCMSenderIdMismatchError(FCMError):
+    """
+    Sender is not allowed for the given device tokens
+    https://firebase.google.com/docs/reference/fcm/rest/v1/ErrorCode
+    """
+
+    pass
+
+
 class FCMServerError(FCMError):
     """
     Internal server error or timeout error on Firebase cloud messaging server
