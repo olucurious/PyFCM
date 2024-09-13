@@ -72,8 +72,18 @@ proxy_dict = {
         }
 fcm = FCMNotification(service_account_file="<service-account-json-path>", project_id="<project-id>", proxy_dict=proxy_dict)
 
+# OR using credentials from environment variable
+# Often you would save service account json in evironment variable
+# Assuming GCP_CREDENTIALS contains the data (TIP: use "export GCP_CREDENTIALS=$(filename.json)" to quickly load the json)
+
+from google.oauth2 import service_account
+gcp_json_credentials_dict = json.loads(os.getenv('GCP_CREDENTIALS', None))
+credentials = service_account.Credentials.from_service_account_info(gcp_json_credentials_dict, scopes=['https://www.googleapis.com/auth/firebase.messaging'])
+fcm = FCMNotification(service_account_file=None, credentials=credentials, project_id="<project-id>")
+
 # Your service account file can be gotten from:  https://console.firebase.google.com/u/0/project/_/settings/serviceaccounts/adminsdk
 
+# Now you are ready to send notification
 fcm_token = "<fcm token>"
 notification_title = "Uber update"
 notification_body = "Hi John, your order is on the way!"
@@ -105,6 +115,15 @@ result = fcm.notify(fcm_token=fcm_token, notification_body=notification_body, da
 # Sending a data message only payload, do NOT include notification_body also do NOT include notification body
 # To a single device
 result = fcm.notify(fcm_token=fcm_token, data_payload=data_payload)
+
+# Only string key and values are accepted. booleans, nested dicts are not supported
+# To send nested dict, use something like
+data_payload = {
+    "foo": "bar",
+    "data": json.dumps(data).
+}
+# For more info on format see https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#Message
+# and https://firebase.google.com/docs/cloud-messaging/http-server-ref#downstream-http-messages-json
 
 # Use notification messages when you want FCM to handle displaying a notification on your app's behalf.
 # Use data messages when you just want to process the messages only in your app.

@@ -16,6 +16,7 @@ from pyfcm.errors import (
     AuthenticationError,
     InvalidDataError,
     FCMError,
+    FCMSenderIdMismatchError,
     FCMServerError,
     FCMNotRegisteredError,
 )
@@ -185,12 +186,14 @@ class BaseAPI(object):
         Parses the json response sent back by the server and tries to get out the important return variables
 
         Returns:
-            dict: name (str) - uThe identifier of the message sent, in the format of projects/*/messages/{message_id}
+            dict: name (str) - The identifier of the message sent, in the format of projects/*/messages/{message_id}
 
         Raises:
             FCMServerError: FCM is temporary not available
             AuthenticationError: error authenticating the sender account
             InvalidDataError: data passed to FCM was incorrecly structured
+            FCMSenderIdMismatchError: the authenticated sender is different from the sender registered to the token
+            FCMNotRegisteredError: device token is missing, not registered, or invalid
         """
 
         if response.status_code == 200:
@@ -210,6 +213,10 @@ class BaseAPI(object):
             )
         elif response.status_code == 400:
             raise InvalidDataError(response.text)
+        elif response.status_code == 403:
+            raise FCMSenderIdMismatchError(
+                "The authenticated sender ID is different from the sender ID for the registration token."
+            )
         elif response.status_code == 404:
             raise FCMNotRegisteredError("Token not registered")
         else:
