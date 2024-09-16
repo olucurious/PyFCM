@@ -1,7 +1,6 @@
 # from __future__ import annotations
 
 import json
-import os
 import time
 import threading
 
@@ -9,13 +8,12 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
-from google.oauth2 import service_account
+from google.oauth2 import service_account, Credentials
 import google.auth.transport.requests
 
 from pyfcm.errors import (
     AuthenticationError,
     InvalidDataError,
-    FCMError,
     FCMSenderIdMismatchError,
     FCMServerError,
     FCMNotRegisteredError,
@@ -25,13 +23,13 @@ from pyfcm.errors import (
 
 
 class BaseAPI(object):
-    FCM_END_POINT = "https://fcm.googleapis.com/v1/projects"
+    FCM_END_POINT_BASE = "https://fcm.googleapis.com/v1/projects"
 
     def __init__(
         self,
-        service_account_file: str,
-        project_id: str,
-        credentials=None,
+        service_account_file: str=None,
+        project_id: str=None,
+        credentials: Credentials=None,
         proxy_dict=None,
         env=None,
         json_encoder=None,
@@ -48,25 +46,38 @@ class BaseAPI(object):
             json_encoder (BaseJSONEncoder): JSON encoder
             adapter (BaseAdapter): adapter instance
         """
-        self.service_account_file = service_account_file
-        self.project_id = project_id
-        self.FCM_END_POINT = self.FCM_END_POINT + f"/{self.project_id}/messages:send"
-        self.FCM_REQ_PROXIES = None
-        self.custom_adapter = adapter
-        self.thread_local = threading.local()
-        self.credentials = credentials
-
-        if not service_account_file and not credentials:
+        if not (service_account_file or credentials):
             raise AuthenticationError(
                 "Please provide a service account file path or credentials in the constructor"
             )
+
+        if credentials is not None:
+            self.credentials = credentials
+        else:
+            self.credentials = service_account.Credentials.from_service_account_file(
+                service_account_file,
+                scopes=["https://www.googleapis.com/auth/firebase.messaging"],
+            )
+
+        # prefer the project ID scoped to the supplied credentials.
+        # If, for some reason, the credentials do not specify a project id,
+        # we'll check for an explicitly supplied one, and raise an error otherwise
+        project_id = getattr(self.credentials, 'project_id', None) or project_id
+
+        if not project_id:
+            raise AuthenticationError(
+                "Please provide a project_id either explicitly or through Google credentials."
+            )
+
+        self.fcm_end_point = self.FCM_END_POINT_BASE + f"/{project_id}/messages:send"
+        self.custom_adapter = adapter
+        self.thread_local = threading.local()
 
         if (
             proxy_dict
             and isinstance(proxy_dict, dict)
             and (("http" in proxy_dict) or ("https" in proxy_dict))
         ):
-            self.FCM_REQ_PROXIES = proxy_dict
             self.requests_session.proxies.update(proxy_dict)
 
         if env == "app_engine":
@@ -101,7 +112,7 @@ class BaseAPI(object):
 
     def send_request(self, payload=None, timeout=None):
         response = self.requests_session.post(
-            self.FCM_END_POINT, data=payload, timeout=timeout
+            self.fcm_end_point, data=payload, timeout=timeout
         )
         if (
             "Retry-After" in response.headers
@@ -120,7 +131,7 @@ class BaseAPI(object):
         payloads = [self.parse_payload(**params) for params in params_list]
         responses = asyncio.new_event_loop().run_until_complete(
             fetch_tasks(
-                end_point=self.FCM_END_POINT,
+                end_point=self.fcm_end_point,
                 headers=self.request_headers(),
                 payloads=payloads,
                 timeout=timeout,
@@ -138,16 +149,9 @@ class BaseAPI(object):
         """
         # get OAuth 2.0 access token
         try:
-            if self.service_account_file:
-                credentials = service_account.Credentials.from_service_account_file(
-                    self.service_account_file,
-                    scopes=["https://www.googleapis.com/auth/firebase.messaging"],
-                )
-            else:
-                credentials = self.credentials
             request = google.auth.transport.requests.Request()
-            credentials.refresh(request)
-            return credentials.token
+            self.credentials.refresh(request)
+            return self.credentials.token
         except Exception as e:
             raise InvalidDataError(e)
 
