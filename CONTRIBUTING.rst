@@ -30,9 +30,10 @@ Tests
 
 Before commiting your changes, please run the tests. For running the tests you need service account credentials in a JSON file.
 These do NOT have to be real credentials, but must have a properly encoded private key. You can create a key for testing using a site
-like [cryptotools](https://cryptotools.net/rsagen). For example:
+like `cryptotools <https://cryptotools.net/rsagen/>`_ . For example:
 
 ::
+
     {
         "type": "service_account",
         "project_id": "splendid-donkey-123",
