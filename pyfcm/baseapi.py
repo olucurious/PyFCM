@@ -28,9 +28,9 @@ class BaseAPI(object):
 
     def __init__(
         self,
-        service_account_file: str=None,
-        project_id: str=None,
-        credentials: Credentials=None,
+        service_account_file: str = None,
+        project_id: str = None,
+        credentials: Credentials = None,
         proxy_dict=None,
         env=None,
         json_encoder=None,
@@ -63,7 +63,7 @@ class BaseAPI(object):
         # prefer the project ID scoped to the supplied credentials.
         # If, for some reason, the credentials do not specify a project id,
         # we'll check for an explicitly supplied one, and raise an error otherwise
-        project_id = getattr(self.credentials, 'project_id', None) or project_id
+        project_id = getattr(self.credentials, "project_id", None) or project_id
 
         if not project_id:
             raise AuthenticationError(
@@ -125,7 +125,6 @@ class BaseAPI(object):
         return response
 
     def send_async_request(self, params_list, timeout):
-
         import asyncio
         from .async_fcm import fetch_tasks
 
@@ -287,7 +286,9 @@ class BaseAPI(object):
             else:
                 raise InvalidDataError("Provided fcm_options is in the wrong format")
 
-        fcm_payload["notification"] = (
+        fcm_payload[
+            "notification"
+        ] = (
             {}
         )  # - https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#notification
         # If title is present, use it
