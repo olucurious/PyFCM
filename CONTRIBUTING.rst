@@ -32,22 +32,20 @@ Before commiting your changes, please run the tests. For running the tests you n
 These do NOT have to be real credentials, but must have a properly encoded private key. You can create a key for testing using a site
 like [cryptotools](https://cryptotools.net/rsagen). For example:
 
-```
-{
-    "type": "service_account",
-    "project_id": "splendid-donkey-123",
-    "private_key_id": "12345",
-    "private_key": "-----BEGIN RSA PRIVATE KEY-----\nMYTESTKEY\n-----END RSA PRIVATE KEY-----",
-    "client_email": "firebase-adminsdk@splendid-donkey-123.iam.gserviceaccount.com",
-    "client_id": "789",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-splendid-donkey-123.iam.gserviceaccount.com",
-    "universe_domain": "googleapis.com"
-}
-```
-
+::
+    {
+        "type": "service_account",
+        "project_id": "splendid-donkey-123",
+        "private_key_id": "12345",
+        "private_key": "-----BEGIN RSA PRIVATE KEY-----\nMYTESTKEY\n-----END RSA PRIVATE KEY-----",
+        "client_email": "firebase-adminsdk@splendid-donkey-123.iam.gserviceaccount.com",
+        "client_id": "789",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-splendid-donkey-123.iam.gserviceaccount.com",
+        "universe_domain": "googleapis.com"
+    }
 
 **Please do not use a service account or private key, which is used in production!**
 
