@@ -8,7 +8,8 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
-from google.oauth2 import service_account, Credentials
+from google.oauth2 import service_account
+from google.oauth2.credentials import Credentials
 import google.auth.transport.requests
 
 from pyfcm.errors import (
@@ -199,7 +200,6 @@ class BaseAPI(object):
             FCMSenderIdMismatchError: the authenticated sender is different from the sender registered to the token
             FCMNotRegisteredError: device token is missing, not registered, or invalid
         """
-
         if response.status_code == 200:
             if (
                 "content-length" in response.headers
