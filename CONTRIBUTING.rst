@@ -32,7 +32,7 @@ Before commiting your changes, please run the tests. For running the tests you n
 These do NOT have to be real credentials, but must have a properly encoded private key. You can create a key for testing using a site
 like [cryptotools](https://cryptotools.net/rsagen). For example:
 
-```json
+```
 {
     "type": "service_account",
     "project_id": "splendid-donkey-123",
