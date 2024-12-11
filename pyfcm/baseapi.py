@@ -4,8 +4,7 @@ import json
 import time
 import threading
 
-import requests
-from requests.adapters import HTTPAdapter
+import niquests
 from urllib3 import Retry
 
 from google.oauth2 import service_account
@@ -72,7 +71,27 @@ class BaseAPI(object):
 
         self.fcm_end_point = self.FCM_END_POINT_BASE + f"/{project_id}/messages:send"
         self.custom_adapter = adapter
-        self.thread_local = threading.local()
+
+        # truly make sure to share a single Session amongst all threads.
+        self.requests_session = niquests.Session(
+            retries=Retry(
+                backoff_factor=1,
+                status_forcelist=[502, 503, 429],
+                allowed_methods=(Retry.DEFAULT_ALLOWED_METHODS | frozenset(["POST"])),
+                respect_retry_after_header=True,
+            ),
+            pool_maxsize=32,
+            happy_eyeballs=True,
+            keepalive_delay=3600.0,
+            multiplexed=True,
+        )
+
+        if self.custom_adapter is not None:
+            self.requests_session.mount("http://", self.custom_adapter)
+            self.requests_session.mount("https://", self.custom_adapter)
+
+        self.token_expiry = 0
+        self._token_check_lock = threading.RLock()
 
         if (
             proxy_dict
@@ -81,64 +100,49 @@ class BaseAPI(object):
         ):
             self.requests_session.proxies.update(proxy_dict)
 
-        if env == "app_engine":
-            try:
-                from requests_toolbelt.adapters import appengine
-
-                appengine.monkeypatch()
-            except ModuleNotFoundError:
-                pass
-
         self.json_encoder = json_encoder
 
-    @property
-    def requests_session(self):
-        if getattr(self.thread_local, "requests_session", None) is None:
-            retries = Retry(
-                backoff_factor=1,
-                status_forcelist=[502, 503],
-                allowed_methods=(Retry.DEFAULT_ALLOWED_METHODS | frozenset(["POST"])),
-            )
-            adapter = self.custom_adapter or HTTPAdapter(max_retries=retries)
-            self.thread_local.requests_session = requests.Session()
-            self.thread_local.requests_session.mount("http://", adapter)
-            self.thread_local.requests_session.mount("https://", adapter)
-            self.thread_local.token_expiry = 0
-
+    def _refresh_token_if_expired(self) -> None:
         current_timestamp = time.time()
-        if self.thread_local.token_expiry < current_timestamp:
-            self.thread_local.requests_session.headers.update(self.request_headers())
-            self.thread_local.token_expiry = current_timestamp + 1800
-        return self.thread_local.requests_session
+
+        if self.token_expiry < current_timestamp:
+            with self._token_check_lock:
+                # racing may occur with multiple thread pending for token refresh.
+                if self.token_expiry > current_timestamp:
+                    return
+
+                self.requests_session.headers.update(self.request_headers())
+                self.token_expiry = current_timestamp + 1800
 
     def send_request(self, payload=None, timeout=None):
-        response = self.requests_session.post(
+        self._refresh_token_if_expired()
+        return self.requests_session.post(
             self.fcm_end_point, data=payload, timeout=timeout
         )
-        if (
-            "Retry-After" in response.headers
-            and int(response.headers["Retry-After"]) > 0
-        ):
-            sleep_time = int(response.headers["Retry-After"])
-            time.sleep(sleep_time)
-            return self.send_request(payload, timeout)
-        return response
 
     def send_async_request(self, params_list, timeout):
-        import asyncio
-        from .async_fcm import fetch_tasks
+        self._refresh_token_if_expired()
 
-        payloads = [self.parse_payload(**params) for params in params_list]
-        responses = asyncio.new_event_loop().run_until_complete(
-            fetch_tasks(
-                end_point=self.fcm_end_point,
-                headers=self.request_headers(),
-                payloads=payloads,
-                timeout=timeout,
+        promises = []
+
+        # thanks to response laziness (multiplexed=True), we can blast the service with
+        # a ton of concurrent requests without having to resolve them
+        # eagerly.
+        for payload in [self.parse_payload(**params) for params in params_list]:
+            promises.append(
+                # calling send_request() would induce too much indirect calls to _refresh_token_if_expired
+                # thus adding undesirable latency for nothing.
+                self.requests_session.post(
+                    self.fcm_end_point,
+                    data=payload,
+                    timeout=timeout,
+                )
             )
-        )
 
-        return responses
+        # only resolve this thread lazy responses.
+        self.requests_session.gather(*promises)
+
+        return promises
 
     def _get_access_token(self):
         """
@@ -148,8 +152,15 @@ class BaseAPI(object):
              str: Access token
         """
         # get OAuth 2.0 access token
+        if "content-type" in self.requests_session.headers:
+            del self.requests_session.headers["content-type"]
+        if "authorization" in self.requests_session.headers:
+            del self.requests_session.headers["authorization"]
+
         try:
-            request = google.auth.transport.requests.Request()
+            request = google.auth.transport.requests.Request(
+                session=self.requests_session
+            )
             self.credentials.refresh(request)
             return self.credentials.token
         except Exception as e:
@@ -244,7 +255,7 @@ class BaseAPI(object):
     ):
         """
 
-        :rtype: json
+        :rtype: bytes
         """
         fcm_payload = dict()
 
@@ -286,9 +297,7 @@ class BaseAPI(object):
             else:
                 raise InvalidDataError("Provided fcm_options is in the wrong format")
 
-        fcm_payload[
-            "notification"
-        ] = (
+        fcm_payload["notification"] = (
             {}
         )  # - https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#notification
         # If title is present, use it

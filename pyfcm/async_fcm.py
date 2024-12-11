@@ -1,6 +1,5 @@
 import asyncio
-import aiohttp
-import json
+import niquests
 
 
 async def fetch_tasks(end_point, headers, payloads, timeout):
@@ -12,15 +11,14 @@ async def fetch_tasks(end_point, headers, payloads, timeout):
     :param timeout (int) : FCM timeout
     :return:
     """
-    fetches = [
-        asyncio.Task(
+    return await asyncio.gather(
+        *[
             send_request(
                 end_point=end_point, headers=headers, payload=payload, timeout=timeout
             )
-        )
-        for payload in payloads
-    ]
-    return await asyncio.gather(*fetches)
+            for payload in payloads
+        ]
+    )
 
 
 async def send_request(end_point, headers, payload, timeout=5):
@@ -32,10 +30,8 @@ async def send_request(end_point, headers, payload, timeout=5):
     :param timeout (int) : FCM timeout
     :return:
     """
-    timeout = aiohttp.ClientTimeout(total=timeout)
-
-    async with aiohttp.ClientSession(headers=headers, timeout=timeout) as session:
-        async with session.post(end_point, data=payload) as res:
-            result = await res.text()
-            result = json.loads(result)
-            return result
+    async with niquests.AsyncSession() as session:
+        response = await session.post(
+            end_point, data=payload, headers=headers, timeout=timeout
+        )
+        return response.json()

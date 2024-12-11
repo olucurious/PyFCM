@@ -162,3 +162,7 @@ Unreleased
 - Explicitly handle 403 SENDER_ID_MISMATCH response
 
 .. _James Priebe: https://github.com/J-Priebe/
+
+- Replace Requests and Aiohttp by Niquests. Support for HTTP/2, and HTTP/3 with advanced multiplexing.
+
+.. _Ahmed Tahri: https://github.com/Ousret

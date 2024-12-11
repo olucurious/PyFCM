@@ -37,10 +37,7 @@ def mock_aiohttp_session(mocker):
     response = {"test": "test"}
 
     # Create a mock response object
-    mock_response = AsyncMock()
-    mock_response.text = AsyncMock(return_value=json.dumps(response))
-    mock_response.status = 200
-    mock_response.headers = {"Content-Length": "123"}
+    mock_response = AsyncMock(return_value=json.dumps(response))
 
     mock_send = mocker.patch("pyfcm.async_fcm.send_request", new_callable=AsyncMock)
     mock_send.return_value = mock_response
