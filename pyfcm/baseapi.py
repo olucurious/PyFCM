@@ -28,11 +28,11 @@ class BaseAPI(object):
 
     def __init__(
         self,
-        service_account_file: str = None,
-        project_id: str = None,
+        service_account_file: str | None = None,
+        project_id: str | None = None,
         credentials: Credentials | None = None,
-        proxy_dict=None,
-        env=None,
+        proxy_dict: dict | None = None,
+        env: str | None = None,
         json_encoder=None,
         adapter=None,
     ):
