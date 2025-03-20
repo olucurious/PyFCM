@@ -30,7 +30,7 @@ class BaseAPI(object):
         self,
         service_account_file: str = None,
         project_id: str = None,
-        credentials: Credentials = None,
+        credentials: Credentials | None = None,
         proxy_dict=None,
         env=None,
         json_encoder=None,
