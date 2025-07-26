@@ -1,4 +1,3 @@
-import pytest
 from pyfcm import FCMNotification, errors
 import os
 from google.oauth2 import service_account

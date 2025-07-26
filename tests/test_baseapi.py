@@ -2,7 +2,6 @@ import os
 import json
 import pytest
 
-from pyfcm import errors
 from pyfcm.baseapi import BaseAPI
 
 

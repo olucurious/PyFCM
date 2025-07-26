@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from pyfcm import FCMNotification, errors
+from pyfcm import FCMNotification
 from pyfcm.baseapi import BaseAPI
 
 
