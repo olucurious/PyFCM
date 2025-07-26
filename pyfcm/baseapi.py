@@ -122,6 +122,11 @@ class BaseAPI(object):
             sleep_time = int(response.headers["Retry-After"])
             time.sleep(sleep_time)
             return self.send_request(payload, timeout)
+
+        if self._is_access_token_expired(response):
+            self.thread_local.token_expiry = 0
+            return self.send_request(payload, timeout)
+
         return response
 
     def send_async_request(self, params_list, timeout):
@@ -139,6 +144,30 @@ class BaseAPI(object):
         )
 
         return responses
+
+    def _is_access_token_expired(self, response):
+        """
+        Check if the response indicates an expired access token
+
+        Args:
+            response: HTTP response object
+
+        Returns:
+            bool: True if access token is expired, False otherwise
+        """
+        if response.status_code != 401:
+            return False
+
+        try:
+            error_response = response.json()
+            error_details = error_response.get("error", {}).get("details", [])
+            for detail in error_details:
+                if detail.get("reason") == "ACCESS_TOKEN_EXPIRED":
+                    return True
+        except (ValueError, AttributeError):
+            pass
+
+        return False
 
     def _get_access_token(self):
         """
