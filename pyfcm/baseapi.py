@@ -52,25 +52,10 @@ class BaseAPI(object):
                 "Please provide a service account file path or credentials in the constructor"
             )
 
-        if credentials is not None:
-            self.credentials = credentials
-        else:
-            self.credentials = service_account.Credentials.from_service_account_file(
-                service_account_file,
-                scopes=["https://www.googleapis.com/auth/firebase.messaging"],
-            )
-
-        # prefer the project ID scoped to the supplied credentials.
-        # If, for some reason, the credentials do not specify a project id,
-        # we'll check for an explicitly supplied one, and raise an error otherwise
-        project_id = getattr(self.credentials, "project_id", None) or project_id
-
-        if not project_id:
-            raise AuthenticationError(
-                "Please provide a project_id either explicitly or through Google credentials."
-            )
-
-        self.fcm_end_point = self.FCM_END_POINT_BASE + f"/{project_id}/messages:send"
+        self._service_account_file = service_account_file
+        self._fcm_end_point = None
+        self._project_id = project_id
+        self.credentials = credentials
         self.custom_adapter = adapter
         self.thread_local = threading.local()
 
@@ -90,6 +75,23 @@ class BaseAPI(object):
                 pass
 
         self.json_encoder = json_encoder
+
+    @property
+    def fcm_end_point(self) -> str:
+        if self._fcm_end_point is not None:
+            return self._fcm_end_point
+        if self.credentials is None:
+            self._initialize_credentials()
+        # prefer the project ID scoped to the supplied credentials.
+        # If, for some reason, the credentials do not specify a project id,
+        # we'll check for an explicitly supplied one, and raise an error otherwise
+        project_id = getattr(self.credentials, "project_id", None) or self._project_id
+        if not project_id:
+            raise AuthenticationError(
+                "Please provide a project_id either explicitly or through Google credentials."
+            )
+        self._fcm_end_point = self.FCM_END_POINT_BASE + f"/{project_id}/messages:send"
+        return self._fcm_end_point
 
     @property
     def requests_session(self):
@@ -169,6 +171,17 @@ class BaseAPI(object):
 
         return False
 
+    def _initialize_credentials(self):
+        """
+        Initialize credentials and FCM endpoint if not already initialized.
+        """
+        if self.credentials is None:
+            self.credentials = service_account.Credentials.from_service_account_file(
+                self._service_account_file,
+                scopes=["https://www.googleapis.com/auth/firebase.messaging"],
+            )
+            self._service_account_file = None
+
     def _get_access_token(self):
         """
         Generates access token from credentials.
@@ -176,6 +189,9 @@ class BaseAPI(object):
         Returns:
              str: Access token
         """
+        if self.credentials is None:
+            self._initialize_credentials()
+
         # get OAuth 2.0 access token
         try:
             request = google.auth.transport.requests.Request()

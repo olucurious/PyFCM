@@ -1,20 +1,5 @@
-import os
 import json
 import time
-import pytest
-
-from pyfcm.baseapi import BaseAPI
-
-
-@pytest.fixture(scope="module")
-def base_api():
-    service_account_file = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", None)
-    project_id = os.getenv("FCM_TEST_PROJECT_ID", None)
-    assert (
-        project_id
-    ), "Please set the environment variables for testing according to CONTRIBUTING.rst"
-
-    return BaseAPI(service_account_file=service_account_file, project_id=project_id)
 
 
 def test_json_dumps(base_api):
