@@ -253,10 +253,11 @@ class BaseAPI(object):
             raise FCMNotRegisteredError("Token not registered")
         else:
             raise FCMServerError(
-                f"FCM server error: Unexpected status code {response.status_code}. The server might be temporarily unavailable."
+                f"FCM server error: Unexpected status code {response.status_code}. "
+                "The server might be temporarily unavailable."
             )
 
-    def parse_payload(
+    def parse_payload(  # noqa: C901
         self,
         fcm_token=None,
         notification_title=None,

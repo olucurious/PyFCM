@@ -1,5 +1,4 @@
 from .baseapi import BaseAPI
-from .errors import InvalidDataError
 
 
 class FCMNotification(BaseAPI):
@@ -33,10 +32,14 @@ class FCMNotification(BaseAPI):
             topic_name (str, optional): Name of the topic to deliver messages to e.g. "weather".
             topic_condition (str, optional): Condition to broadcast a message to, e.g. "'foo' in topics && 'bar' in topics".
 
-            android_config (dict, optional): Android specific options for messages - https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#androidconfig
-            apns_config (dict, optional): Apple Push Notification Service specific options - https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#apnsconfig
-            webpush_config (dict, optional): Webpush protocol options - https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#webpushconfig
-            fcm_options (dict, optional): Platform independent options for features provided by the FCM SDKs - https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#fcmoptions
+            android_config (dict, optional): Android specific options for messages -
+                https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#androidconfig
+            apns_config (dict, optional): Apple Push Notification Service specific options -
+                https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#apnsconfig
+            webpush_config (dict, optional): Webpush protocol options -
+                https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#webpushconfig
+            fcm_options (dict, optional): Platform independent options for features provided by the FCM SDKs -
+                https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#fcmoptions
 
             timeout (int, optional): Set time limit for the request
 

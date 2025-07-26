@@ -3,7 +3,6 @@ import json
 import time
 import pytest
 
-from pyfcm import errors
 from pyfcm.baseapi import BaseAPI
 
 
