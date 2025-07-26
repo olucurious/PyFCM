@@ -76,7 +76,7 @@ def test_send_request_retry_after(base_api, mocker):
     """Test that send_request retries when Retry-After header is present"""
 
     # Mock time.sleep to avoid actual delays
-    mock_sleep = mocker.patch('time.sleep')
+    mock_sleep = mocker.patch("time.sleep")
 
     retry_response = mocker.Mock()
     retry_response.headers = {"Retry-After": "2"}
@@ -117,9 +117,9 @@ def test_send_request_access_token_expired_retry(base_api, mocker):
                 {
                     "@type": "type.googleapis.com/google.rpc.ErrorInfo",
                     "reason": "ACCESS_TOKEN_EXPIRED",
-                    "domain": "googleapis.com"
+                    "domain": "googleapis.com",
                 }
-            ]
+            ],
         }
     }
 
@@ -131,7 +131,7 @@ def test_send_request_access_token_expired_retry(base_api, mocker):
     mock_session.post.side_effect = [expired_response, success_response]
 
     mock_requests_session = mocker.patch.object(
-        type(base_api), 'requests_session', new_callable=mocker.PropertyMock
+        type(base_api), "requests_session", new_callable=mocker.PropertyMock
     )
     mock_requests_session.return_value = mock_session
 

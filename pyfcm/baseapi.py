@@ -315,9 +315,7 @@ class BaseAPI(object):
             else:
                 raise InvalidDataError("Provided fcm_options is in the wrong format")
 
-        fcm_payload[
-            "notification"
-        ] = (
+        fcm_payload["notification"] = (
             {}
         )  # - https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#notification
         # If title is present, use it
