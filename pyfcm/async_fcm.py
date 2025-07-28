@@ -35,7 +35,6 @@ async def send_request(end_point, headers, payload, timeout=5):
     timeout = aiohttp.ClientTimeout(total=timeout)
 
     async with aiohttp.ClientSession(headers=headers, timeout=timeout) as session:
-
         async with session.post(end_point, data=payload) as res:
             result = await res.text()
             result = json.loads(result)

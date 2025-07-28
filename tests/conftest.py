@@ -1,24 +1,25 @@
 import json
-import os
 from unittest.mock import AsyncMock
 
 import pytest
 
-from pyfcm import FCMNotification, errors
+from pyfcm import FCMNotification
 from pyfcm.baseapi import BaseAPI
+from google.auth.credentials import Credentials
+
+
+class DummyCredentials(Credentials):
+    def refresh():
+        pass
+
+    @property
+    def project_id(self):
+        return "test"
 
 
 @pytest.fixture(scope="module")
 def push_service():
-    service_account_file = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", None)
-    project_id = os.getenv("FCM_TEST_PROJECT_ID", None)
-    assert (
-        service_account_file
-    ), "Please set the service_account for testing according to CONTRIBUTING.rst"
-
-    return FCMNotification(
-        service_account_file=service_account_file, project_id=project_id
-    )
+    return FCMNotification(credentials=DummyCredentials())
 
 
 @pytest.fixture
@@ -49,9 +50,4 @@ def mock_aiohttp_session(mocker):
 
 @pytest.fixture(scope="module")
 def base_api():
-    service_account = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", None)
-    assert (
-        service_account
-    ), "Please set the service_account for testing according to CONTRIBUTING.rst"
-
-    return BaseAPI(api_key=service_account)
+    return BaseAPI(credentials=DummyCredentials())

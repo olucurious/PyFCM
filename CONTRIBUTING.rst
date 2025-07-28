@@ -28,16 +28,11 @@ Some simple guidelines to follow when contributing code:
 Tests
 -----
 
-Before commiting your changes, please run the tests. For running the tests you need a service account.
-
-**Please do not use a service account, which is used in production!**
+Before commiting your changes, please run the tests. 
 
 ::
 
     pip install . ".[test]"
-
-    export GOOGLE_APPLICATION_CREDENTIALS="service_account.json"
-
     python -m pytest
 
 If you add a new fixture or fix a bug, please make sure to write a new unit test. This makes development easier and avoids new bugs.
