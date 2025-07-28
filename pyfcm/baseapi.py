@@ -3,6 +3,7 @@
 import json
 import time
 import threading
+from typing import Optional
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -28,11 +29,11 @@ class BaseAPI(object):
 
     def __init__(
         self,
-        service_account_file: str | None = None,
-        project_id: str | None = None,
-        credentials: Credentials | None = None,
-        proxy_dict: dict | None = None,
-        env: str | None = None,
+        service_account_file: Optional[str] = None,
+        project_id: Optional[str] = None,
+        credentials: Optional[Credentials] = None,
+        proxy_dict: Optional[dict] = None,
+        env: Optional[str] = None,
         json_encoder=None,
         adapter=None,
     ):
