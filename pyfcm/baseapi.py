@@ -3,7 +3,7 @@
 import json
 import time
 import threading
-from typing import Optional, Union
+from typing import Optional
 
 import requests
 from requests.adapters import HTTPAdapter
