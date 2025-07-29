@@ -1,5 +1,6 @@
 # from __future__ import annotations
 
+from functools import cached_property
 import json
 import time
 import threading
@@ -9,7 +10,7 @@ from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 from google.oauth2 import service_account
-from google.oauth2.credentials import Credentials
+from google.auth.credentials import Credentials
 import google.auth.transport.requests
 
 from pyfcm.errors import (
@@ -41,7 +42,7 @@ class BaseAPI(object):
         Attributes:
             service_account_file (str): path to service account JSON file
             project_id (str): project ID of Google account
-            credentials (Credentials): Google oauth2 credentials instance, such as ADC
+            credentials (Credentials): Google auth credentials instance, such as ADC, service account one
             proxy_dict (dict): proxy settings dictionary, use proxy (keys: `http`, `https`)
             env (dict): environment settings dictionary, for example "app_engine"
             json_encoder (BaseJSONEncoder): JSON encoder
@@ -53,9 +54,8 @@ class BaseAPI(object):
             )
 
         self._service_account_file = service_account_file
-        self._fcm_end_point = None
         self._project_id = project_id
-        self.credentials = credentials
+        self._provided_credentials = credentials
         self.custom_adapter = adapter
         self.thread_local = threading.local()
 
@@ -76,22 +76,28 @@ class BaseAPI(object):
 
         self.json_encoder = json_encoder
 
-    @property
+    @cached_property
+    def _credentials(self) -> Credentials:
+        if self._provided_credentials is not None:
+            return self._provided_credentials
+
+        credentials = service_account.Credentials.from_service_account_file(
+            self._service_account_file,
+            scopes=["https://www.googleapis.com/auth/firebase.messaging"],
+        )
+        # Service account credentials has project_id (others are not)
+        self._project_id = credentials.project_id or self._project_id
+        self._service_account_file = None
+        return credentials
+
+    @cached_property
     def fcm_end_point(self) -> str:
-        if self._fcm_end_point is not None:
-            return self._fcm_end_point
-        if self.credentials is None:
-            self._initialize_credentials()
-        # prefer the project ID scoped to the supplied credentials.
-        # If, for some reason, the credentials do not specify a project id,
-        # we'll check for an explicitly supplied one, and raise an error otherwise
-        project_id = getattr(self.credentials, "project_id", None) or self._project_id
-        if not project_id:
-            raise AuthenticationError(
-                "Please provide a project_id either explicitly or through Google credentials."
-            )
-        self._fcm_end_point = self.FCM_END_POINT_BASE + f"/{project_id}/messages:send"
-        return self._fcm_end_point
+        if self._provided_credentials is None:
+            # read credentails to resolve project_id if needed
+            _ = self._credentials
+        if self._project_id is None:
+            raise RuntimeError("Please provide a project_id either explicitly or through Google credentials.")
+        return self.FCM_END_POINT_BASE + f"/{self._project_id}/messages:send"
 
     @property
     def requests_session(self):
@@ -171,32 +177,18 @@ class BaseAPI(object):
 
         return False
 
-    def _initialize_credentials(self):
-        """
-        Initialize credentials and FCM endpoint if not already initialized.
-        """
-        if self.credentials is None:
-            self.credentials = service_account.Credentials.from_service_account_file(
-                self._service_account_file,
-                scopes=["https://www.googleapis.com/auth/firebase.messaging"],
-            )
-            self._service_account_file = None
-
-    def _get_access_token(self):
+    def _get_access_token(self) -> str:
         """
         Generates access token from credentials.
         If token expires then new access token is generated.
         Returns:
              str: Access token
         """
-        if self.credentials is None:
-            self._initialize_credentials()
-
         # get OAuth 2.0 access token
         try:
             request = google.auth.transport.requests.Request()
-            self.credentials.refresh(request)
-            return self.credentials.token
+            self._credentials.refresh(request)
+            return self._credentials.token  # pyright: ignore[reportReturnType]
         except Exception as e:
             raise InvalidDataError(e)
 
