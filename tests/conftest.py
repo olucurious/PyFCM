@@ -2,24 +2,29 @@ import json
 from unittest.mock import AsyncMock
 
 import pytest
+from google.auth.credentials import Credentials
 
 from pyfcm import FCMNotification
 from pyfcm.baseapi import BaseAPI
-from google.auth.credentials import Credentials
 
 
 class DummyCredentials(Credentials):
-    def refresh():
-        pass
+    def __init__(self):
+        self.token = "dummy_token"
+        self._expired = True
+
+    def refresh(self, request):
+        self.token = "refreshed_dummy_token"
+        self._expired = False
 
     @property
-    def project_id(self):
-        return "test"
+    def expired(self):
+        return self._expired
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def push_service():
-    return FCMNotification(credentials=DummyCredentials())
+    return FCMNotification(credentials=DummyCredentials(), project_id="test")
 
 
 @pytest.fixture
@@ -48,6 +53,6 @@ def mock_aiohttp_session(mocker):
     return mock_send
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def base_api():
-    return BaseAPI(credentials=DummyCredentials())
+    return BaseAPI(credentials=DummyCredentials(), project_id="test")
