@@ -4,10 +4,13 @@ import pytest
 
 
 def test_empty_project_id(base_api):
-    base_api._project_id = None
+    base_api.token_manager._project_id = None
     with pytest.raises(RuntimeError) as e:
         base_api.fcm_end_point
-    assert str(e.value) == "Please provide a project_id either explicitly or through Google credentials."
+    assert (
+        str(e.value)
+        == "Please provide a project_id either explicitly or through Google credentials."
+    )
 
 
 def test_json_dumps(base_api):
@@ -124,8 +127,8 @@ def test_send_request_access_token_expired_retry(base_api, mocker):
         type(base_api), "requests_session", new_callable=mocker.PropertyMock
     )
     mock_requests_session.return_value = mock_session
-    base_api._shared_token = "dummy"
-    assert base_api._shared_token is not None
+    base_api.token_manager._shared_token = "dummy"
+    assert base_api.token_manager._shared_token is not None
 
     # do
     result = base_api.send_request(payload="test_payload", timeout=30)
@@ -133,5 +136,5 @@ def test_send_request_access_token_expired_retry(base_api, mocker):
     # check
     assert mock_session.post.call_count == 2
     # token cleared, but not refreshed because request_session is mocked
-    assert base_api._shared_token is None
+    assert base_api.token_manager._shared_token is None
     assert result == success_response

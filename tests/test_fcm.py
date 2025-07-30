@@ -12,7 +12,7 @@ def test_push_service_without_credentials():
 def test_push_service_directly_passed_credentials(push_service):
     # We should infer the project ID/endpoint from credentials
     # without the need to explcitily pass it
-    push_service._project_id = "abc123"
+    push_service.token_manager._project_id = "abc123"
     assert push_service.fcm_end_point == (
         "https://fcm.googleapis.com/v1/projects/abc123/messages:send"
     )
