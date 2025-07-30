@@ -1,6 +1,7 @@
 from functools import cached_property
 import threading
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 from google.oauth2 import service_account
 from google.auth.credentials import Credentials
@@ -17,9 +18,9 @@ class TokenManager:
 
     def __init__(
         self,
-        service_account_file: str | None = None,
-        project_id: str | None = None,
-        credentials: Credentials | None = None,
+        service_account_file: Optional[str] = None,
+        project_id: Optional[str] = None,
+        credentials: Optional[Credentials] = None,
     ):
         """
         Initialize TokenManager
