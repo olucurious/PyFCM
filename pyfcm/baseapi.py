@@ -4,6 +4,7 @@ from functools import cached_property
 import json
 import time
 import threading
+from datetime import datetime, timedelta, timezone
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -59,6 +60,10 @@ class BaseAPI(object):
         self.custom_adapter = adapter
         self.thread_local = threading.local()
 
+        # Shared token management across threads
+        self._shared_token = None
+        self._token_lock = threading.RLock()
+
         if (
             proxy_dict
             and isinstance(proxy_dict, dict)
@@ -111,12 +116,9 @@ class BaseAPI(object):
             self.thread_local.requests_session = requests.Session()
             self.thread_local.requests_session.mount("http://", adapter)
             self.thread_local.requests_session.mount("https://", adapter)
-            self.thread_local.token_expiry = 0
 
-        current_timestamp = time.time()
-        if self.thread_local.token_expiry < current_timestamp:
-            self.thread_local.requests_session.headers.update(self.request_headers())
-            self.thread_local.token_expiry = current_timestamp + 1800
+        # Always update headers with current shared token
+        self.thread_local.requests_session.headers.update(self.request_headers())
         return self.thread_local.requests_session
 
     def send_request(self, payload=None, timeout=None):
@@ -132,7 +134,16 @@ class BaseAPI(object):
             return self.send_request(payload, timeout)
 
         if self._is_access_token_expired(response):
-            self.thread_local.token_expiry = 0
+            # Clear shared token and refresh credentials
+            with self._token_lock:
+                self._shared_token = None
+                if self._credentials:
+                    try:
+                        request = google.auth.transport.requests.Request()
+                        self._credentials.refresh(request)
+                    except Exception:
+                        # If refresh fails, let the next request handle it
+                        pass
             return self.send_request(payload, timeout)
 
         return response
@@ -177,20 +188,52 @@ class BaseAPI(object):
 
         return False
 
+    def _is_token_valid(self) -> bool:
+        """
+        Enhanced token validity check with fallback mechanisms.
+        Combines expired property check with time-based validation.
+
+        Returns:
+            bool: True if token is valid, False otherwise
+        """
+        if not self._shared_token:
+            return False
+
+        if self._credentials.expired:
+            return False
+
+        # Fallback check: time-based validation with 5-minute buffer
+        # This accounts for the 4-minute early expiration issue
+        if (hasattr(self._credentials, 'expiry') and
+                self._credentials.expiry and
+                self._credentials.expiry <= datetime.now(timezone.utc) + timedelta(minutes=5)):
+            return False
+
+        return True
+
     def _get_access_token(self) -> str:
         """
-        Generates access token from credentials.
-        If token expires then new access token is generated.
+        Thread-safe access token management with shared token across threads.
+        Uses double-checked locking pattern for performance with enhanced validation.
         Returns:
              str: Access token
         """
-        # get OAuth 2.0 access token
-        try:
-            request = google.auth.transport.requests.Request()
-            self._credentials.refresh(request)
-            return self._credentials.token  # pyright: ignore[reportReturnType]
-        except Exception as e:
-            raise InvalidDataError(e)
+        # First check without lock (performance optimization)
+        if self._is_token_valid():
+            return self._shared_token
+
+        # Acquire lock and check again (double-checked locking)
+        with self._token_lock:
+            if self._is_token_valid():
+                return self._shared_token
+
+            try:
+                request = google.auth.transport.requests.Request()
+                self._credentials.refresh(request)
+                self._shared_token = self._credentials.token
+                return self._shared_token
+            except Exception as e:
+                raise InvalidDataError(e)
 
     def request_headers(self):
         """

@@ -9,8 +9,17 @@ from pyfcm.baseapi import BaseAPI
 
 
 class DummyCredentials(Credentials):
+    def __init__(self):
+        self.token = "dummy_token"
+        self._expired = True
+
     def refresh(self, request):
-        pass
+        self.token = "refreshed_dummy_token"
+        self._expired = False
+
+    @property
+    def expired(self):
+        return self._expired
 
 
 @pytest.fixture(scope="function")
