@@ -1,6 +1,15 @@
 import json
 import time
 
+import pytest
+
+
+def test_empty_project_id(base_api):
+    base_api._project_id = None
+    with pytest.raises(RuntimeError) as e:
+        base_api.fcm_end_point
+    assert str(e.value) == "Please provide a project_id either explicitly or through Google credentials."
+
 
 def test_json_dumps(base_api):
     json_string = base_api.json_dumps([{"test": "Test"}, {"test2": "Test2"}])
