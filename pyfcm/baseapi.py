@@ -8,6 +8,7 @@ from typing import Optional
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
+from os import path
 
 from google.oauth2 import service_account
 from google.oauth2.credentials import Credentials
@@ -177,6 +178,13 @@ class BaseAPI(object):
         Initialize credentials and FCM endpoint if not already initialized.
         """
         if self.credentials is None:
+
+            missing_account_file = not path.isfile(self._service_account_file)
+
+            if missing_account_file:
+                raise InvalidDataError(f"The service account file you passed does not exist at '{path}'. "
+                                        "Ensure it does not have any typos and exists."
+                                        )
             self.credentials = service_account.Credentials.from_service_account_file(
                 self._service_account_file,
                 scopes=["https://www.googleapis.com/auth/firebase.messaging"],
