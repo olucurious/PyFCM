@@ -16,6 +16,26 @@ def test_push_service_with_incorrect_service_account_file():
     except errors.InvalidDataError:
         pass
 
+def test_push_service_with_valid_service_account_file(mocker):
+    # When the service account file exists, credentials must be built via
+    # google.oauth2.service_account.Credentials.from_service_account_file.
+    # google.oauth2.credentials.Credentials does not provide that method.
+    mocker.patch("pyfcm.baseapi.path.isfile", return_value=True)
+    mock_from_file = mocker.patch(
+        "pyfcm.baseapi.service_account.Credentials.from_service_account_file",
+        return_value="dummy-credentials",
+    )
+
+    fcm = FCMNotification(
+        service_account_file="./service_account.json",
+        project_id="test",
+        credentials=None,
+    )
+    fcm._initialize_credentials()
+
+    mock_from_file.assert_called_once()
+    assert fcm.credentials == "dummy-credentials"
+
 def test_push_service_directly_passed_credentials(push_service):
     # We should infer the project ID/endpoint from credentials
     # without the need to explcitily pass it
