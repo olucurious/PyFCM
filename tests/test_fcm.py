@@ -10,7 +10,6 @@ def test_push_service_without_credentials():
 
 def test_push_service_with_incorrect_service_account_file():
     try:
-        # figure out why this goddamn test is not running
         fcm = FCMNotification(service_account_file='./foo.json', project_id=None, credentials=None)
         fcm.notify()
         assert False, "Should raise InvalidDataError without correct service account file path"
