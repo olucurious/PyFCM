@@ -142,10 +142,10 @@ class TokenManager:
         """
         with self._token_lock:
             self._shared_token = None
-            if self._credentials:
-                try:
-                    request = google.auth.transport.requests.Request()
-                    self._credentials.refresh(request)
-                except Exception:
-                    # If refresh fails, let the next request handle it
-                    pass
+            try:
+                request = google.auth.transport.requests.Request()
+                self._credentials.refresh(request)
+                self._shared_token = self._credentials.token
+            except Exception:
+                # If refresh fails, let the next request handle it
+                pass

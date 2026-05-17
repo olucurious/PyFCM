@@ -135,6 +135,5 @@ def test_send_request_access_token_expired_retry(base_api, mocker):
 
     # check
     assert mock_session.post.call_count == 2
-    # token cleared, but not refreshed because request_session is mocked
-    assert base_api.token_manager._shared_token is None
+    assert base_api.token_manager._shared_token == "refreshed_dummy_token"
     assert result == success_response
