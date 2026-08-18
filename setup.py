@@ -21,7 +21,7 @@ install_requires = [
     "google-auth>=2.22.0",
     "aiohttp>=3.8.6",
 ]
-tests_require = ["pytest"]
+tests_require = ["pytest", "pytest-mock"]
 
 # We can't get the values using `from pyfcm import __meta__`, because this would import
 # the other modules too and raise an exception (dependencies are not installed at this point yet).
