@@ -1,0 +1,27 @@
+name: Validate PR title
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+
+jobs:
+  conventional-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Conventional Commit prefix
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          pattern='^(fix|feat|docs|test|ci|chore|build|refactor|perf|style|revert)(\([[:alnum:]_.-]+\))?!?: .+'
+
+          if [[ ! "$PR_TITLE" =~ $pattern ]]; then
+            echo "::error::PR title must start with a Conventional Commit prefix. Examples: 'fix: correct token refresh', 'feat: add topic management', or 'feat!: remove legacy API'."
+            exit 1
+          fi
