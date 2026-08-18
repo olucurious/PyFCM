@@ -1,21 +1,6 @@
-import json
-import pdb
-from pyfcm import FCMNotification, errors
+import pytest
 
-def test_credentials():
-    return {
-        "type": "service_account",
-        "project_id": "my-project-123456",
-        "private_key_id": "abc123def4567890abc123def4567890abc123de",
-        "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC...\n...REDACTED...\n-----END PRIVATE KEY-----\n",
-        "client_email": "my-service-account@my-project-123456.iam.gserviceaccount.com",
-        "client_id": "123456789012345678901",
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/my-service-account%40my-project-123456.iam.gserviceaccount.com",
-        "universe_domain": "googleapis.com",
-    }
+from pyfcm import FCMNotification, errors
 
 
 def test_push_service_without_credentials():
@@ -26,58 +11,33 @@ def test_push_service_without_credentials():
         pass
 
 
-def test_push_service_with_incorrect_service_account_file():
-    try:
+def test_push_service_with_incorrect_service_account_file(tmp_path):
+    missing_file = tmp_path / "missing.json"
+    with pytest.raises(errors.InvalidDataError):
         fcm = FCMNotification(
-            service_account_file="./foo.json", project_id=None, credentials=None
+            service_account_file=missing_file, project_id=None, credentials=None
         )
         fcm.notify()
-        assert False, (
-            "Should raise InvalidDataError without correct service account file path"
-        )
-    except errors.InvalidDataError:
-        pass
-
-
-def test_push_works_with_dict_credentials(mocker):
-    credentials = test_credentials()
-    mock_from_info = mocker.patch(
-        "pyfcm.baseapi.service_account.Credentials.from_service_account_info",
-        return_value=credentials
-    )
-
-    fcm = FCMNotification(
-        service_account_file=credentials,
-        project_id="test",
-        credentials=None,
-    )
-    fcm._initialize_credentials()
-
-    mock_from_info.assert_called_once()
-    assert fcm.credentials == credentials
 
 
 def test_push_service_does_not_leak_credentials():
-    import pytest
-    credentials = test_credentials()
+    raw_credentials = '{"private_key":"TOP-SECRET-PRIVATE-KEY"}'
     with pytest.raises(errors.InvalidDataError) as exc_info:
         fcm = FCMNotification(
-            service_account_file=json.dumps(credentials),
+            service_account_file=raw_credentials,
             project_id=None,
             credentials=None,
         )
-        fcm.notify()
+        fcm._initialize_credentials()
 
     error_message = str(exc_info.value)
-    credentials = test_credentials()
-    
-    assert credentials["private_key"] not in error_message
-    assert credentials["private_key_id"] not in error_message
+    assert raw_credentials not in error_message
+    assert "TOP-SECRET-PRIVATE-KEY" not in error_message
 
 
 def test_push_service_with_valid_service_account_file(mocker):
-    # When the service account file exists, test_credentials must be built via
-    # google.oauth2.service_account.test_credentials.from_service_account_file.
+    # When the service account file exists, credentials must be built via
+    # google.oauth2.service_account.Credentials.from_service_account_file.
     # google.oauth2.credentials.Credentials does not provide that method.
     mocker.patch("pyfcm.baseapi.path.isfile", return_value=True)
     mock_from_file = mocker.patch(
@@ -92,7 +52,10 @@ def test_push_service_with_valid_service_account_file(mocker):
     )
     fcm._initialize_credentials()
 
-    mock_from_file.assert_called_once()
+    mock_from_file.assert_called_once_with(
+        "./service_account.json",
+        scopes=["https://www.googleapis.com/auth/firebase.messaging"],
+    )
     assert fcm.credentials == "dummy-credentials"
 
 

@@ -177,30 +177,14 @@ class BaseAPI(object):
         Initialize credentials and FCM endpoint if not already initialized.
         """
         if self.credentials is None:
-            if isinstance(self._service_account_file, dict):
-                try:
-                    self.credentials = service_account.Credentials.from_service_account_info(
-                        self._service_account_file,
-                        scopes=["https://www.googleapis.com/auth/firebase.messaging"],
-                    )
-                except ValueError as e:
-                    raise InvalidDataError(f"Invalid service account file: {e}")
-                self._service_account_file = None
-                return None
-            
-            is_path = isinstance(self._service_account_file, (str, bytes)) or hasattr(self._service_account_file, "__fspath__")
-            
-            invalid_path = not is_path or not path.isfile(self._service_account_file)
-
-            if invalid_path:
-                raise InvalidDataError("The service account file does not exist or is not a regular file.")
-            try:
-                self.credentials = service_account.Credentials.from_service_account_file(
-                    self._service_account_file,
-                    scopes=["https://www.googleapis.com/auth/firebase.messaging"],
+            if not path.isfile(self._service_account_file):
+                raise InvalidDataError(
+                    "The service account file does not exist or is not a regular file."
                 )
-            except Exception as e:
-                raise InvalidDataError(f"Invalid service account file: {e}")
+            self.credentials = service_account.Credentials.from_service_account_file(
+                self._service_account_file,
+                scopes=["https://www.googleapis.com/auth/firebase.messaging"],
+            )
             self._service_account_file = None
 
     def _get_access_token(self):
