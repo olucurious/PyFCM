@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "5e86247fecfcc9ea2dd9e3a036d3bd1607e5f408",
+  "packages": {
+    ".": {
+      "release-type": "python",
+      "package-name": "pyfcm",
+      "extra-files": [
+        {
+          "type": "generic",
+          "path": "pyfcm/__meta__.py"
+        }
+      ]
+    }
+  }
+}
